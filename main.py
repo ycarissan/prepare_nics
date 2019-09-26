@@ -51,7 +51,7 @@ def main():
         fout.write(l)
     for q in list_q:
         fout.write("{:s} {:10.6f} {:10.6f}
-                   {:10.6f}\n".format("q",list_q[0]/len(cycle),list_q[1]/len(cycle),list_q[2]/len(cycle)))
+                   {:10.6f}\n".format("q",list_q[0],list_q[1],list_q[2]))
     fout.close()
 
 
