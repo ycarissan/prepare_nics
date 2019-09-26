@@ -36,16 +36,15 @@ def main():
     # Traitement des cycles
     list_q=[]
     for cycle in cycles:
-        if len(cycle)==6:
-            x=y=z=0
-            for iat in cycle:
-                xpath = './/'+qdn+'atom[@id="'+iat+'"]'
-                atom = atomArray_el.find(xpath)
-                x = x + float(atom.get("x3"))
-                y = y + float(atom.get("y3"))
-                z = z + float(atom.get("z3"))
-            list_q.append([x/len(cycle),y/len(cycle),z/len(cycle)])
-            print("q",x/len(cycle),y/len(cycle),z/len(cycle))
+        x=y=z=0
+        for iat in cycle:
+            xpath = './/'+qdn+'atom[@id="'+iat+'"]'
+            atom = atomArray_el.find(xpath)
+            x = x + float(atom.get("x3"))
+            y = y + float(atom.get("y3"))
+            z = z + float(atom.get("z3"))
+        list_q.append([x/len(cycle),y/len(cycle),z/len(cycle)])
+        print("q",x/len(cycle),y/len(cycle),z/len(cycle))
 #write final file
     fout=open("molecule_q.xyz","w+")
     fout.write(str(len(list_q)+nat)+"\n")
