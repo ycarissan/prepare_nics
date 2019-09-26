@@ -50,7 +50,7 @@ def main():
     for l in open(geomfile,"r").readlines()[1:]:
         fout.write(l)
     for q in list_q:
-        fout.write("{:s} {} {} {}\n".format("q",q[0],q[1],q[2]))
+        fout.write("{:s} {:10.6f} {:10.6f} {:10.6f}\n".format("q",q[0],q[1],q[2]))
     fout.close()
 
 
