@@ -46,7 +46,7 @@ def main():
             print("q",x/len(cycle),y/len(cycle),z/len(cycle))
 #write final file
     fout=open("molecule_q.xyz","w+")
-    fout.write(len(list_q))
+    fout.write(str(len(list_q)))
     for l in geomfile.readlines()[1:]:
         fout.write(l)
     for q in list_q:
