@@ -33,6 +33,7 @@ def main():
         G.add_edge(at1,at2)
     cycles = nx.minimum_cycle_basis(G)
     # Traitement des cycles
+    list_q=[]
     for cycle in cycles:
         x=y=z=0
         for iat in cycle:
@@ -41,7 +42,16 @@ def main():
             x = x + float(atom.get("x3"))
             y = y + float(atom.get("y3"))
             z = z + float(atom.get("z3"))
-        print("q",x/len(cycle),y/len(cycle),z/len(cycle))
+            list_q.append([x/len(cycle),y/len(cycle),z/len(cycle)])
+            print("q",x/len(cycle),y/len(cycle),z/len(cycle))
+#write final file
+    fout=open("molecule_q.xyz","w+")
+    fout.write(len(list_q))
+    for l in geomfile.readlines()[1:]:
+        fout.write(l)
+    for q in list_q:
+        fout.write("".format("q",x/len(cycle),y/len(cycle),z/len(cycle)))
+    fout.close()
 
 
 
