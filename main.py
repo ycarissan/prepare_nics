@@ -32,6 +32,7 @@ def main():
         at1, at2 = str.split(bond.get('atomRefs2'))
         G.add_edge(at1,at2)
     cycles = nx.minimum_cycle_basis(G)
+    print(cycles)
     # Traitement des cycles
     list_q=[]
     for cycle in cycles:
@@ -43,8 +44,8 @@ def main():
                 x = x + float(atom.get("x3"))
                 y = y + float(atom.get("y3"))
                 z = z + float(atom.get("z3"))
-                list_q.append([x/len(cycle),y/len(cycle),z/len(cycle)])
-                print("q",x/len(cycle),y/len(cycle),z/len(cycle))
+            list_q.append([x/len(cycle),y/len(cycle),z/len(cycle)])
+            print("q",x/len(cycle),y/len(cycle),z/len(cycle))
 #write final file
     fout=open("molecule_q.xyz","w+")
     fout.write(str(len(list_q)+nat)+"\n")
