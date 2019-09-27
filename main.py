@@ -50,7 +50,7 @@ def main():
     #
     list_q=[]
     #
-    # Pour chaque cycle detecte on fait la moyenne des coordonnées de atomes
+    # Pour chaque cycle detecte on fait la moyenne des coordonnees de atomes
     #
     for cycle in cycles:
         x=y=z=0
