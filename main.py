@@ -61,7 +61,7 @@ def main():
             y = y + float(atom.get("y3"))
             z = z + float(atom.get("z3"))
         list_q.append([x/len(cycle),y/len(cycle),z/len(cycle)])
-        print("q",x/len(cycle),y/len(cycle),z/len(cycle))
+#        print("q",x/len(cycle),y/len(cycle),z/len(cycle))
     #
     # Ecriture finale
     #
@@ -72,8 +72,6 @@ def main():
     for q in list_q:
         fout.write("{:s} {:10.6f} {:10.6f} {:10.6f}\n".format("q",q[0],q[1],q[2]))
     fout.close()
-
-
 
 if __name__ == "__main__":
     main()
