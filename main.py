@@ -65,12 +65,12 @@ def main():
     #
     # Ecriture finale
     #
-    fout=open("molecule_q.xyz","w+")
+    fout=open("molecule_bq.xyz","w+")
     fout.write(str(len(list_q)+nat)+"\n")
     for l in open(geomfile,"r").readlines()[1:]:
         fout.write(l)
     for q in list_q:
-        fout.write("{:s} {:10.6f} {:10.6f} {:10.6f}\n".format("q",q[0],q[1],q[2]))
+        fout.write("{:s} {:10.6f} {:10.6f} {:10.6f}\n".format("bq",q[0],q[1],q[2]))
     fout.close()
 
 if __name__ == "__main__":
