@@ -86,7 +86,7 @@ def main():
       print "Average plane pt1 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format([1,0,a+c])
       print "Average plane pt2 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format([0,1,b+c])
    v=[a,b,-1]
-   v=v/np.linalg.norm(v)
+   v=v/np.linalg.norm(v) //normal vector of the average plane applied at the center of the plane
    if (verbose==1):
       print   "point at  0    {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( origin      )
    else:
