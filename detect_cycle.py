@@ -13,7 +13,7 @@ def generate_cml(geomfile):
     stdout, stderr = proc.communicate()
     return
 
-def detect_cycles(geomfile)
+def detect_cycles(geomfile):
     #
     # Detection des cycles
     #

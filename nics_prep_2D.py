@@ -3,6 +3,7 @@
 import sys
 import numpy as np
 import getopt
+import detect_cycle
 
 atomlist=[]
 inc = 0.0
