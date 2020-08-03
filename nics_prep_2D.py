@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 
 import sys
 import numpy as np
@@ -54,7 +54,7 @@ def get_averageplane(coords):
   return origin,a,b,c
 
 def usage():
-  print 'Usage: '+sys.argv[0]+' [-h -v -i inc -n nval -l "atom list to define av. plane" -g <file>]'
+  print('Usage: '+sys.argv[0]+' [-h -v -i inc -n nval -l "atom list to define av. plane" -g <file>]')
 
 def main():
   global atomlist
@@ -75,7 +75,7 @@ def main():
      opts, args = getopt.getopt(sys.argv[1:], "hvi:n:l:g:", ["help", "verbose", "inc=","nval=","list=","geom="])
   except getopt.GetoptError as err:
         # print help information and exit:
-        print str(err)  # will print something like "option -a not recognized"
+        print(str(err))  # will print something like "option -a not recognized"
         usage()
         sys.exit(2)
   output = None
@@ -100,9 +100,9 @@ def main():
 # Print for debugging
 #
   if (verbose==1):
-     print "list",atomlist
-     print "nxpoints",nxpoints
-     print "nypoints",nypoints
+     print("list",atomlist)
+     print("nxpoints",nxpoints)
+     print("nypoints",nypoints)
 #
 # Read the geometry in the geom file called opt.xyz
 #
@@ -117,7 +117,7 @@ def main():
   origin,a,b,c = get_averageplane(coords)
 #
   if (verbose==1):
-     print "plane equation z=ax+by+c with a,b,c: ", a, b, c
+     print("plane equation z=ax+by+c with a,b,c: ", a, b, c)
 #
 # "altitude" above the ring mean plane at which the ghost atoms will be located
 #
@@ -126,9 +126,9 @@ def main():
 #Print for debugging
 #
   if (verbose==1):
-     print "Average plane origin {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(origin)
-     print "Average plane pt1 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format([1,0,a+c])
-     print "Average plane pt2 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format([0,1,b+c])
+     print("Average plane origin {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(origin))
+     print("Average plane pt1 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format([1,0,a+c]))
+     print("Average plane pt2 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format([0,1,b+c]))
 #
 #  Determine the normal vector normal_v to the mean plane
 #
@@ -157,21 +157,21 @@ def main():
 #Print for debugging
 #
   if (verbose==1):
-     print   "point at  0    {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( origin      )
-     print   "normal vector v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( normal_v      )
-     print   "normal vector v shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( normal_v_shifted      )
-     print   "inplane_u     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( inplane_u      )
-     print   "inplane_u_shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( inplane_u_shifted      )
-     print   "inplane_v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( inplane_v      )
-     print   "inplane_v_shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( inplane_v_shifted      )
-     print   "u.v {{ {:16.10f} }}".format( np.dot(inplane_u,normal_v) )
-     print   "w.v {{ {:16.10f} }}".format( np.dot(inplane_v,normal_v))
-     print   "u.w {{ {:16.10f} }}".format( np.dot(inplane_u,inplane_v))
+     print("point at  0    {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( origin      ))
+     print("normal vector v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( normal_v      ))
+     print("normal vector v shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( normal_v_shifted      ))
+     print("inplane_u     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( inplane_u      ))
+     print("inplane_u_shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( inplane_u_shifted      ))
+     print("inplane_v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( inplane_v      ))
+     print("inplane_v_shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format( inplane_v_shifted      ))
+     print("u.v {{ {:16.10f} }}".format( np.dot(inplane_u,normal_v) ))
+     print("w.v {{ {:16.10f} }}".format( np.dot(inplane_v,normal_v)))
+     print("u.w {{ {:16.10f} }}".format( np.dot(inplane_u,inplane_v)))
   else:
 #
 # Print the ring center coordinates
 #
-     print   "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( origin      )
+     print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( origin      ))
 #
 # Scan along the inplane_u direction
 #
@@ -200,13 +200,13 @@ def main():
 #
 # Print pointP and pointM
 #
-              print "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( pointP)
-              print "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( pointM)
+              print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( pointP))
+              print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( pointM))
 #
 # Calculate and Print point0
 #
            point0 =origin+(ymin+k*step)*inplane_v+(xmin+j*step)*inplane_u+v0*normal_v
-           print "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( point0)
+           print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( point0))
 
 if __name__ == "__main__":
   main()
