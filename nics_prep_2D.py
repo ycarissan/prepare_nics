@@ -108,6 +108,11 @@ def generate_grid(geom, atomlist):
   inplane_v=inplane_v/np.linalg.norm(inplane_v)
   inplane_v_shifted=inplane_v+origin
 #
+# initilize the grid
+#
+  grid = []
+  grid.append(origin)
+#
 #Print for debugging
 #
   if (verbose==1):
@@ -121,23 +126,22 @@ def generate_grid(geom, atomlist):
      print("u.v {{ {:16.10f} }}".format( np.dot(inplane_u,normal_v) ))
      print("w.v {{ {:16.10f} }}".format( np.dot(inplane_v,normal_v)))
      print("u.w {{ {:16.10f} }}".format( np.dot(inplane_u,inplane_v)))
-  else:
 #
 # Print the ring center coordinates
 #
-     print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( origin      ))
+  print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( origin      ))
 #
 # Scan along the inplane_u direction
 #
-     for j in range(0, nxpoints):
+  for j in range(0, nxpoints):
 #
 # Scan along the inplane_v direction
 #
-        for k in range(0, nypoints):
+     for k in range(0, nypoints):
 #
 # Scan along the normal_v direction
 #
-           for i in range(1, nval+1):
+        for i in range(1, nval+1):
 #
 # Calculate the ghost points coordinates:
 # i <-> number of ghost atoms planes
@@ -149,18 +153,34 @@ def generate_grid(geom, atomlist):
 #
 # Calculate pointP and pointM
 #
-              pointP =origin+(ymin+k*step)*inplane_v+(xmin+j*step)*inplane_u+(v0+i*inc)*normal_v
-              pointM =origin+(ymin+k*step)*inplane_v+(xmin+j*step)*inplane_u+(v0-i*inc)*normal_v
+           pointP =origin+(ymin+k*step)*inplane_v+(xmin+j*step)*inplane_u+(v0+i*inc)*normal_v
+           pointM =origin+(ymin+k*step)*inplane_v+(xmin+j*step)*inplane_u+(v0-i*inc)*normal_v
+           grid.append(pointP)
+           if (inc != 0):
+               grid.append(pointM)
 #
 # Print pointP and pointM
 #
-              print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( pointP))
-              print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( pointM))
+           print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( pointP))
+           print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( pointM))
 #
 # Calculate and Print point0
 #
-           point0 =origin+(ymin+k*step)*inplane_v+(xmin+j*step)*inplane_u+v0*normal_v
-           print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( point0))
+        point0 =origin+(ymin+k*step)*inplane_v+(xmin+j*step)*inplane_u+v0*normal_v
+        grid.append(point0) #peu clair
+        print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( point0))
+  return grid
+
+def generate_gaussianFile(index, geom, grid):
+    gaussianfile = "input_{}.com".format(index)
+    f = open(gaussianfile, "w")
+    f.write("# route card\n\nTitle\n\n0 1\n".format())
+    for l in geom[2:]:
+        f.write("{}\n".format(l))
+    for at in grid:
+        f.write("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}\n".format( at ))
+    f.write("\n")
+    return
 
 def usage():
   print('Usage: '+sys.argv[0]+' [-h -v -i inc -n nval -l "atom list to define av. plane" -g <file>]')
@@ -217,9 +237,12 @@ def main():
   geom = readgeom(geomfile)
   cycles = detect_cycle.detect_cycles(geomfile)
   print(cycles)
+  index = 0
   for cycle in cycles:
+      index = index + 1
       atomlist = [ int(i.replace('a','')) for i in cycle ]
-      generate_grid(geom, atomlist)
+      grid = generate_grid(geom, atomlist)
+      generate_gaussianFile(index, geom, grid)
 
 if __name__ == "__main__":
   main()
