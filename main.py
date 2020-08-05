@@ -8,7 +8,7 @@ import networkx as nx
 
 def generate_cml(geomfile):
     """ Genere le fichier de descritpion de la geometrie en cml"""
-    proc = subprocess.Popen(["babel","-ixyz",geomfile,"-ocml","geom.cml"],
+    proc = subprocess.Popen(["obabel","-ixyz",geomfile,"-ocml","-O","geom.cml"],
                                universal_newlines=True)
     stdout, stderr = proc.communicate()
     return
