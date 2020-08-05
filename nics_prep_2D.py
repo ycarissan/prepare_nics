@@ -174,7 +174,8 @@ def generate_grid(geom, atomlist):
 def generate_gaussianFile(index, geom, grid):
     gaussianfile = "input_{}.com".format(index)
     f = open(gaussianfile, "w")
-    f.write("# route card\n\nTitle\n\n0 1\n".format())
+    f.write("%nproc=8\n".format())
+    f.write("# rb3lyp/6-311+g** NMR\n\nTitle\n\n0 1\n".format())
     for l in geom[2:]:
         f.write("{}\n".format(l))
     for at in grid:
