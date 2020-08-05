@@ -5,11 +5,15 @@ import numpy as np
 import getopt
 import detect_cycle
 
-inc = 0.0
-nval = 0
 verbose = 0
 nxpoints = 0
 nypoints = 0
+nval = 0
+xmin = 0
+xmax = 0
+ymin = 0
+ymax = 0
+step = 0
 
 def readgeom(f):
   """ Store a geometry from a file into the geom list """
@@ -82,15 +86,15 @@ def generate_grid(geom, atomlist):
 #
 #  Determine the normal vector normal_v to the mean plane
 #
-  normal_v=[-a,-b,1]
+  normal_v = [-a,-b,1]
 #
 #  Normalize normal_v
 #
-  normal_v=normal_v/np.linalg.norm(normal_v)
+  normal_v = normal_v/np.linalg.norm(normal_v)
 #
 #  Shift the normal vector to the origin of the ring (for plotting)
 #
-  normal_v_shifted=normal_v+origin
+  normal_v_shifted = normal_v+origin
 #
 #  first vector belonging to the mean plan and perpendicular to normal_v
 #
@@ -162,6 +166,7 @@ def usage():
   print('Usage: '+sys.argv[0]+' [-h -v -i inc -n nval -l "atom list to define av. plane" -g <file>]')
 
 def main():
+  global verbose, nxpoints, nypoints, nval, xmin, xmax, ymin, ymax, step
   geomfile="opt.xyz"
 # define here the ranges of the rectangular xy grid perpendicular to the mean plane
   xmin=-2.5
@@ -174,7 +179,6 @@ def main():
   nxpoints=int((xmax-xmin)/step)
   nypoints=int((ymax-ymin)/step)
 #
-  verbose=0
   try:
      opts, args = getopt.getopt(sys.argv[1:], "hvi:n:l:g:", ["help", "verbose", "inc=","nval=","list=","geom="])
   except getopt.GetoptError as err:
@@ -190,10 +194,11 @@ def main():
         sys.exit()
      elif o in ("-v", "--verb"):
         verbose=1
+        print('verbose ON')
      elif o in ("-i", "--inc"):
         inc = float(a)
      elif o in ("-n", "--nval"):
-        nval = float(a)
+        nval = int(a)
      elif o in ("-l", "--list"):
         atomlist = [int(i) for i in a.split()]
      elif o in ("-g", "--geom"):
