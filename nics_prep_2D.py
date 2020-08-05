@@ -5,9 +5,11 @@ import numpy as np
 import getopt
 import detect_cycle
 
-atomlist=[]
 inc = 0.0
 nval = 0
+verbose = 0
+nxpoints = 0
+nypoints = 0
 
 def readgeom(f):
   """ Store a geometry from a file into the geom list """
@@ -54,60 +56,7 @@ def get_averageplane(coords):
   origin=[np.mean(x),np.mean(y),np.mean(z)]
   return origin,a,b,c
 
-def usage():
-  print('Usage: '+sys.argv[0]+' [-h -v -i inc -n nval -l "atom list to define av. plane" -g <file>]')
-
-def main():
-  global atomlist
-  geomfile="opt.xyz"
-# define here the ranges of the rectangular xy grid perpendicular to the mean plane
-  xmin=-2.5
-  xmax=2.5
-  ymin=-2.5
-  ymax=2.5
-#  Step size of the grid
-  step=0.5
-#  Calculate the number of points in the x and y directions
-  nxpoints=int((xmax-xmin)/step)
-  nypoints=int((ymax-ymin)/step)
-#
-  verbose=0
-  try:
-     opts, args = getopt.getopt(sys.argv[1:], "hvi:n:l:g:", ["help", "verbose", "inc=","nval=","list=","geom="])
-  except getopt.GetoptError as err:
-        # print help information and exit:
-        print(str(err))  # will print something like "option -a not recognized"
-        usage()
-        sys.exit(2)
-  output = None
-  verbose = False
-  for o, a in opts:
-     if o in ("-h", "--help"):
-        usage()
-        sys.exit()
-     elif o in ("-v", "--verb"):
-        verbose=1
-     elif o in ("-i", "--inc"):
-        inc = float(a)
-     elif o in ("-n", "--nval"):
-        nval = int(a)
-     elif o in ("-l", "--list"):
-        atomlist = [int(i) for i in a.split()]
-     elif o in ("-g", "--geom"):
-        geomfile = a
-     else:
-        assert False, "unhandled option"
-#
-# Print for debugging
-#
-  if (verbose==1):
-     print("list",atomlist)
-     print("nxpoints",nxpoints)
-     print("nypoints",nypoints)
-#
-# Read the geometry in the geom file called opt.xyz
-#
-  geom = readgeom(geomfile)
+def generate_grid(geom, atomlist):
 #
 # Extract the coordinates of interest i.e. the ones of the atoms which define the average plane
 #
@@ -208,6 +157,64 @@ def main():
 #
            point0 =origin+(ymin+k*step)*inplane_v+(xmin+j*step)*inplane_u+v0*normal_v
            print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format( point0))
+
+def usage():
+  print('Usage: '+sys.argv[0]+' [-h -v -i inc -n nval -l "atom list to define av. plane" -g <file>]')
+
+def main():
+  geomfile="opt.xyz"
+# define here the ranges of the rectangular xy grid perpendicular to the mean plane
+  xmin=-2.5
+  xmax=2.5
+  ymin=-2.5
+  ymax=2.5
+#  Step size of the grid
+  step=0.5
+#  Calculate the number of points in the x and y directions
+  nxpoints=int((xmax-xmin)/step)
+  nypoints=int((ymax-ymin)/step)
+#
+  verbose=0
+  try:
+     opts, args = getopt.getopt(sys.argv[1:], "hvi:n:l:g:", ["help", "verbose", "inc=","nval=","list=","geom="])
+  except getopt.GetoptError as err:
+     # print help information and exit:
+     print(str(err))  # will print something like "option -a not recognized"
+     usage()
+     sys.exit(2)
+  output = None
+  verbose = False
+  for o, a in opts:
+     if o in ("-h", "--help"):
+        usage()
+        sys.exit()
+     elif o in ("-v", "--verb"):
+        verbose=1
+     elif o in ("-i", "--inc"):
+        inc = float(a)
+     elif o in ("-n", "--nval"):
+        nval = float(a)
+     elif o in ("-l", "--list"):
+        atomlist = [int(i) for i in a.split()]
+     elif o in ("-g", "--geom"):
+        geomfile = a
+     else:
+        assert False, "unhandled option"
+#
+# Print for debugging
+#
+  if (verbose==1):
+     print("nxpoints",nxpoints)
+     print("nypoints",nypoints)
+#
+# Read the geometry in the geom file called opt.xyz
+#
+  geom = readgeom(geomfile)
+  cycles = detect_cycle.detect_cycles(geomfile)
+  print(cycles)
+  for cycle in cycles:
+      atomlist = [ int(i.replace('a','')) for i in cycle ]
+      generate_grid(geom, atomlist)
 
 if __name__ == "__main__":
   main()
