@@ -41,6 +41,19 @@ def readlogfile(logfile):
             geom.append(el)
     return geom, nics_grid
 
+def store_data(geom, nics_grid):
+    geom_file = "geom.xyz"
+    fio = open(geom_file,"w")
+    fio.write("{}\n\n".format(len(geom)))
+    for el in geom:
+        fio.write("{0[label]:s} {0[x]:16.10f}  {0[y]:16.10f}  {0[z]:16.10f}\n".format(el))
+    fio.close()
+    nics_file = "nics.dat"
+    fio = open(nics_file,"w")
+    for el in nics_grid:
+        fio.write("{0[x]:16.10f}  {0[y]:16.10f}  {0[z]:16.10f}  {0[nics]:16.10f}\n".format(el))
+    fio.close()
+
 def usage():
   print('Usage: '+sys.argv[0]+' [-h -v -l <logfile>]')
 
@@ -75,6 +88,7 @@ def main():
 # Read the geometry in the geom file called opt.xyz
 #
   geom, nics_grid = readlogfile(logfile)
+  store_data(geom, nics_grid)
 
 if __name__ == "__main__":
   main()
