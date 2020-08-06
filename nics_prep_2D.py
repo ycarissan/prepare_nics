@@ -189,19 +189,18 @@ def usage():
 def main():
   global verbose, nxpoints, nypoints, nval, xmin, xmax, ymin, ymax, step
   geomfile="opt.xyz"
+#
 # define here the ranges of the rectangular xy grid perpendicular to the mean plane
+#
   xmin=-2.5
   xmax=2.5
   ymin=-2.5
   ymax=2.5
-#  Step size of the grid
+#  Default Step size of the grid
   step=0.5
-#  Calculate the number of points in the x and y directions
-  nxpoints=int((xmax-xmin)/step+1) #+1 to get the final point
-  nypoints=int((ymax-ymin)/step+1) #+1 to get the final point
 #
   try:
-     opts, args = getopt.getopt(sys.argv[1:], "hvi:n:l:g:", ["help", "verbose", "inc=","nval=","list=","geom="])
+      opts, args = getopt.getopt(sys.argv[1:], "hvi:n:l:g:s:", ["help", "verbose", "inc=","nval=","list=","geom=","step="])
   except getopt.GetoptError as err:
      # print help information and exit:
      print(str(err))  # will print something like "option -a not recognized"
@@ -218,6 +217,8 @@ def main():
         print('verbose ON')
      elif o in ("-i", "--inc"):
         inc = float(a)
+     elif o in ("-s", "--step"):
+        step = float(a)
      elif o in ("-n", "--nval"):
         nval = int(a)
      elif o in ("-l", "--list"):
@@ -226,6 +227,9 @@ def main():
         geomfile = a
      else:
         assert False, "unhandled option"
+#  Calculate the number of points in the x and y directions
+  nxpoints=int((xmax-xmin)/step+1) #+1 to get the final point
+  nypoints=int((ymax-ymin)/step+1) #+1 to get the final point
 #
 # Print for debugging
 #
