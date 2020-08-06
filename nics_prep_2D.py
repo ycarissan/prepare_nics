@@ -197,8 +197,8 @@ def main():
 #  Step size of the grid
   step=0.5
 #  Calculate the number of points in the x and y directions
-  nxpoints=int((xmax-xmin)/step)
-  nypoints=int((ymax-ymin)/step)
+  nxpoints=int((xmax-xmin)/step+1) #+1 to get the final point
+  nypoints=int((ymax-ymin)/step+1) #+1 to get the final point
 #
   try:
      opts, args = getopt.getopt(sys.argv[1:], "hvi:n:l:g:", ["help", "verbose", "inc=","nval=","list=","geom="])
