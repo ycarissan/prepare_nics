@@ -3,6 +3,9 @@
 import sys
 import numpy as np
 import getopt
+import re
+import os
+import glob
 
 def readlogfile(logfile):
     """Read a guassian output file and store the geometry and the nics values (if any)"""
@@ -18,7 +21,6 @@ def readlogfile(logfile):
         if ( store_geom and len(l) == 2 ): #line with 1 space character and a carriage return symbol
                                            #end of geometry
             store_geom = False
-            print(">>>",l)
         if ( store_geom and not("Charge" in l)):
             atmp = l.split()
             geom.append({ 'label' : str(atmp[0]),
@@ -49,7 +51,7 @@ def store_data(geom, nics_grid):
         fio.write("{0[label]:s} {0[x]:16.10f}  {0[y]:16.10f}  {0[z]:16.10f}\n".format(el))
     fio.close()
     nics_file = "nics.dat"
-    fio = open(nics_file,"w")
+    fio = open(nics_file,"a+")
     for el in nics_grid:
         fio.write("{0[x]:16.10f}  {0[y]:16.10f}  {0[z]:16.10f}  {0[nics]:16.10f}\n".format(el))
     fio.close()
@@ -77,6 +79,8 @@ def main():
         print('verbose ON')
      elif o in ("-l", "--logfile"):
         logfile = str(a)
+        radical = re.sub('_\d*.log$', '', os.path.basename(logfile))
+        dirname = os.path.dirname(logfile)
      else:
         assert False, "unhandled option"
 #
@@ -85,10 +89,14 @@ def main():
   if (verbose==1):
      print("logfile",logfile)
 #
-# Read the geometry in the geom file called opt.xyz
+# Read the geometry stored in geom for all radical_###.log files
+#  and the data for all these files
 #
-  geom, nics_grid = readlogfile(logfile)
-  store_data(geom, nics_grid)
+  logfiles = sorted(glob.glob(dirname+"/"+radical+"_[0-9]*.log"))
+  for f in logfiles:
+     print("Treating "+f)
+     geom, nics_grid = readlogfile(f)
+     store_data(geom, nics_grid)
 
 if __name__ == "__main__":
   main()
