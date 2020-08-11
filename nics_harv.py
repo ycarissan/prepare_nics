@@ -20,9 +20,10 @@ def generate_cube(geom, nics_grid):
     zmin = min(a['z'] for a in nics_grid)
     zmax = max(a['z'] for a in nics_grid)
     print(xmin, xmax, ymin, ymax, zmin, zmax)
-    npts = 100
+    npts = 50
     tmp_lst = []
     #Generate grid : there is probably more efficient
+    print("Generating grid")
     for x in np.linspace(xmin, xmax, npts):
         for y in np.linspace(ymin, ymax, npts):
             for z in np.linspace(zmin, zmax, npts):
