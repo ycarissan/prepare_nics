@@ -1,17 +1,19 @@
 #!/usr/bin/python3
-#encoding utf-8
+# encoding utf-8
 
 import argparse
 import subprocess
 import xml.etree.ElementTree as ET
 import networkx as nx
 
+
 def generate_cml(geomfile):
     """ Genere le fichier de descritpion de la geometrie en cml"""
-    proc = subprocess.Popen(["obabel","-ixyz",geomfile,"-ocml","-O","geom.cml"],
-                               universal_newlines=True)
+    proc = subprocess.Popen(["obabel", "-ixyz", geomfile, "-ocml", "-O", "geom.cml"],
+                            universal_newlines=True)
     stdout, stderr = proc.communicate()
     return
+
 
 def detect_cycles(geomfile):
     #
@@ -33,7 +35,7 @@ def detect_cycles(geomfile):
     #  On parcourt les liaisons et on cree le graphe
     for bond in bondArray_el:
         at1, at2 = str.split(bond.get('atomRefs2'))
-        G.add_edge(at1,at2)
+        G.add_edge(at1, at2)
     #  Dectection des cycles
     cycles = nx.minimum_cycle_basis(G)
     return cycles
@@ -54,7 +56,7 @@ def detect_cycles(geomfile):
 #            y = y + float(atom.get("y3"))
 #            z = z + float(atom.get("z3"))
 #        list_q.append([x/len(cycle),y/len(cycle),z/len(cycle)])
-##        print("q",x/len(cycle),y/len(cycle),z/len(cycle))
+# print("q",x/len(cycle),y/len(cycle),z/len(cycle))
 #    #
 #    # Ecriture finale
 #    #
@@ -66,8 +68,10 @@ def detect_cycles(geomfile):
 #        fout.write("{:s} {:10.6f} {:10.6f} {:10.6f}\n".format("bq",q[0],q[1],q[2]))
 #    fout.close()
 
+
 def main():
     print("Cycle detection library")
+
 
 if __name__ == "__main__":
     main()
