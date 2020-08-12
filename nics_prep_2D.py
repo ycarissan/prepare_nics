@@ -4,17 +4,10 @@ import sys
 import numpy as np
 import getopt
 import detect_cycle
+import argparse
 
-verbose = 0
-nxpoints = 0
-nypoints = 0
-nval = 0
-xmin = 0
-xmax = 0
-ymin = 0
-ymax = 0
-step = 0
-
+global params
+params={}
 
 def readgeom(f):
     """ Store a geometry from a file into the geom list """
@@ -65,6 +58,8 @@ def get_averageplane(coords):
 
 
 def generate_grid(geom, atomlist):
+    global params
+    verbose = params['verbose']
     #
     # Extract the coordinates of interest i.e. the ones of the atoms which define the average plane
     #
@@ -147,6 +142,14 @@ def generate_grid(geom, atomlist):
 #
 # Scan along the inplane_u direction
 #
+    nxpoints = params['nxpoints']
+    nypoints = params['nypoints']
+    xmin = params['xmin']
+    xmax = params['xmax']
+    ymin = params['ymin']
+    ymax = params['ymax']
+    nval = params['nval']
+    step = params['step']
     for j in range(0, nxpoints):
         #
         # Scan along the inplane_v direction
@@ -206,70 +209,74 @@ def generate_gaussianFile(index, geom, grid):
     return
 
 
-def usage():
-    print(
-        'Usage: ' +
-        sys.argv[0] +
-        ' [-h -v -i inc -n nval -l "atom list to define av. plane" -g <file>]')
-
-
 def main():
-    global verbose, nxpoints, nypoints, nval, xmin, xmax, ymin, ymax, step
-    geomfile = "opt.xyz"
+    global params
+#
+    parser = argparse.ArgumentParser(
+        description='Generate gaussian inputs for NICS calculations.')
+    parser.add_argument('-v', '--verbose', action='store_true', help='More info')
+    parser.add_argument('-d', '--debug', action='store_true', help='Debug info')
+    parser.add_argument(
+        '-i',
+        '--increment',
+        '--inc',
+        type=float,
+        help="Value of increment in angstrom",
+        default=0.0)
+    parser.add_argument(
+        '-s',
+        '--step',
+        type=float,
+        help="Size of the step",
+        default=0.5)
+    parser.add_argument('--nval', type=int, help="Number of values", default=0)
+    parser.add_argument(
+        '-g',
+        '--geomfile',
+        '--geom',
+        type=str,
+        help="Geometry file in xyz format",
+        default="geom.xyz")
+    args = parser.parse_args()
 #
 # define here the ranges of the rectangular xy grid perpendicular to the mean plane
 #
-    xmin = -2.5
-    xmax = 2.5
-    ymin = -2.5
-    ymax = 2.5
-#  Default Step size of the grid
-    step = 0.5
-#
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "hvi:n:l:g:s:", [
-                                   "help", "verbose", "inc=", "nval=", "list=", "geom=", "step="])
-    except getopt.GetoptError as err:
-        # print help information and exit:
-        print(str(err))  # will print something like "option -a not recognized"
-        usage()
-        sys.exit(2)
-    output = None
-    verbose = False
-    for o, a in opts:
-        if o in ("-h", "--help"):
-            usage()
-            sys.exit()
-        elif o in ("-v", "--verb"):
-            verbose = 1
-            print('verbose ON')
-        elif o in ("-i", "--inc"):
-            inc = float(a)
-        elif o in ("-s", "--step"):
-            step = float(a)
-        elif o in ("-n", "--nval"):
-            nval = int(a)
-        elif o in ("-l", "--list"):
-            atomlist = [int(i) for i in a.split()]
-        elif o in ("-g", "--geom"):
-            geomfile = a
-        else:
-            assert False, "unhandled option"
+    params['xmin'] = -2.5
+    params['xmax'] = 2.5
+    params['ymin'] = -2.5
+    params['ymax'] = 2.5
+    params['geomfile'] = args.geomfile
+    params['increment'] = args.increment
+    params['verbose'] = args.verbose
+    params['debug'] = args.debug
+    params['step'] = args.step
+    params['nval'] = args.nval
+    step = params['step']
+    xmin = params['xmin']
+    xmax = params['xmax']
+    ymin = params['ymin']
+    ymax = params['ymax']
 #  Calculate the number of points in the x and y directions
     nxpoints = int((xmax - xmin) / step + 1)  # +1 to get the final point
     nypoints = int((ymax - ymin) / step + 1)  # +1 to get the final point
+    params['nxpoints'] = nxpoints
+    params['nypoints'] = nypoints
 #
 # Print for debugging
 #
+    verbose = params['verbose']
+    debug = params['debug']
     if (verbose == 1):
         print("nxpoints", nxpoints)
         print("nypoints", nypoints)
 #
 # Read the geometry in the geom file called opt.xyz
 #
+    geomfile = params['geomfile']
     geom = readgeom(geomfile)
     cycles = detect_cycle.detect_cycles(geomfile)
-    print(cycles)
+    if (debug):
+        print(cycles)
     index = 0
     for cycle in cycles:
         index = index + 1
