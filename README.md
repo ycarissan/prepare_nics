@@ -1,6 +1,6 @@
 
 # prepare_nics (all doc in progress)
-## Feature (section in progress)
+## Features (section in progress)
 
 - python 3
 - nics_prepare
