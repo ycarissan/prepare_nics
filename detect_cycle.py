@@ -9,7 +9,12 @@ import networkx as nx
 
 def generate_cml(geomfile):
     """ Genere le fichier de descritpion de la geometrie en cml"""
-    proc = subprocess.Popen(["obabel", "-ixyz", geomfile, "-ocml", "-O", "geom.cml"],
+    proc = subprocess.Popen(["obabel",
+                             "-ixyz",
+                             geomfile,
+                             "-ocml",
+                             "-O",
+                             "geom.cml"],
                             universal_newlines=True)
     stdout, stderr = proc.communicate()
     return
@@ -25,13 +30,13 @@ def detect_cycles(geomfile):
     #  Lecture du cml
     tree = ET.parse('geom.cml')
     root = tree.getroot()
-    atomArray_el = root.find(qdn+'atomArray')
-    bondArray_el = root.find(qdn+'bondArray')
+    atomArray_el = root.find(qdn + 'atomArray')
+    bondArray_el = root.find(qdn + 'bondArray')
     #  Nombre d'atomes
     nat = len(atomArray_el)
     #  Creation du graphe
     G = nx.Graph()
-    G.add_nodes_from([i+1 for i in range(nat)])
+    G.add_nodes_from([i + 1 for i in range(nat)])
     #  On parcourt les liaisons et on cree le graphe
     for bond in bondArray_el:
         at1, at2 = str.split(bond.get('atomRefs2'))

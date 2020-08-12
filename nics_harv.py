@@ -17,29 +17,30 @@ def generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz):
     fio.write("head 1\n".format())
     fio.write("head 2\n".format())
     fio.write("{0:5d} {1[0]:12.6f} {1[1]:12.6f} {1[2]:12.6f}\n".format(
-        nat, grid[0]/Bohr2Angstrom))
+        nat, grid[0] / Bohr2Angstrom))
     fio.write("{:5d} {:12.6f} {:12.6f} {:12.6f}\n".format(
-        nptx, dx/Bohr2Angstrom, 0, 0))
+        nptx, dx / Bohr2Angstrom, 0, 0))
     fio.write("{:5d} {:12.6f} {:12.6f} {:12.6f}\n".format(
-        npty, 0, dy/Bohr2Angstrom, 0))
+        npty, 0, dy / Bohr2Angstrom, 0))
     fio.write("{:5d} {:12.6f} {:12.6f} {:12.6f}\n".format(
-        nptz, 0, 0, dz/Bohr2Angstrom))
+        nptz, 0, 0, dz / Bohr2Angstrom))
     for el in geom:
         if (el['label'].strip().lower() == "c"):
             nuclear_charge = 6
         elif (el['label'].strip().lower() == "h"):
             nuclear_charge = 1
         charge = 0.0
-        fio.write("{:5d} {:12.6f} {:12.6f} {:12.6f}  {:12.6f}\n".format(nuclear_charge, charge,
-                                                                        el['x'] /
-                                                                        Bohr2Angstrom,
-                                                                        el['y'] /
-                                                                        Bohr2Angstrom,
-                                                                        el['z']/Bohr2Angstrom))
+        fio.write(
+            "{:5d} {:12.6f} {:12.6f} {:12.6f}  {:12.6f}\n".format(
+                nuclear_charge,
+                charge,
+                el['x'] / Bohr2Angstrom,
+                el['y'] / Bohr2Angstrom,
+                el['z'] / Bohr2Angstrom))
     idx = 0
-    for x in range(0, nptx+1):
-        for y in range(0, npty+1):
-            for z in range(0, nptz+1):
+    for x in range(0, nptx + 1):
+        for y in range(0, npty + 1):
+            for z in range(0, nptz + 1):
                 k = str(idx)
                 val = 0
                 if (k in grid_values.keys()):
@@ -52,7 +53,8 @@ def generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz):
 
 
 def closest_node(node, nodes):
-    # from https://codereview.stackexchange.com/questions/28207/finding-the-closest-point-to-a-list-of-points
+    # from
+    # https://codereview.stackexchange.com/questions/28207/finding-the-closest-point-to-a-list-of-points
     return nodes[cdist([node], nodes).argmin()]
 
 
@@ -103,7 +105,8 @@ def readlogfile(logfile):
     for l in f.readlines():
         if (("Charge" in l) and ("Multiplicity" in l)):
             store_geom = True
-        if (store_geom and len(l) == 2):  # line with 1 space character and a carriage return symbol
+        if (store_geom and len(l) ==
+                2):  # line with 1 space character and a carriage return symbol
             # end of geometry
             store_geom = False
         if (store_geom and not("Charge" in l)):
@@ -118,7 +121,8 @@ def readlogfile(logfile):
             geom[index]['nics'] = -float(atmp[7])
             index = index + 1
     # split data into two sparate lists
-    # as one will process many log files and want only 1 geometry but the full nics grid
+    # as one will process many log files and want only 1 geometry but the full
+    # nics grid
     g = geom
     geom = []
     for el in g:
@@ -146,7 +150,7 @@ def store_data(geom, nics_grid):
 
 
 def usage():
-    print('Usage: '+sys.argv[0]+' [-h -v -l <logfile>]')
+    print('Usage: ' + sys.argv[0] + ' [-h -v -l <logfile>]')
 
 
 def main():
@@ -170,7 +174,7 @@ def main():
             print('verbose ON')
         elif o in ("-l", "--logfile"):
             logfile = str(a)
-            radical = re.sub('_\d*.log$', '', os.path.basename(logfile))
+            radical = re.sub(r'_\d*.log$', '', os.path.basename(logfile))
             dirname = os.path.dirname(logfile)
         else:
             assert False, "unhandled option"
@@ -183,7 +187,7 @@ def main():
 # Read the geometry stored in geom for all radical_###.log files
 #  and the data for all these files
 #
-    logfiles = sorted(glob.glob(dirname+"/"+radical+"_[0-9]*.log"))
+    logfiles = sorted(glob.glob(dirname + "/" + radical + "_[0-9]*.log"))
     geom = []
     nics_grid = []
     for f in logfiles:

@@ -30,10 +30,10 @@ def getcoords(geom, atomlist):
     """ Return the position of the atoms which determine a cycle """
     coords = []
     for at in atomlist:
-        pos = np.asarray(geom[at+1].split()[1:4], dtype=np.float64)
+        pos = np.asarray(geom[at + 1].split()[1:4], dtype=np.float64)
         coords.append(pos)
         # print at, pos
-    pos = np.asarray(geom[atomlist[0]+1].split()[1:4], dtype=np.float64)
+    pos = np.asarray(geom[atomlist[0] + 1].split()[1:4], dtype=np.float64)
     coords.append(pos)
     return coords
 
@@ -43,7 +43,7 @@ def get_averageplane(coords):
     x = []
     y = []
     z = []
-    for pos in coords[:len(coords)-1]:
+    for pos in coords[:len(coords) - 1]:
         x.append(pos[0])
         y.append(pos[1])
         z.append(pos[2])
@@ -54,9 +54,9 @@ def get_averageplane(coords):
     covyz = np.cov(y, z, bias=True)[0][1]
     covxx = np.cov(x, x, bias=True)[0][1]
     covyy = np.cov(y, y, bias=True)[0][1]
-    a = (covxy*covyz-covyy*covxz)/(covxy*covxy-covxx*covyy)
-    b = (covxy*covxz-covxx*covyz)/(covxy*covxy-covxx*covyy)
-    c = np.mean(z)-a*np.mean(x)-b*np.mean(y)
+    a = (covxy * covyz - covyy * covxz) / (covxy * covxy - covxx * covyy)
+    b = (covxy * covxz - covxx * covyz) / (covxy * covxy - covxx * covyy)
+    c = np.mean(z) - a * np.mean(x) - b * np.mean(y)
 #
 # calculate the ring origin coordinates
 #
@@ -87,9 +87,9 @@ def generate_grid(geom, atomlist):
         print(
             "Average plane origin {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(origin))
         print("Average plane pt1 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
-            [1, 0, a+c]))
+            [1, 0, a + c]))
         print("Average plane pt2 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
-            [0, 1, b+c]))
+            [0, 1, b + c]))
 #
 #  Determine the normal vector normal_v to the mean plane
 #
@@ -97,23 +97,23 @@ def generate_grid(geom, atomlist):
 #
 #  Normalize normal_v
 #
-    normal_v = normal_v/np.linalg.norm(normal_v)
+    normal_v = normal_v / np.linalg.norm(normal_v)
 #
 #  Shift the normal vector to the origin of the ring (for plotting)
 #
-    normal_v_shifted = normal_v+origin
+    normal_v_shifted = normal_v + origin
 #
 #  first vector belonging to the mean plan and perpendicular to normal_v
 #
     inplane_u = [1, 0, a]
-    inplane_u = inplane_u/np.linalg.norm(inplane_u)
-    inplane_u_shifted = inplane_u+origin
+    inplane_u = inplane_u / np.linalg.norm(inplane_u)
+    inplane_u_shifted = inplane_u + origin
 #
 #  second vector belonging to the mean plan and perpendicular to normal_v and inplane_u
 #
-    inplane_v = [-a*b/(a*a+1), 1, b/(a*a+1)]
-    inplane_v = inplane_v/np.linalg.norm(inplane_v)
-    inplane_v_shifted = inplane_v+origin
+    inplane_v = [-a * b / (a * a + 1), 1, b / (a * a + 1)]
+    inplane_v = inplane_v / np.linalg.norm(inplane_v)
+    inplane_v_shifted = inplane_v + origin
 #
 # initilize the grid
 #
@@ -155,7 +155,7 @@ def generate_grid(geom, atomlist):
             #
             # Scan along the normal_v direction
             #
-            for i in range(1, nval+1):
+            for i in range(1, nval + 1):
                 #
                 # Calculate the ghost points coordinates:
                 # i <-> number of ghost atoms planes
@@ -167,10 +167,10 @@ def generate_grid(geom, atomlist):
                 #
                 # Calculate pointP and pointM
                 #
-                pointP = origin+(ymin+k*step)*inplane_v + \
-                    (xmin+j*step)*inplane_u+(v0+i*inc)*normal_v
-                pointM = origin+(ymin+k*step)*inplane_v + \
-                    (xmin+j*step)*inplane_u+(v0-i*inc)*normal_v
+                pointP = origin + (ymin + k * step) * inplane_v + \
+                    (xmin + j * step) * inplane_u + (v0 + i * inc) * normal_v
+                pointM = origin + (ymin + k * step) * inplane_v + \
+                    (xmin + j * step) * inplane_u + (v0 - i * inc) * normal_v
                 grid.append(pointP)
                 if (inc != 0):
                     grid.append(pointM)
@@ -184,8 +184,8 @@ def generate_grid(geom, atomlist):
 #
 # Calculate and Print point0
 #
-            point0 = origin+(ymin+k*step)*inplane_v + \
-                (xmin+j*step)*inplane_u+v0*normal_v
+            point0 = origin + (ymin + k * step) * inplane_v + \
+                (xmin + j * step) * inplane_u + v0 * normal_v
             grid.append(point0)  # peu clair
             print(
                 "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(point0))
@@ -208,7 +208,9 @@ def generate_gaussianFile(index, geom, grid):
 
 def usage():
     print(
-        'Usage: '+sys.argv[0]+' [-h -v -i inc -n nval -l "atom list to define av. plane" -g <file>]')
+        'Usage: ' +
+        sys.argv[0] +
+        ' [-h -v -i inc -n nval -l "atom list to define av. plane" -g <file>]')
 
 
 def main():
@@ -254,8 +256,8 @@ def main():
         else:
             assert False, "unhandled option"
 #  Calculate the number of points in the x and y directions
-    nxpoints = int((xmax-xmin)/step+1)  # +1 to get the final point
-    nypoints = int((ymax-ymin)/step+1)  # +1 to get the final point
+    nxpoints = int((xmax - xmin) / step + 1)  # +1 to get the final point
+    nypoints = int((ymax - ymin) / step + 1)  # +1 to get the final point
 #
 # Print for debugging
 #
