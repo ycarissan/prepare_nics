@@ -18,8 +18,9 @@ pip3 install networkx
 To launch :
 `python3 nics_prepare_2D.py -g geometry.xyz -n 0`
 
-To harvest data _on all logfiles of the same series_:
+To harvest data __on all logfiles of the same series__:
 `python 3 nics_harv.py -l logfile`
+
 Attention, the logfile should be named after the convention:
 radical_{an integer number}.log
 
