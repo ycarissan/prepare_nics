@@ -6,6 +6,7 @@ import getopt
 import detect_cycle
 import argparse
 import logging
+import jsonUtils
 
 # Create logger
 logger = logging.getLogger('log')
@@ -246,8 +247,8 @@ def generate_grid(geom, atomlist, p2D_grid):
     return grid
 
 
-def generate_gaussianFile(index, geom, grid):
-    gaussianfile = "input_{}.com".format(index)
+def generate_gaussianFile(index, geom, grid, outdir="./"):
+    gaussianfile = outdir + "input_{}.com".format(index)
     f = open(gaussianfile, "w")
     f.write("%nproc=8\n".format())
     f.write("# rb3lyp/6-311+g** NMR\n\nTitle\n\n0 1\n".format())
@@ -293,7 +294,7 @@ def main():
         '-o',
         type=int,
         help="Offset with respect to the average plane",
-        default=0)
+        default=1)
     parser.add_argument(
         '--geomfile',
         '--geom',
@@ -301,6 +302,10 @@ def main():
         type=str,
         help="Geometry file in xyz format. default: %(default)s",
         default="geom.xyz")
+    parser.add_argument(
+        '--json',
+        action='store_true',
+        help="Used to generate test cases: does not perform regular calculation: do not use.")
     parser.add_argument(
         '--bounds',
         '-b',
@@ -333,11 +338,23 @@ def main():
     cycles = detect_cycle.detect_cycles(geomfile)
     logger.debug(cycles)
     index = 0
+    if (args.json):
+        logger.info(
+            "Generating json test file : do not generate gaussian files.")
+        state = {}
+        grids = []
+        state["cycles"] = cycles
     for cycle in cycles:
         index = index + 1
         atomlist = [int(i.replace('a', '')) for i in cycle]
         grid = generate_grid(geom, atomlist, p2D_grid)
-        generate_gaussianFile(index, geom, grid)
+        if (args.json):
+            grids.append(grid)
+        else:
+            generate_gaussianFile(index, geom, grid)
+    if (args.json):
+        state["grids"] = grids
+        jsonUtils.dump_state(state, "state.json")
 
 
 if __name__ == "__main__":
