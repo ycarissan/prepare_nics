@@ -5,34 +5,63 @@ import numpy as np
 import getopt
 import detect_cycle
 import argparse
+import logging
 
 global params
 params={}
 
+# Create logger
+logger = logging.getLogger('log')
+logger.setLevel(logging.DEBUG)
+
+# create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.WARNING)
+
+# create formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# add formatter to ch
+ch.setFormatter(formatter)
+
+# add ch to logger
+logger.addHandler(ch)
+
+# 'application' code
+logger.debug('debug message')
+logger.info('info message')
+logger.warning('warn message')
+logger.error('error message')
+logger.critical('critical message')
+
 def readgeom(f):
     """ Store a geometry from a file into the geom list """
+    logger.debug("in readgeom")
     fgeom = open(f, "r")
     geom = []
     for line in fgeom.readlines():
-        geom.append(line.strip())
+        l = line.strip()
+        geom.append(l)
+        logger.debug(l)
     fgeom.close()
     return geom
 
 
 def getcoords(geom, atomlist):
     """ Return the position of the atoms which determine a cycle """
+    logger.debug("in getcoords")
     coords = []
     for at in atomlist:
         pos = np.asarray(geom[at + 1].split()[1:4], dtype=np.float64)
         coords.append(pos)
-        # print at, pos
+        logger.debug("{} {}\n".format(at, pos))
     pos = np.asarray(geom[atomlist[0] + 1].split()[1:4], dtype=np.float64)
     coords.append(pos)
     return coords
 
 
 def get_averageplane(coords):
-    """Return the coordinates of a plane """
+    """ Return the coordinates of a plane """
     x = []
     y = []
     z = []
@@ -58,8 +87,8 @@ def get_averageplane(coords):
 
 
 def generate_grid(geom, atomlist):
+    """ Generates 2D grids """
     global params
-    verbose = params['verbose']
     #
     # Extract the coordinates of interest i.e. the ones of the atoms which define the average plane
     #
@@ -69,21 +98,18 @@ def generate_grid(geom, atomlist):
 #
     origin, a, b, c = get_averageplane(coords)
 #
-    if (verbose == 1):
-        print("plane equation z=ax+by+c with a,b,c: ", a, b, c)
+    logger.debug("plane equation z=ax+by+c with a,b,c: {} {} {}\n".format(a, b, c))
 #
 # "altitude" above the ring mean plane at which the ghost atoms will be located
 #
-    v0 = 1.
+    v0 = params['offset']
 #
 # Print for debugging
 #
-    if (verbose == 1):
-        print(
-            "Average plane origin {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(origin))
-        print("Average plane pt1 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
+    logger.debug( "Average plane origin {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(origin))
+    logger.debug("Average plane pt1 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
             [1, 0, a + c]))
-        print("Average plane pt2 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
+    logger.debug("Average plane pt2 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
             [0, 1, b + c]))
 #
 #  Determine the normal vector normal_v to the mean plane
@@ -117,28 +143,27 @@ def generate_grid(geom, atomlist):
 #
 # Print for debugging
 #
-    if (verbose == 1):
-        print(
+    logger.debug(
             "point at  0    {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(origin))
-        print("normal vector v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
+    logger.debug("normal vector v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
             normal_v))
-        print("normal vector v shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
+    logger.debug("normal vector v shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
             normal_v_shifted))
-        print("inplane_u     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
+    logger.debug("inplane_u     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
             inplane_u))
-        print("inplane_u_shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
+    logger.debug("inplane_u_shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
             inplane_u_shifted))
-        print("inplane_v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
+    logger.debug("inplane_v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
             inplane_v))
-        print("inplane_v_shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
+    logger.debug("inplane_v_shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
             inplane_v_shifted))
-        print("u.v {{ {:16.10f} }}".format(np.dot(inplane_u, normal_v)))
-        print("w.v {{ {:16.10f} }}".format(np.dot(inplane_v, normal_v)))
-        print("u.w {{ {:16.10f} }}".format(np.dot(inplane_u, inplane_v)))
+    logger.debug("u.v {{ {:16.10f} }}".format(np.dot(inplane_u, normal_v)))
+    logger.debug("w.v {{ {:16.10f} }}".format(np.dot(inplane_v, normal_v)))
+    logger.debug("u.w {{ {:16.10f} }}".format(np.dot(inplane_u, inplane_v)))
 #
 # Print the ring center coordinates
 #
-    print("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(origin))
+    logger.debug("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(origin))
 #
 # Scan along the inplane_u direction
 #
@@ -150,6 +175,7 @@ def generate_grid(geom, atomlist):
     ymax = params['ymax']
     nval = params['nval']
     step = params['step']
+    inc  = params['increment']
     for j in range(0, nxpoints):
         #
         # Scan along the inplane_v direction
@@ -180,9 +206,9 @@ def generate_grid(geom, atomlist):
 #
 # Print pointP and pointM
 #
-                print(
+                logger.debug(
                     "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(pointP))
-                print(
+                logger.debug(
                     "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(pointM))
 #
 # Calculate and Print point0
@@ -190,7 +216,7 @@ def generate_grid(geom, atomlist):
             point0 = origin + (ymin + k * step) * inplane_v + \
                 (xmin + j * step) * inplane_u + v0 * normal_v
             grid.append(point0)  # peu clair
-            print(
+            logger.debug(
                 "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(point0))
     return grid
 
@@ -217,27 +243,32 @@ def main():
     parser.add_argument('-v', '--verbose', action='store_true', help='More info')
     parser.add_argument('-d', '--debug', action='store_true', help='Debug info')
     parser.add_argument(
-        '-i',
         '--increment',
         '--inc',
+        '-i',
         type=float,
-        help="Value of increment in angstrom",
+        help="Value of increment between grids in angstrom",
         default=0.0)
     parser.add_argument(
-        '-s',
         '--step',
+        '-s',
         type=float,
         help="Size of the step",
         default=0.5)
     parser.add_argument('--nval', type=int, help="Number of values", default=0)
+    parser.add_argument('--offset', '-o', type=int, help="Offset with respect to the average plane", default=0)
     parser.add_argument(
-        '-g',
         '--geomfile',
         '--geom',
+        '-g',
         type=str,
         help="Geometry file in xyz format",
         default="geom.xyz")
     args = parser.parse_args()
+    if (args.debug):
+        ch.setLevel(DEBUG)
+    elif(args.verbose):
+        ch.setLevel(INFO)
 #
 # define here the ranges of the rectangular xy grid perpendicular to the mean plane
 #
@@ -247,10 +278,9 @@ def main():
     params['ymax'] = 2.5
     params['geomfile'] = args.geomfile
     params['increment'] = args.increment
-    params['verbose'] = args.verbose
-    params['debug'] = args.debug
     params['step'] = args.step
     params['nval'] = args.nval
+    params['offset'] = args.offset
     step = params['step']
     xmin = params['xmin']
     xmax = params['xmax']
@@ -264,19 +294,15 @@ def main():
 #
 # Print for debugging
 #
-    verbose = params['verbose']
-    debug = params['debug']
-    if (verbose == 1):
-        print("nxpoints", nxpoints)
-        print("nypoints", nypoints)
+    logger.info("nxpoints", nxpoints)
+    logger.info("nypoints", nypoints)
 #
 # Read the geometry in the geom file called opt.xyz
 #
     geomfile = params['geomfile']
     geom = readgeom(geomfile)
     cycles = detect_cycle.detect_cycles(geomfile)
-    if (debug):
-        print(cycles)
+    logger.debug(cycles)
     index = 0
     for cycle in cycles:
         index = index + 1
