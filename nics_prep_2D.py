@@ -8,7 +8,7 @@ import argparse
 import logging
 
 global params
-params={}
+params = {}
 
 # Create logger
 logger = logging.getLogger('log')
@@ -19,7 +19,8 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.WARNING)
 
 # create formatter
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # add formatter to ch
 ch.setFormatter(formatter)
@@ -33,6 +34,7 @@ logger.info('info message')
 logger.warning('warn message')
 logger.error('error message')
 logger.critical('critical message')
+
 
 def readgeom(f):
     """ Store a geometry from a file into the geom list """
@@ -98,7 +100,8 @@ def generate_grid(geom, atomlist):
 #
     origin, a, b, c = get_averageplane(coords)
 #
-    logger.debug("plane equation z=ax+by+c with a,b,c: {} {} {}\n".format(a, b, c))
+    logger.debug(
+        "plane equation z=ax+by+c with a,b,c: {} {} {}\n".format(a, b, c))
 #
 # "altitude" above the ring mean plane at which the ghost atoms will be located
 #
@@ -106,11 +109,12 @@ def generate_grid(geom, atomlist):
 #
 # Print for debugging
 #
-    logger.debug( "Average plane origin {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(origin))
+    logger.debug(
+        "Average plane origin {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(origin))
     logger.debug("Average plane pt1 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
-            [1, 0, a + c]))
+        [1, 0, a + c]))
     logger.debug("Average plane pt2 {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
-            [0, 1, b + c]))
+        [0, 1, b + c]))
 #
 #  Determine the normal vector normal_v to the mean plane
 #
@@ -144,26 +148,27 @@ def generate_grid(geom, atomlist):
 # Print for debugging
 #
     logger.debug(
-            "point at  0    {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(origin))
-    logger.debug("normal vector v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
-            normal_v))
+        "point at  0    {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(origin))
+    logger.debug(
+        "normal vector v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(normal_v))
     logger.debug("normal vector v shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
-            normal_v_shifted))
-    logger.debug("inplane_u     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
-            inplane_u))
+        normal_v_shifted))
+    logger.debug(
+        "inplane_u     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(inplane_u))
     logger.debug("inplane_u_shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
-            inplane_u_shifted))
-    logger.debug("inplane_v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
-            inplane_v))
+        inplane_u_shifted))
+    logger.debug(
+        "inplane_v     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(inplane_v))
     logger.debug("inplane_v_shifted     {{ {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} }}".format(
-            inplane_v_shifted))
+        inplane_v_shifted))
     logger.debug("u.v {{ {:16.10f} }}".format(np.dot(inplane_u, normal_v)))
     logger.debug("w.v {{ {:16.10f} }}".format(np.dot(inplane_v, normal_v)))
     logger.debug("u.w {{ {:16.10f} }}".format(np.dot(inplane_u, inplane_v)))
 #
 # Print the ring center coordinates
 #
-    logger.debug("Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(origin))
+    logger.debug(
+        "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(origin))
 #
 # Scan along the inplane_u direction
 #
@@ -175,7 +180,7 @@ def generate_grid(geom, atomlist):
     ymax = params['ymax']
     nval = params['nval']
     step = params['step']
-    inc  = params['increment']
+    inc = params['increment']
     for j in range(0, nxpoints):
         #
         # Scan along the inplane_v direction
@@ -240,8 +245,16 @@ def main():
 #
     parser = argparse.ArgumentParser(
         description='Generate gaussian inputs for NICS calculations.')
-    parser.add_argument('-v', '--verbose', action='store_true', help='More info')
-    parser.add_argument('-d', '--debug', action='store_true', help='Debug info')
+    parser.add_argument(
+        '-v',
+        '--verbose',
+        action='store_true',
+        help='More info')
+    parser.add_argument(
+        '-d',
+        '--debug',
+        action='store_true',
+        help='Debug info')
     parser.add_argument(
         '--increment',
         '--inc',
@@ -256,7 +269,12 @@ def main():
         help="Size of the step",
         default=0.5)
     parser.add_argument('--nval', type=int, help="Number of values", default=0)
-    parser.add_argument('--offset', '-o', type=int, help="Offset with respect to the average plane", default=0)
+    parser.add_argument(
+        '--offset',
+        '-o',
+        type=int,
+        help="Offset with respect to the average plane",
+        default=0)
     parser.add_argument(
         '--geomfile',
         '--geom',
