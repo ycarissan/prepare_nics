@@ -7,11 +7,41 @@ import getopt
 import re
 import os
 import glob
+import argparse
+import logging
 
 Bohr2Angstrom = 0.5291772108
 
+# Create logger
+logger = logging.getLogger('log')
+logger.setLevel(logging.DEBUG)
+
+# create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+# create formatter
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# add formatter to ch
+ch.setFormatter(formatter)
+
+# add ch to logger
+logger.addHandler(ch)
+
+# 'application' code
+logger.debug('debug message')
+logger.info('info message')
+logger.warning('warn message')
+logger.error('error message')
+logger.critical('critical message')
+
 
 def generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz):
+    """
+    Generate a cube file for the given geometry and grid
+    """
     fio = open('nics.cube', "w+")
     nat = len(geom)
     fio.write("head 1\n".format())
@@ -59,18 +89,28 @@ def closest_node(node, nodes):
 
 
 def generate_values_on_grid(geom, nics_grid):
+    """
+    Put the nics_values on a cubic grid based on the proximity of a measured point and a grid point
+    """
     xmin = min(a['x'] for a in nics_grid)
     xmax = max(a['x'] for a in nics_grid)
     ymin = min(a['y'] for a in nics_grid)
     ymax = max(a['y'] for a in nics_grid)
     zmin = min(a['z'] for a in nics_grid)
     zmax = max(a['z'] for a in nics_grid)
-    print(xmin, xmax, ymin, ymax, zmin, zmax)
+    logger.info(
+        "xmin={} xmax={} ymin={} ymax={} zmin={} zmax={}".format(
+            xmin,
+            xmax,
+            ymin,
+            ymax,
+            zmin,
+            zmax))
     npts = 50
     nptx = npty = nptz = npts
     tmp_lst = []
     # Generate grid : there is probably more efficient
-    print("Generating grid")
+    logger.info("Generating grid")
     for x in np.linspace(xmin, xmax, npts):         # see dz
         for y in np.linspace(ymin, ymax, npts):     # see dz
             # dz = ( zmax - zmin ) / ( npts - 1 )
@@ -95,7 +135,9 @@ def generate_values_on_grid(geom, nics_grid):
 
 
 def readlogfile(logfile):
-    """Read a guassian output file and store the geometry and the nics values (if any)"""
+    """
+    Read a guassian output file and store the geometry and the nics values (if any)
+    """
     f = open(logfile, "r")
     store_geom = False
     store_nics = False
@@ -149,40 +191,30 @@ def store_data(geom, nics_grid):
     fio.close()
 
 
-def usage():
-    print('Usage: ' + sys.argv[0] + ' [-h -v -l <logfile>]')
-
-
 def main():
     #
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "hvl:", [
-                                   "help", "verbose", "logfile="])
-    except getopt.GetoptError as err:
-        # print help information and exit:
-        print(str(err))  # will print something like "option -a not recognized"
-        usage()
-        sys.exit(2)
-    output = None
-    verbose = False
-    for o, a in opts:
-        if o in ("-h", "--help"):
-            usage()
-            sys.exit()
-        elif o in ("-v", "--verb"):
-            verbose = 1
-            print('verbose ON')
-        elif o in ("-l", "--logfile"):
-            logfile = str(a)
-            radical = re.sub(r'_\d*.log$', '', os.path.basename(logfile))
-            dirname = os.path.dirname(logfile)
-        else:
-            assert False, "unhandled option"
+    parser = argparse.ArgumentParser(
+        description='Harvest the calcuated data of NICS calculations.')
+    parser.add_argument(
+        '--verbose',
+        '-v',
+        action='store_true',
+        help='More info')
+    parser.add_argument(
+        '--logfile',
+        '-l',
+        type=str,
+        default="input_1.log",
+        help='More info')
+    args = parser.parse_args()
+    logfile = str(args.logfile)
+    radical = re.sub(r'_\d*.log$', '', os.path.basename(logfile))
+    dirname = os.path.dirname(logfile)
+
 #
 # Print for debugging
 #
-    if (verbose == 1):
-        print("logfile", logfile)
+    logger.debug("logfile", logfile)
 #
 # Read the geometry stored in geom for all radical_###.log files
 #  and the data for all these files
@@ -191,13 +223,13 @@ def main():
     geom = []
     nics_grid = []
     for f in logfiles:
-        print("Extracting from {0:s} ".format(f), end='')
+        logger.info("Extracting from {0:s} ".format(f))
         geom_tmp, nics_grid_tmp = readlogfile(f)
         if len(geom) == 0:
             geom = geom_tmp
-            print("geometry and ".format(), end='')
+            logger.info("geometry and ".format())
         nics_grid.extend(nics_grid_tmp)
-        print("NICS values")
+        logger.info("NICS values")
     store_data(geom, nics_grid)
     grid, grid_values, dx, dy, dz, nptx, npty, nptz = generate_values_on_grid(
         geom, nics_grid)
