@@ -120,7 +120,6 @@ def generate_grid(geom, atomlist, p2D_grid):
     nxpoints = p2D_grid.nxpoints
     nypoints = p2D_grid.nypoints
 
-
     #
     # Extract the coordinates of interest i.e. the ones of the atoms which define the average plane
     #
