@@ -1,3 +1,8 @@
+import unittest
+import random
+
+unittest.main()
+
 class RandomTest(unittest.TestCase):
 
     """Test case utilisé pour tester les fonctions du module 'random'."""
