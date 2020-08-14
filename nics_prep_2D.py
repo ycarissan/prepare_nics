@@ -26,13 +26,6 @@ ch.setFormatter(formatter)
 # add ch to logger
 logger.addHandler(ch)
 
-# 'application' code
-logger.debug('debug message')
-logger.info('info message')
-logger.warning('warn message')
-logger.error('error message')
-logger.critical('critical message')
-
 
 class parallel_2D_grid:
     def __init__(self, xmin, xmax, ymin, ymax, inc, step, nval, offset):
@@ -262,6 +255,13 @@ def generate_gaussianFile(index, geom, grid, outdir="./"):
 
 
 def main():
+    # 'application' code
+    logger.debug('debug message')
+    logger.info('info message')
+    logger.warning('warn message')
+    logger.error('error message')
+    logger.critical('critical message')
+
     #
     parser = argparse.ArgumentParser(
         description='Generate gaussian inputs for NICS calculations.')
@@ -331,11 +331,11 @@ def main():
     )
 
 #
-# Read the geometry in the geom file called opt.xyz
+# Read the geometry in the geom file
 #
     geomfile = args.geomfile
     geom = readgeom(geomfile)
-    cycles = detect_cycle.detect_cycles(geomfile)
+    cycles = detect_cycle.detect_cycles(geomfile, logger)
     logger.debug(cycles)
     index = 0
     if (args.json):

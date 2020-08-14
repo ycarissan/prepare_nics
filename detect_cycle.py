@@ -1,34 +1,45 @@
 #!/usr/bin/python3
 # encoding utf-8
 
+import os
 import argparse
 import subprocess
 import xml.etree.ElementTree as ET
 import networkx as nx
+import random
+import logging
 
 
-def generate_cml(geomfile):
+def generate_cml(geomfile, logger):
     """ Genere le fichier de descritpion de la geometrie en cml"""
+    cml_filename = "tmpfile_{:05d}.cml".format(int(random.uniform(0, 99999)))
+    print(cml_filename)
     proc = subprocess.Popen(["obabel",
                              "-ixyz",
                              geomfile,
                              "-ocml",
                              "-O",
-                             "geom.cml"],
+                             cml_filename],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
                             universal_newlines=True)
     stdout, stderr = proc.communicate()
-    return
+    if (logger):
+        # stderr is None because of stderr=subprocess.STDOUT in the Popen call
+        logger.warning(stdout)
+    return cml_filename
 
 
-def detect_cycles(geomfile):
+def detect_cycles(geomfile, logger=None):
     #
     # Detection des cycles
     #
     #  Qualified domain name
     qdn = "{http://www.xml-cml.org/schema}"
-    generate_cml(geomfile)
+    cml_filename = generate_cml(geomfile, logger)
     #  Lecture du cml
-    tree = ET.parse('geom.cml')
+    tree = ET.parse(cml_filename)
+    os.remove(cml_filename)
     root = tree.getroot()
     atomArray_el = root.find(qdn + 'atomArray')
     bondArray_el = root.find(qdn + 'bondArray')

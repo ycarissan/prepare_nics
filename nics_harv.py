@@ -30,13 +30,6 @@ ch.setFormatter(formatter)
 # add ch to logger
 logger.addHandler(ch)
 
-# 'application' code
-logger.debug('debug message')
-logger.info('info message')
-logger.warning('warn message')
-logger.error('error message')
-logger.critical('critical message')
-
 
 def generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz):
     """
@@ -192,6 +185,12 @@ def store_data(geom, nics_grid):
 
 
 def main():
+    # 'application' code
+    logger.debug('debug message')
+    logger.info('info message')
+    logger.warning('warn message')
+    logger.error('error message')
+    logger.critical('critical message')
     #
     parser = argparse.ArgumentParser(
         description='Harvest the calcuated data of NICS calculations.')

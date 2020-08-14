@@ -18,8 +18,8 @@ class RandomTest(unittest.TestCase):
             2.5,  # ymax
             0.0,  # increment
             0.5,  # step
-            0,  # nval
-            1.0  # offset
+            0,    # nval
+            1.0   # offset
         )
 
         indir = 'test/test001/input/'
@@ -49,7 +49,13 @@ class RandomTest(unittest.TestCase):
                 len(grid),
                 "Number of points per grid differ for grids {}".format(igrid))
             for ipt in range(len(refgrid)):
-                np.testing.assert_almost_equal(refgrid[ipt], grid[ipt], 6)
+                np.testing.assert_almost_equal(
+                    refgrid[ipt],
+                    grid[ipt],
+                    6,
+                    err_msg="Point {} of grid {} differ".format(
+                        ipt,
+                        igrid))
 
 
 if __name__ == '__main__':
