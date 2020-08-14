@@ -239,14 +239,15 @@ def generate_grid(geom, atomlist, p2D_grid):
     return grid
 
 
-def generate_gaussianFile(icycle, geom, grid, outdir="./", igrid = 0):
-    gaussianfile = outdir + "input_cycle_{:02d}_batch_{:05d}.com".format(icycle, igrid)
+def generate_gaussianFile(icycle, geom, grid, outdir="./", igrid=0):
+    gaussianfile = outdir + \
+        "input_cycle_{:02d}_batch_{:05d}.com".format(icycle, igrid)
     f = open(gaussianfile, "w")
     f.write("%nproc=8\n".format())
     f.write("# rb3lyp/6-311+g** NMR\n\nTitle\n\n0 1\n".format())
     for l in geom[2:]:
         f.write("{}\n".format(l))
-    nbq=0
+    nbq = 0
     for at in grid[igrid:]:
         f.write(
             "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}\n".format(at))
@@ -254,7 +255,8 @@ def generate_gaussianFile(icycle, geom, grid, outdir="./", igrid = 0):
         igrid = igrid + 1
         if (nbq == 200):
             print("call : {} {}".format(icycle, igrid))
-            generate_gaussianFile(icycle, geom, grid, outdir=outdir, igrid=igrid)
+            generate_gaussianFile(
+                icycle, geom, grid, outdir=outdir, igrid=igrid)
             break
     f.write("\n")
     f.close()
