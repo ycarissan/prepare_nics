@@ -239,17 +239,25 @@ def generate_grid(geom, atomlist, p2D_grid):
     return grid
 
 
-def generate_gaussianFile(index, geom, grid, outdir="./"):
-    gaussianfile = outdir + "input_{}.com".format(index)
+def generate_gaussianFile(icycle, geom, grid, outdir="./", igrid = 0):
+    gaussianfile = outdir + "input_cycle_{:02d}_batch_{:05d}.com".format(icycle, igrid)
     f = open(gaussianfile, "w")
     f.write("%nproc=8\n".format())
     f.write("# rb3lyp/6-311+g** NMR\n\nTitle\n\n0 1\n".format())
     for l in geom[2:]:
         f.write("{}\n".format(l))
-    for at in grid:
+    nbq=0
+    for at in grid[igrid:]:
         f.write(
             "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}\n".format(at))
+        nbq = nbq + 1
+        igrid = igrid + 1
+        if (nbq == 200):
+            print("call : {} {}".format(icycle, igrid))
+            generate_gaussianFile(icycle, geom, grid, outdir=outdir, igrid=igrid)
+            break
     f.write("\n")
+    f.close()
     return
 
 
@@ -336,21 +344,21 @@ def main():
     geom = readgeom(geomfile)
     cycles = detect_cycle.detect_cycles(geomfile, logger)
     logger.debug(cycles)
-    index = 0
     if (args.json):
         logger.info(
             "Generating json test file : do not generate gaussian files.")
         state = {}
         grids = []
         state["cycles"] = cycles
+    icycle = 0
     for cycle in cycles:
-        index = index + 1
+        icycle = icycle + 1
         atomlist = [int(i.replace('a', '')) for i in cycle]
         grid = generate_grid(geom, atomlist, p2D_grid)
         if (args.json):
             grids.append(grid)
         else:
-            generate_gaussianFile(index, geom, grid)
+            generate_gaussianFile(icycle, geom, grid)
     if (args.json):
         state["grids"] = grids
         jsonUtils.dump_state(state, "state.json")
