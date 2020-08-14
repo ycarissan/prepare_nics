@@ -13,7 +13,8 @@ import logging
 def generate_cml(geomfile, logger):
     """ Genere le fichier de descritpion de la geometrie en cml"""
     cml_filename = "tmpfile_{:05d}.cml".format(int(random.uniform(0, 99999)))
-    print(cml_filename)
+    if (logger):
+        logger.info("Temporary cml file : {}".format(cml_filename))
     proc = subprocess.Popen(["obabel",
                              "-ixyz",
                              geomfile,

@@ -3,7 +3,6 @@
 import sys
 import numpy as np
 from scipy.spatial.distance import cdist
-import getopt
 import re
 import os
 import glob

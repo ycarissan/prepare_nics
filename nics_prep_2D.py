@@ -2,7 +2,6 @@
 
 import sys
 import numpy as np
-import getopt
 import detect_cycle
 import argparse
 import logging
@@ -208,7 +207,7 @@ def generate_grid(geom, atomlist, p2D_grid):
                 # Calculate the ghost points coordinates:
                 # i <-> number of ghost atoms planes
                 # inc <-> increment between these planes
-                # v0 : fixed to 1 Angstroem
+                # v0 : offset
                 # PointP is above the mean plane at distance v0+i*inc
                 # PointM is below the mean plane at distance v0-i*inc
                 # Point0 is in the mean plane at distance v0-i*inc

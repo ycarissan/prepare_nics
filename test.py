@@ -7,28 +7,7 @@ import numpy as np
 
 class RandomTest(unittest.TestCase):
 
-    def test_naphtalene(self):
-        """
-        Reproduces naphtalene calculation
-        """
-        p2D_grid = nics_prep_2D.parallel_2D_grid(
-            -2.5,  # xmin
-            2.5,  # xmax
-            -2.5,  # ymin
-            2.5,  # ymax
-            0.0,  # increment
-            0.5,  # step
-            0,    # nval
-            1.0   # offset
-        )
-
-        indir = 'test/test001/input/'
-        outdir = 'test/test001/output/'
-        geomfile = indir + '/naphtalene.xyz'
-        statefile = indir + '/state.json'
-        #
-        # End of parameters
-        #
+    def run_with_config(self, p2D_grid, indir, outdir, geomfile, statefile):
         geom = nics_prep_2D.readgeom(geomfile)
         cycles = detect_cycle.detect_cycles(geomfile)
         index = 0
@@ -56,6 +35,102 @@ class RandomTest(unittest.TestCase):
                     err_msg="Point {} of grid {} differ".format(
                         ipt,
                         igrid))
+
+    def test_naphtalene_1grid_1ang(self):
+        """
+        Naphtalene 1 grid at 1 angstrom above the average plane of each cycle
+        """
+        p2D_grid = nics_prep_2D.parallel_2D_grid(
+            -2.5,  # xmin
+            2.5,  # xmax
+            -2.5,  # ymin
+            2.5,  # ymax
+            0.0,  # increment
+            0.5,  # step
+            0,    # nval
+            1.0   # offset
+        )
+
+        indir = 'test/test001/'
+        outdir = 'test/test001/output/'
+        geomfile = indir + '/naphtalene.xyz'
+        statefile = indir + '/state.json'
+        #
+        # End of parameters
+        #
+        self.run_with_config(p2D_grid, indir, outdir, geomfile, statefile)
+
+    def test_naphtalene_5grid_1ang_pm01(self):
+        """
+        Naphtalene 5 grid at 1 angstrom +/- 0.1 angstrom to the average plane of each cycle
+        """
+        p2D_grid = nics_prep_2D.parallel_2D_grid(
+            -2.5,  # xmin
+            2.5,  # xmax
+            -2.5,  # ymin
+            2.5,  # ymax
+            0.1,  # increment
+            0.5,  # step
+            5,    # nval
+            1.0   # offset
+        )
+
+        indir = 'test/test002/'
+        outdir = 'test/test002/output/'
+        geomfile = indir + '/naphtalene.xyz'
+        statefile = indir + '/state.json'
+        #
+        # End of parameters
+        #
+        self.run_with_config(p2D_grid, indir, outdir, geomfile, statefile)
+
+    def test_5_helicene_1grid_1ang(self):
+        """
+        5-helicene 1 grid at 1 angstrom
+        """
+        p2D_grid = nics_prep_2D.parallel_2D_grid(
+            -2.5,  # xmin
+            2.5,  # xmax
+            -2.5,  # ymin
+            2.5,  # ymax
+            0.0,  # increment
+            0.5,  # step
+            1,    # nval
+            1.0   # offset
+        )
+
+        indir = 'test/test003/'
+        outdir = 'test/test003/output/'
+        geomfile = indir + '/_5_helicene.xyz'
+        statefile = indir + '/state.json'
+        #
+        # End of parameters
+        #
+        self.run_with_config(p2D_grid, indir, outdir, geomfile, statefile)
+
+    def test_5_helicene_5grid_1ang_pm01(self):
+        """
+        5-helicene 5 grid at 1 angstrom +/- 0.1 angstrom to the average plane of each cycle
+        """
+        p2D_grid = nics_prep_2D.parallel_2D_grid(
+            -2.5,  # xmin
+            2.5,  # xmax
+            -2.5,  # ymin
+            2.5,  # ymax
+            0.1,  # increment
+            0.5,  # step
+            5,    # nval
+            1.0   # offset
+        )
+
+        indir = 'test/test004/'
+        outdir = 'test/test004/output/'
+        geomfile = indir + '/_5_helicene.xyz'
+        statefile = indir + '/state.json'
+        #
+        # End of parameters
+        #
+        self.run_with_config(p2D_grid, indir, outdir, geomfile, statefile)
 
 
 if __name__ == '__main__':
