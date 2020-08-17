@@ -6,10 +6,10 @@ def generate_jmolfle(jmol_filename, cube_filename, plane, png_filename):
     fio.write('wireframe 5\n'.format())
     fio.write('color atoms black\n'.format())
     fio.write(
-        'isosurface iso_surface color range -75 75 colorscheme "rwb" "{5}" plane {{ {1} {2} {3} {4} }} map "{5}"\n'.format(
+        'isosurface iso_surface color range -75 75 colorscheme "rwb" "{4}" plane {{ {0} {1} {2} {3} }} map "{4}"\n'.format(
             plane['a'], plane['b'], -1, -plane['c'], cube_filename))
     fio.write(
-        'isosurface iso_contours color range -75 75 colorscheme "rwb" contour increment {{ -45,25,5 }} "{5}" plane {{ {1} {2} {3} {4} }} map "{5}"\n'.format(
+        'isosurface iso_contours color range -75 75 colorscheme "rwb" contour increment {{ -45,25,5 }} "{4}" plane {{ {0} {1} {2} {3} }} map "{4}"\n'.format(
             plane['a'], plane['b'], -1, -plane['c'], cube_filename))
     fio.write('color isosurface phase red blue\n'.format())
     fio.write('write "{}" as PNGJ\n'.format(png_filename))
