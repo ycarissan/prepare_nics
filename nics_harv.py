@@ -98,7 +98,7 @@ def generate_values_on_grid(geom, nics_grid):
             ymax,
             zmin,
             zmax))
-    npts = 50
+    npts = 100
     nptx = npty = nptz = npts
     tmp_lst = []
     # Generate grid : there is probably more efficient
@@ -206,7 +206,8 @@ def main():
         help='More info')
     args = parser.parse_args()
     logfile = str(args.logfile)
-    radical = re.sub(r'_\d*.log$', '', os.path.basename(logfile))
+    radical = re.sub(r'_cycle_\d*_batch_\d*.log$',
+                     '', os.path.basename(logfile))
     dirname = os.path.dirname(logfile)
 
 #
@@ -217,7 +218,12 @@ def main():
 # Read the geometry stored in geom for all radical_###.log files
 #  and the data for all these files
 #
-    logfiles = sorted(glob.glob(dirname + "/" + radical + "_[0-9]*.log"))
+    logfiles = sorted(
+        glob.glob(
+            dirname +
+            "/" +
+            radical +
+            "_cycle_[0-9]*_batch_[0-9]*.log"))
     geom = []
     nics_grid = []
     for f in logfiles:
