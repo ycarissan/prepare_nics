@@ -33,18 +33,20 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def dump_element(element, filename, indent = None):
+def dump_element(element, filename, indent=None):
     dump_state(element, filename, indent)
+
 
 def load_element(filename):
     load_state(filename)
 
-def dump_state(state, filename, indent = None):
+
+def dump_state(state, filename, indent=None):
     #
     # Serializes numpy lists in json
     #
     fio = open(filename, "w+")
-    json.dump(state, fio, cls=NumpyEncoder, indent = indent)
+    json.dump(state, fio, cls=NumpyEncoder, indent=indent)
     fio.close()
 
 

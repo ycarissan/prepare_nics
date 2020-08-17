@@ -25,6 +25,7 @@ ch.setFormatter(formatter)
 # add ch to logger
 logger.addHandler(ch)
 
+
 class parallel_2D_grid:
     def __init__(self, xmin, xmax, ymin, ymax, inc, step, nval, offset):
         #  Calculate the number of points in the x and y directions
@@ -123,7 +124,7 @@ def generate_grid(geom, atomlist, p2D_grid):
     #
     logger.info(
         "plane equation z=ax+by+c with a,b,c: {} {} {}\n".format(a, b, c))
-    plane = { 'origin' : origin, 'a' : a, 'b' : b, 'c' : c}
+    plane = {'origin': origin, 'a': a, 'b': b, 'c': c}
     #
     # "altitude" above the ring mean plane at which the ghost atoms will be located
     #
@@ -264,7 +265,7 @@ def generate_gaussianFile(icycle, geom, grid, outdir="./", igrid=0):
             break
     f.write("\n")
     for i in range(nat):
-        f.write("{}\n".format(i+1))
+        f.write("{}\n".format(i + 1))
     f.write("\n")
     f.close()
     return
@@ -365,12 +366,12 @@ def main():
         icycle = icycle + 1
         atomlist = [int(i.replace('a', '')) for i in cycle]
         plane, grid = generate_grid(geom, atomlist, p2D_grid)
-        planes.append({'#cycle' : icycle, 'cycle' : cycle, 'plane' : plane})
+        planes.append({'#cycle': icycle, 'cycle': cycle, 'plane': plane})
         if (args.json):
             grids.append(grid)
         else:
             generate_gaussianFile(icycle, geom, grid)
-            jsonUtils.dump_element(planes, "planes.json", indent = 4)
+            jsonUtils.dump_element(planes, "planes.json", indent=4)
     if (args.json):
         state["grids"] = grids
         state["planes"] = planes
