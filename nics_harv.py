@@ -8,6 +8,8 @@ import os
 import glob
 import argparse
 import logging
+import jsonUtils
+import jmol_interface
 
 Bohr2Angstrom = 0.5291772108
 
@@ -98,7 +100,7 @@ def generate_values_on_grid(geom, nics_grid):
             ymax,
             zmin,
             zmax))
-    npts = 100
+    npts = 10
     nptx = npty = nptz = npts
     tmp_lst = []
     # Generate grid : there is probably more efficient
@@ -238,6 +240,11 @@ def main():
     grid, grid_values, dx, dy, dz, nptx, npty, nptz = generate_values_on_grid(
         geom, nics_grid)
     generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz)
+    # Part 2 plot usin jmol
+    planes = jsonUtils.load_element("planes.json")
+    plane = planes[3]['plane']
+    jmol_interface.generate_jmolfle(
+        "file.jmol", "nics.cube", plane, "nics.png")
 
 
 if __name__ == "__main__":
