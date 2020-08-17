@@ -27,7 +27,7 @@ def generate_cml(geomfile, logger):
     stdout, stderr = proc.communicate()
     if (logger):
         # stderr is None because of stderr=subprocess.STDOUT in the Popen call
-        logger.warning(stdout)
+        logger.info(stdout)
     return cml_filename
 
 
