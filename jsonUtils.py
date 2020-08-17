@@ -38,7 +38,10 @@ def dump_element(element, filename, indent=None):
 
 
 def load_element(filename):
-    load_state(filename)
+    fio = open(filename, "r")
+    element = json.load(fio)
+    fio.close()
+    return element
 
 
 def dump_state(state, filename, indent=None):
