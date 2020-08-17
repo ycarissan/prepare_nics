@@ -13,7 +13,7 @@ logger.setLevel(logging.DEBUG)
 
 # create console handler and set level to debug
 ch = logging.StreamHandler()
-ch.setLevel(logging.WARNING)
+ch.setLevel(logging.INFO)
 
 # create formatter
 formatter = logging.Formatter(
@@ -24,7 +24,6 @@ ch.setFormatter(formatter)
 
 # add ch to logger
 logger.addHandler(ch)
-
 
 class parallel_2D_grid:
     def __init__(self, xmin, xmax, ymin, ymax, inc, step, nval, offset):
@@ -44,8 +43,8 @@ class parallel_2D_grid:
         #
         # Print for debugging
         #
-        logger.info("nxpoints", self.nxpoints)
-        logger.info("nypoints", self.nypoints)
+        logger.info("nxpoints = {}".format(self.nxpoints))
+        logger.info("nypoints = {}".format(self.nypoints))
 
 
 def readgeom(f):
@@ -122,8 +121,9 @@ def generate_grid(geom, atomlist, p2D_grid):
     #
     origin, a, b, c = get_averageplane(coords)
     #
-    logger.debug(
+    logger.info(
         "plane equation z=ax+by+c with a,b,c: {} {} {}\n".format(a, b, c))
+    plane = { 'origin' : origin, 'a' : a, 'b' : b, 'c' : c}
     #
     # "altitude" above the ring mean plane at which the ghost atoms will be located
     #
@@ -236,7 +236,7 @@ def generate_grid(geom, atomlist, p2D_grid):
             grid.append(point0)  # peu clair
             logger.debug(
                 "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(point0))
-    return grid
+    return plane, grid
 
 
 def generate_gaussianFile(icycle, geom, grid, outdir="./", igrid=0):
@@ -244,20 +244,27 @@ def generate_gaussianFile(icycle, geom, grid, outdir="./", igrid=0):
         "input_cycle_{:02d}_batch_{:05d}.com".format(icycle, igrid)
     f = open(gaussianfile, "w")
     f.write("%nproc=8\n".format())
-    f.write("# rb3lyp/6-311+g** NMR\n\nTitle\n\n0 1\n".format())
+    f.write("%mem=1000MB\n".format())
+    f.write("# rb3lyp/6-311+g** NMR geom=connectivity\n\nTitle\n\n0 1\n".format())
+    nat = 0
     for l in geom[2:]:
         f.write("{}\n".format(l))
+        nat = nat + 1
     nbq = 0
     for at in grid[igrid:]:
         f.write(
             "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}\n".format(at))
         nbq = nbq + 1
+        nat = nat + 1
         igrid = igrid + 1
         if (nbq == 200):
-            print("call : {} {}".format(icycle, igrid))
+            logger.info("Batch generation : {} {}".format(icycle, igrid))
             generate_gaussianFile(
                 icycle, geom, grid, outdir=outdir, igrid=igrid)
             break
+    f.write("\n")
+    for i in range(nat):
+        f.write("{}\n".format(i+1))
     f.write("\n")
     f.close()
     return
@@ -346,6 +353,7 @@ def main():
     geom = readgeom(geomfile)
     cycles = detect_cycle.detect_cycles(geomfile, logger)
     logger.debug(cycles)
+    planes = []
     if (args.json):
         logger.info(
             "Generating json test file : do not generate gaussian files.")
@@ -356,13 +364,16 @@ def main():
     for cycle in cycles:
         icycle = icycle + 1
         atomlist = [int(i.replace('a', '')) for i in cycle]
-        grid = generate_grid(geom, atomlist, p2D_grid)
+        plane, grid = generate_grid(geom, atomlist, p2D_grid)
+        planes.append({'#cycle' : icycle, 'cycle' : cycle, 'plane' : plane})
         if (args.json):
             grids.append(grid)
         else:
             generate_gaussianFile(icycle, geom, grid)
+            jsonUtils.dump_element(planes, "planes.json", indent = 4)
     if (args.json):
         state["grids"] = grids
+        state["planes"] = planes
         jsonUtils.dump_state(state, "state.json")
 
 
