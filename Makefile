@@ -7,3 +7,4 @@ syntax:
 	autopep8 --aggressive --aggressive --in-place nics_prep_2D.py
 	autopep8 --aggressive --aggressive --in-place test.py
 	autopep8 --aggressive --aggressive --in-place jsonUtils.py
+	autopep8 --aggressive --aggressive --in-place jmol_interface.py
