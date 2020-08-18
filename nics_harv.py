@@ -10,8 +10,7 @@ import argparse
 import logging
 import jsonUtils
 import jmol_interface
-
-Bohr2Angstrom = 0.5291772108
+from constants import Bohr2Angstrom
 
 # Create logger
 logger = logging.getLogger('log')
@@ -242,7 +241,7 @@ def main():
     generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz)
     # Part 2 plot usin jmol
     planes = jsonUtils.load_element("planes.json")
-    plane = planes[3]['plane']
+    plane = planes[0]['plane']
     jmol_interface.generate_jmolfle(
         "file.jmol", "nics.cube", plane, "nics.png")
 
