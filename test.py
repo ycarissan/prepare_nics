@@ -7,7 +7,23 @@ import numpy as np
 
 class RandomTest(unittest.TestCase):
 
+    def generate_cli(self, p2D_grid, geomfile):
+        cli = "python3 nics_prep_2D.py "
+        cli = cli + " --increment {} ".format(p2D_grid.increment)
+        cli = cli + " --step {} ".format(p2D_grid.step)
+        cli = cli + " --nval {} ".format(p2D_grid.nval)
+        cli = cli + " --offset {} ".format(p2D_grid.offset)
+        cli = cli + " --geomfile {} ".format(geomfile)
+        cli = cli + " --bounds {} {} {} {}".format(
+                p2D_grid.xmin,
+                p2D_grid.xmax,
+                p2D_grid.ymin,
+                p2D_grid.ymax  )
+        return cli
+
     def run_with_config(self, p2D_grid, indir, outdir, geomfile, statefile):
+        cli = self.generate_cli(p2D_grid, geomfile)
+        print("#CLI: "+cli)
         geom = nics_prep_2D.readgeom(geomfile)
         cycles = detect_cycle.detect_cycles(geomfile)
         index = 0
