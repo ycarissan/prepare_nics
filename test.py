@@ -15,7 +15,7 @@ class RandomTest(unittest.TestCase):
         for cycle in cycles:
             index = index + 1
             atomlist = [int(i.replace('a', '')) for i in cycle]
-            grid = nics_prep_2D.generate_grid(geom, atomlist, p2D_grid)
+            dum, grid = nics_prep_2D.generate_grid(geom, atomlist, p2D_grid)
             grids.append(grid)
         state_ref = jsonUtils.load_state(statefile)
         refgrids = state_ref["grids"]
@@ -26,7 +26,7 @@ class RandomTest(unittest.TestCase):
             self.assertEqual(
                 len(refgrid),
                 len(grid),
-                "Number of points per grid differ for grids {}".format(igrid))
+                "Number of points per grid differ for grid {} ref:{}".format(igrid, len(refgrid)))
             for ipt in range(len(refgrid)):
                 np.testing.assert_almost_equal(
                     refgrid[ipt],
