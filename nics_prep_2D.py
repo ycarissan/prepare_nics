@@ -196,9 +196,9 @@ def generate_grid(geom, atomlist, p2D_grid):
     # Define the bounding box
     #
     boundingBox = []
-    boundingBox.append( origin + ymin * inplane_v + xmin * inplane_u + (v0+0.0) * normal_v)
-    boundingBox.append( origin + (ymin + (nypoints-1) * step) * inplane_v +
-                       (xmin + (nxpoints-1) * step) * inplane_u + (v0-0.0) * normal_v)
+    boundingBox.append( origin + ymin * inplane_v + xmin * inplane_u + v0 * normal_v)
+    boundingBox.append( origin + (ymin + (nypoints - 1) * step) * inplane_v +
+                       (xmin + (nxpoints - 1) * step) * inplane_u + v0 * normal_v)
     plane["bbox"] = boundingBox
     #
     # Scan along the inplane_u direction
@@ -211,7 +211,7 @@ def generate_grid(geom, atomlist, p2D_grid):
             #
             # Scan along the normal_v direction
             #
-            for i in range(1, nval + 1):
+            for i in range(1, nval + 1): #if nval==1 we do not enter here
                 #
                 # Calculate the ghost points coordinates:
                 # i <-> number of ghost atoms planes
@@ -228,7 +228,7 @@ def generate_grid(geom, atomlist, p2D_grid):
                 pointM = origin + (ymin + k * step) * inplane_v + \
                     (xmin + j * step) * inplane_u + (v0 - i * inc) * normal_v
                 grid.append(pointP)
-                if (inc != 0):
+                if (inc!=0.0):
                     grid.append(pointM)
                 #
                 # Print pointP and pointM
@@ -242,7 +242,7 @@ def generate_grid(geom, atomlist, p2D_grid):
             #
             point0 = origin + (ymin + k * step) * inplane_v + \
                 (xmin + j * step) * inplane_u + v0 * normal_v
-            grid.append(point0)  # peu clair
+            grid.append(point0)  # 
             logger.debug(
                 "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(point0))
     return plane, grid
@@ -317,7 +317,7 @@ def main():
     parser.add_argument(
         '--offset',
         '-o',
-        type=int,
+        type=float,
         help="Offset with respect to the average plane. default: %(default)s",
         default=1)
     parser.add_argument(
@@ -363,11 +363,11 @@ def main():
     cycles = detect_cycle.detect_cycles(geomfile, logger)
     logger.debug(cycles)
     planes = []
+    grids = []
     if (args.json):
         logger.info(
             "Generating json test file : do not generate gaussian files.")
         state = {}
-        grids = []
         state["cycles"] = cycles
     icycle = 0
     for cycle in cycles:
