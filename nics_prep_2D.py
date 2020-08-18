@@ -193,6 +193,14 @@ def generate_grid(geom, atomlist, p2D_grid):
     logger.debug(
         "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(origin))
     #
+    # Define the bounding box
+    #
+    boundingBox = []
+    boundingBox.append( origin + ymin * inplane_v + xmin * inplane_u + (v0+0.0) * normal_v)
+    boundingBox.append( origin + (ymin + (nypoints-1) * step) * inplane_v +
+                       (xmin + (nxpoints-1) * step) * inplane_u + (v0-0.0) * normal_v)
+    plane["bbox"] = boundingBox
+    #
     # Scan along the inplane_u direction
     #
     for j in range(0, nxpoints):
@@ -297,20 +305,20 @@ def main():
         '--inc',
         '-i',
         type=float,
-        help="Value of increment between grids in angstrom",
+        help="Value of increment between grids in angstrom. default: %(default)s",
         default=0.0)
     parser.add_argument(
         '--step',
         '-s',
         type=float,
-        help="Size of the step",
+        help="Size of the step. default: %(default)s",
         default=0.5)
-    parser.add_argument('--nval', type=int, help="Number of values", default=0)
+    parser.add_argument('--nval', type=int, help="Number of values. default: %(default)s", default=0)
     parser.add_argument(
         '--offset',
         '-o',
         type=int,
-        help="Offset with respect to the average plane",
+        help="Offset with respect to the average plane. default: %(default)s",
         default=1)
     parser.add_argument(
         '--geomfile',
@@ -367,11 +375,9 @@ def main():
         atomlist = [int(i.replace('a', '')) for i in cycle]
         plane, grid = generate_grid(geom, atomlist, p2D_grid)
         planes.append({'#cycle': icycle, 'cycle': cycle, 'plane': plane})
-        if (args.json):
-            grids.append(grid)
-        else:
-            generate_gaussianFile(icycle, geom, grid)
-            jsonUtils.dump_element(planes, "planes.json", indent=4)
+        grids.append(grid)
+        generate_gaussianFile(icycle, geom, grid)
+        jsonUtils.dump_element(planes, "planes.json", indent=4)
     if (args.json):
         state["grids"] = grids
         state["planes"] = planes
