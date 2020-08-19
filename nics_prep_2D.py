@@ -294,11 +294,11 @@ def generate_gaussianFile(icycle, geom, grid, outdir="./", igrid=0):
 
 def main():
     # 'application' code
-    logger.debug('debug message')
-    logger.info('info message')
-    logger.warning('warn message')
-    logger.error('error message')
-    logger.critical('critical message')
+#    logger.debug('debug message')
+#    logger.info('info message')
+#    logger.warning('warn message')
+#    logger.error('error message')
+#    logger.critical('critical message')
 
     #
     parser = argparse.ArgumentParser(

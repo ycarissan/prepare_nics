@@ -202,11 +202,11 @@ def store_data(geom, nics_grid):
 
 def main():
     # 'application' code
-    logger.debug('debug message')
-    logger.info('info message')
-    logger.warning('warn message')
-    logger.error('error message')
-    logger.critical('critical message')
+#    logger.debug('debug message')
+#    logger.info('info message')
+#    logger.warning('warn message')
+#    logger.error('error message')
+#    logger.critical('critical message')
     #
     parser = argparse.ArgumentParser(
         description='Harvest the calcuated data of NICS calculations.')
