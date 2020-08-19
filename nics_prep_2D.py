@@ -224,7 +224,7 @@ def generate_grid(geom, atomlist, p2D_grid):
             #
             # Scan along the normal_v direction
             #
-            for i in range(1, nval + 1):  # if nval==1 we do not enter here
+            for i in range(1, nval + 1):  # if nval==0 we enter here once
                 #
                 # Calculate the ghost points coordinates:
                 # i <-> number of ghost atoms planes
@@ -314,30 +314,6 @@ def main():
         action='store_true',
         help='Debug info')
     parser.add_argument(
-        '--increment',
-        '--inc',
-        '-i',
-        type=float,
-        help="Value of increment between grids in angstrom. default: %(default)s",
-        default=0.0)
-    parser.add_argument(
-        '--step',
-        '-s',
-        type=float,
-        help="Size of the step. default: %(default)s",
-        default=0.5)
-    parser.add_argument(
-        '--nval',
-        type=int,
-        help="Number of values. default: %(default)s",
-        default=0)
-    parser.add_argument(
-        '--offset',
-        '-o',
-        type=float,
-        help="Offset with respect to the average plane. default: %(default)s",
-        default=1)
-    parser.add_argument(
         '--geomfile',
         '--geom',
         '-g',
@@ -345,9 +321,17 @@ def main():
         help="Geometry file in xyz format. default: %(default)s",
         default="geom.xyz")
     parser.add_argument(
-        '--json',
-        action='store_true',
-        help="Used to generate test cases: does not perform regular calculation: do not use.")
+        '--offset',
+        '-o',
+        type=float,
+        help="Offset with respect to the average plane. default: %(default)s",
+        default=1)
+    parser.add_argument(
+        '--step',
+        '-s',
+        type=float,
+        help="Size of the step. default: %(default)s",
+        default=0.5)
     parser.add_argument(
         '--bounds',
         '-b',
@@ -356,6 +340,18 @@ def main():
         help="Boundaries of the plane xmin xmax ymin ymax. default: %(default)s",
         metavar=('xmin', 'xmax', 'ymin', 'ymax'),
         default=[-2.5, 2.5, -2.5, 2.5])
+    parser.add_argument(
+        '--nval',
+        type=int,
+        help="Number of grids above (and below) the average plane. default: %(default)s",
+        default=0)
+    parser.add_argument(
+        '--increment',
+        '--inc',
+        '-i',
+        type=float,
+        help="Value of increment between grids in angstrom. default: %(default)s",
+        default=0.0)
     args = parser.parse_args()
     if (args.debug):
         ch.setLevel(DEBUG)
