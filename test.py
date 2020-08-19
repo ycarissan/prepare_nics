@@ -5,7 +5,7 @@ import jsonUtils
 import numpy as np
 
 
-class RandomTest(unittest.TestCase):
+class Testclass(unittest.TestCase):
 
     def generate_cli(self, p2D_grid, geomfile):
         cli = "python3 nics_prep_2D.py "
