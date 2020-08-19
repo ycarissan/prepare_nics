@@ -23,7 +23,7 @@ class Testclass(unittest.TestCase):
 
     def run_with_config(self, p2D_grid, indir, outdir, geomfile, statefile):
         cli = self.generate_cli(p2D_grid, geomfile)
-        print("#CLI: " + cli)
+        print("\n#CLI: {}\n".format(cli))
         geom = nics_prep_2D.readgeom(geomfile)
         cycles = detect_cycle.detect_cycles(geomfile)
         index = 0
