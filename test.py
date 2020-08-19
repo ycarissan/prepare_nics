@@ -150,6 +150,30 @@ class Testclass(unittest.TestCase):
         #
         self.run_with_config(p2D_grid, indir, outdir, geomfile, statefile)
 
+    def test_5_helicene_1grid_0ang(self):
+        """
+        5-helicene 1 fine grid at 0 angstrom
+        """
+        p2D_grid = nics_prep_2D.parallel_2D_grid(
+            -2.5,  # xmin
+            2.5,  # xmax
+            -2.5,  # ymin
+            2.5,  # ymax
+            0.0,  # increment
+            0.05,  # step
+            0,    # nval
+            0.0   # offset
+        )
+
+        indir = 'test/test005/'
+        outdir = 'test/test005/output/'
+        geomfile = indir + '/_5_helicene.xyz'
+        statefile = indir + '/state.json'
+        #
+        # End of parameters
+        #
+        self.run_with_config(p2D_grid, indir, outdir, geomfile, statefile)
+
 
 if __name__ == '__main__':
     unittest.main()
