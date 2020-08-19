@@ -16,9 +16,13 @@ from constants import Bohr2Angstrom
 logger = logging.getLogger('log')
 logger.setLevel(logging.DEBUG)
 
-# create console handler and set level to debug
+# create console handler and set level to error
 ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
+ch.setLevel(logging.ERROR)
+
+# create file handler and set level to info
+fh = logging.StreamHandler()
+fh.setLevel(logging.INFO)
 
 # create formatter
 formatter = logging.Formatter(
@@ -26,16 +30,19 @@ formatter = logging.Formatter(
 
 # add formatter to ch
 ch.setFormatter(formatter)
+fh.setFormatter(formatter)
 
 # add ch to logger
 logger.addHandler(ch)
+logger.addHandler(fh)
 
 
 def generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz):
     """
     Generate a cube file for the given geometry and grid
     """
-    fio = open('nics.cube', "w+")
+    cubefile = "nics.cube"
+    fio = open(cubefile, "w+")
     nat = len(geom)
     fio.write("head 1\n".format())
     fio.write("head 2\n".format())
@@ -73,6 +80,7 @@ def generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz):
                     fio.write("\n".format())
                 idx = idx + 1
         fio.write("\n".format())
+    return cubefile
 
 
 def closest_node(node, nodes):
@@ -253,12 +261,26 @@ def main():
     store_data(geom, nics_grid)
     grid, grid_values, dx, dy, dz, nptx, npty, nptz = generate_values_on_grid(
         geom, nics_grid, npts)
-    generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz)
+    cubefile = generate_cubefile(
+        geom,
+        grid,
+        grid_values,
+        dx,
+        dy,
+        dz,
+        nptx,
+        npty,
+        nptz)
     # Part 2 plot usin jmol
     planes = jsonUtils.load_state("state.json")["planes"]
-    plane = planes[0]['plane']
-    jmol_interface.generate_jmolfile(
-        "file.jmol", "nics.cube", plane, "nics.png")
+    id_plane = 0
+    for plane in planes:
+        p = plane['plane']
+        id_plane = id_plane + 1
+        jmolfile = "commands_{}.jmol".format(id_plane)
+        pngfile = "nics_{}.png".format(id_plane)
+        jmol_interface.generate_jmolfile(
+            jmolfile, cubefile, p, pngfile)
 
 
 if __name__ == "__main__":
