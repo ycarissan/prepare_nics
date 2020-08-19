@@ -22,6 +22,10 @@ generate_statefiles:
 	mv state.json test/test003/
 	python3 nics_prep_2D.py  --increment 0.1  --step 0.5  --nval 5  --offset 1.0  --geomfile test/test004//_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5
 	mv state.json test/test004/
+	python3 nics_prep_2D.py  --increment 0.0  --step 0.05  --nval 0  --offset 0.0  --geomfile test/test005//_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5
+	mv state.json test/test005/
+	python3 nics_prep_2D.py  --increment 0.0  --step 1  --nval 0  --offset 1.0  --geomfile test/test006/naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5
+	mv state.json test/test006/
 
 generate_comfiles:
 	python3 nics_prep_2D.py  --increment 0.0  --step 0.5  --nval 0  --offset 1.0  --geomfile test/test001//naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5
@@ -32,3 +36,7 @@ generate_comfiles:
 	mv input_cycle_* test/test003/com
 	python3 nics_prep_2D.py  --increment 0.1  --step 0.5  --nval 5  --offset 1.0  --geomfile test/test004//_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5
 	mv input_cycle_* test/test004/com
+	python3 nics_prep_2D.py  --increment 0.0  --step 0.05  --nval 0  --offset 0.0  --geomfile test/test005//_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5
+	mv input_cycle_* test/test005/com
+	python3 nics_prep_2D.py  --increment 0.0  --step 1  --nval 0  --offset 1.0  --geomfile test/test006/naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5
+	mv input_cycle_* test/test006/com
