@@ -8,6 +8,7 @@ syntax:
 	autopep8 --aggressive --aggressive --in-place test.py
 	autopep8 --aggressive --aggressive --in-place jsonUtils.py
 	autopep8 --aggressive --aggressive --in-place jmol_interface.py
+	autopep8 --aggressive --aggressive --in-place constants.py
 
 generate_comfiles:
 	python3 nics_prep_2D.py  --increment 0.0  --step 0.5  --nval 0  --offset 1.0  --geomfile test/test001//naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5
