@@ -10,6 +10,19 @@ syntax:
 	autopep8 --aggressive --aggressive --in-place jmol_interface.py
 	autopep8 --aggressive --aggressive --in-place constants.py
 
+runtest:
+	python3 test.py -v
+
+generate_statefiles:
+	python3 nics_prep_2D.py  --increment 0.0  --step 0.5  --nval 0  --offset 1.0  --geomfile test/test001//naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5
+	mv state.json test/test001/
+	python3 nics_prep_2D.py  --increment 0.1  --step 0.5  --nval 5  --offset 1.0  --geomfile test/test002//naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5
+	mv state.json test/test002/
+	python3 nics_prep_2D.py  --increment 0.0  --step 0.5  --nval 1  --offset 1.0  --geomfile test/test003//_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5
+	mv state.json test/test003/
+	python3 nics_prep_2D.py  --increment 0.1  --step 0.5  --nval 5  --offset 1.0  --geomfile test/test004//_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5
+	mv state.json test/test004/
+
 generate_comfiles:
 	python3 nics_prep_2D.py  --increment 0.0  --step 0.5  --nval 0  --offset 1.0  --geomfile test/test001//naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5
 	mv input_cycle_* test/test001/com
