@@ -92,7 +92,7 @@ def generate_values_on_grid(geom, nics_grid, npts):
     zmin = min(a['z'] for a in nics_grid)
     zmax = max(a['z'] for a in nics_grid)
     #
-    # Add margin to handle volume plotting
+    # Add 5% margin to handle volume plotting
     #
     xmin = xmin - xmin * .05
     ymin = ymin - ymin * .05
@@ -112,10 +112,10 @@ def generate_values_on_grid(geom, nics_grid, npts):
     tmp_lst = []
     # Generate grid : there is probably more efficient
     logger.info("Generating grid")
-    for x in np.linspace(xmin, xmax, npts):         # see dz
-        for y in np.linspace(ymin, ymax, npts):     # see dz
+    for x in np.linspace(xmin, xmax, nptx):         # see dz
+        for y in np.linspace(ymin, ymax, npty):     # see dz
             # dz = ( zmax - zmin ) / ( npts - 1 )
-            for z in np.linspace(zmin, zmax, npts):
+            for z in np.linspace(zmin, zmax, nptz):
                 tmp_lst.append([x, y, z])
     grid = np.array(tmp_lst)
     grid_values = {}
