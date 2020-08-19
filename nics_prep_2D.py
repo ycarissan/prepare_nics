@@ -196,8 +196,15 @@ def generate_grid(geom, atomlist, p2D_grid):
     # Define the bounding box
     #
     boundingBox = []
-    boundingBox.append( origin + ymin * inplane_v + xmin * inplane_u + v0 * normal_v)
-    boundingBox.append( origin + (ymin + (nypoints - 1) * step) * inplane_v +
+    boundingBox.append(
+        origin +
+        ymin *
+        inplane_v +
+        xmin *
+        inplane_u +
+        v0 *
+        normal_v)
+    boundingBox.append(origin + (ymin + (nypoints - 1) * step) * inplane_v +
                        (xmin + (nxpoints - 1) * step) * inplane_u + v0 * normal_v)
     plane["bbox"] = boundingBox
     #
@@ -211,7 +218,7 @@ def generate_grid(geom, atomlist, p2D_grid):
             #
             # Scan along the normal_v direction
             #
-            for i in range(1, nval + 1): #if nval==1 we do not enter here
+            for i in range(1, nval + 1):  # if nval==1 we do not enter here
                 #
                 # Calculate the ghost points coordinates:
                 # i <-> number of ghost atoms planes
@@ -228,7 +235,7 @@ def generate_grid(geom, atomlist, p2D_grid):
                 pointM = origin + (ymin + k * step) * inplane_v + \
                     (xmin + j * step) * inplane_u + (v0 - i * inc) * normal_v
                 grid.append(pointP)
-                if (inc!=0.0):
+                if (inc != 0.0):
                     grid.append(pointM)
                 #
                 # Print pointP and pointM
@@ -242,7 +249,7 @@ def generate_grid(geom, atomlist, p2D_grid):
             #
             point0 = origin + (ymin + k * step) * inplane_v + \
                 (xmin + j * step) * inplane_u + v0 * normal_v
-            grid.append(point0)  # 
+            grid.append(point0)  #
             logger.debug(
                 "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(point0))
     return plane, grid
@@ -313,7 +320,11 @@ def main():
         type=float,
         help="Size of the step. default: %(default)s",
         default=0.5)
-    parser.add_argument('--nval', type=int, help="Number of values. default: %(default)s", default=0)
+    parser.add_argument(
+        '--nval',
+        type=int,
+        help="Number of values. default: %(default)s",
+        default=0)
     parser.add_argument(
         '--offset',
         '-o',
@@ -355,21 +366,25 @@ def main():
         args.offset
     )
 
-#
-# Read the geometry in the geom file
-#
+    #
+    # Read the geometry in the geom file
+    #
     geomfile = args.geomfile
     geom = readgeom(geomfile)
+    #
+    # Detect the cycles
+    #
     cycles = detect_cycle.detect_cycles(geomfile, logger)
     logger.debug(cycles)
+    #
     planes = []
     grids = []
-    if (args.json):
-        logger.info(
-            "Generating json test file : do not generate gaussian files.")
-        state = {}
-        state["cycles"] = cycles
+    state = {}
+    state["cycles"] = cycles
     icycle = 0
+    #
+    # Process each cycle
+    #
     for cycle in cycles:
         icycle = icycle + 1
         atomlist = [int(i.replace('a', '')) for i in cycle]
@@ -377,11 +392,9 @@ def main():
         planes.append({'#cycle': icycle, 'cycle': cycle, 'plane': plane})
         grids.append(grid)
         generate_gaussianFile(icycle, geom, grid)
-        jsonUtils.dump_element(planes, "planes.json", indent=4)
-    if (args.json):
-        state["grids"] = grids
-        state["planes"] = planes
-        jsonUtils.dump_state(state, "state.json")
+    state["grids"] = grids
+    state["planes"] = planes
+    jsonUtils.dump_state(state, "state.json")
 
 
 if __name__ == "__main__":
