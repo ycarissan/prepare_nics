@@ -21,7 +21,7 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.ERROR)
 
 # create file handler and set level to info
-fh = logging.StreamHandler()
+fh = logging.FileHandler("log_nics_harv")
 fh.setLevel(logging.INFO)
 
 # create formatter
