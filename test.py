@@ -15,15 +15,15 @@ class RandomTest(unittest.TestCase):
         cli = cli + " --offset {} ".format(p2D_grid.offset)
         cli = cli + " --geomfile {} ".format(geomfile)
         cli = cli + " --bounds {} {} {} {}".format(
-                p2D_grid.xmin,
-                p2D_grid.xmax,
-                p2D_grid.ymin,
-                p2D_grid.ymax  )
+            p2D_grid.xmin,
+            p2D_grid.xmax,
+            p2D_grid.ymin,
+            p2D_grid.ymax)
         return cli
 
     def run_with_config(self, p2D_grid, indir, outdir, geomfile, statefile):
         cli = self.generate_cli(p2D_grid, geomfile)
-        print("#CLI: "+cli)
+        print("#CLI: " + cli)
         geom = nics_prep_2D.readgeom(geomfile)
         cycles = detect_cycle.detect_cycles(geomfile)
         index = 0
@@ -42,7 +42,9 @@ class RandomTest(unittest.TestCase):
             self.assertEqual(
                 len(refgrid),
                 len(grid),
-                "Number of points per grid differ for grid {} ref:{}".format(igrid, len(refgrid)))
+                "Number of points per grid differ for grid {} ref:{}".format(
+                    igrid,
+                    len(refgrid)))
             for ipt in range(len(refgrid)):
                 np.testing.assert_almost_equal(
                     refgrid[ipt],
