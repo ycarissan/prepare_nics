@@ -33,17 +33,6 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def dump_element(element, filename, indent=None):
-    dump_state(element, filename, indent)
-
-
-def load_element(filename):
-    fio = open(filename, "r")
-    element = json.load(fio)
-    fio.close()
-    return element
-
-
 def dump_state(state, filename, indent=None):
     #
     # Serializes numpy lists in json
@@ -67,5 +56,6 @@ def load_state(filename):
         grids.append(grid)
     state = {}
     state["cycles"] = state_loaded["cycles"]
+    state["planes"] = state_loaded["planes"]
     state["grids"] = grids
     return state
