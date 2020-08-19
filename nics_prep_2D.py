@@ -11,9 +11,13 @@ import jsonUtils
 logger = logging.getLogger('log')
 logger.setLevel(logging.DEBUG)
 
-# create console handler and set level to debug
+# create console handler and set level to error
 ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
+ch.setLevel(logging.ERROR)
+
+# create file handler and set level to info
+fh = logging.FileHandler("log_nics_prep_2D")
+fh.setLevel(logging.INFO)
 
 # create formatter
 formatter = logging.Formatter(
@@ -21,9 +25,11 @@ formatter = logging.Formatter(
 
 # add formatter to ch
 ch.setFormatter(formatter)
+fh.setFormatter(formatter)
 
 # add ch to logger
 logger.addHandler(ch)
+logger.addHandler(fh)
 
 
 class parallel_2D_grid:
