@@ -91,6 +91,15 @@ def generate_values_on_grid(geom, nics_grid):
     ymax = max(a['y'] for a in nics_grid)
     zmin = min(a['z'] for a in nics_grid)
     zmax = max(a['z'] for a in nics_grid)
+    #
+    # Add margin to handle volume plotting
+    #
+    xmin = xmin - xmin * .05
+    ymin = ymin - ymin * .05
+    zmin = zmin - zmin * .05
+    xmax = xmax + xmax * .05
+    ymax = ymax + ymax * .05
+    zmax = zmax + zmax * .05
     logger.info(
         "xmin={} xmax={} ymin={} ymax={} zmin={} zmax={}".format(
             xmin,
@@ -240,9 +249,9 @@ def main():
         geom, nics_grid)
     generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz)
     # Part 2 plot usin jmol
-    planes = jsonUtils.load_element("planes.json")
+    planes = jsonUtils.load_state("state.json")["planes"]
     plane = planes[0]['plane']
-    jmol_interface.generate_jmolfle(
+    jmol_interface.generate_jmolfile(
         "file.jmol", "nics.cube", plane, "nics.png")
 
 
