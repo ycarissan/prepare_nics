@@ -81,7 +81,7 @@ def closest_node(node, nodes):
     return nodes[cdist([node], nodes).argmin()]
 
 
-def generate_values_on_grid(geom, nics_grid):
+def generate_values_on_grid(geom, nics_grid, npts):
     """
     Put the nics_values on a cubic grid based on the proximity of a measured point and a grid point
     """
@@ -108,7 +108,6 @@ def generate_values_on_grid(geom, nics_grid):
             ymax,
             zmin,
             zmax))
-    npts = 10
     nptx = npty = nptz = npts
     tmp_lst = []
     # Generate grid : there is probably more efficient
@@ -209,13 +208,20 @@ def main():
         action='store_true',
         help='More info')
     parser.add_argument(
+        '--npts',
+        '-n',
+        type=int,
+        default="10",
+        help='Number of grid points in all 3 directions. default: %(default)s')
+    parser.add_argument(
         '--logfile',
         '-l',
         type=str,
-        default="input_1.log",
-        help='More info')
+        default="input_cycle_01_batch_01.log. default: %(default)s",
+        help='Log filename of a series of calculations.')
     args = parser.parse_args()
-    logfile = str(args.logfile)
+    logfile = args.logfile
+    npts = args.npts
     radical = re.sub(r'_cycle_\d*_batch_\d*.log$',
                      '', os.path.basename(logfile))
     dirname = os.path.dirname(logfile)
@@ -246,7 +252,7 @@ def main():
         logger.info("NICS values")
     store_data(geom, nics_grid)
     grid, grid_values, dx, dy, dz, nptx, npty, nptz = generate_values_on_grid(
-        geom, nics_grid)
+        geom, nics_grid, npts)
     generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz)
     # Part 2 plot usin jmol
     planes = jsonUtils.load_state("state.json")["planes"]
