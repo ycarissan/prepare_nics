@@ -330,10 +330,9 @@ def main():
         action='store_true',
         help='Debug info')
     parser.add_argument(
-        'geom.xyz',
+        'geomfile',
         type=str,
         help="Geometry file in xyz format. default: %(default)s",
-        nargs=1,
         default="geom.xyz")
     parser.add_argument(
         '--offset',
@@ -386,6 +385,7 @@ def main():
     # Read the geometry in the geom file
     #
     geomfile = args.geomfile
+    print(geomfile)
     geom = readgeom(geomfile)
     #
     # Generate the full command_line
