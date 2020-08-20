@@ -145,7 +145,7 @@ def generate_grid(geom, atomlist, p2D_grid):
     origin, a, b, c = get_averageplane(coords)
     #
     logger.info(
-        "plane equation z=ax+by+c with a,b,c: {} {} {}\n".format(a, b, c))
+            "plane equation z=ax+by+c with a,b,c: {:16.10f} {:16.10f} {:16.10f}\n".format(a, b, c))
     plane = {'origin': origin, 'a': a, 'b': b, 'c': c}
     #
     # "altitude" above the ring mean plane at which the ghost atoms will be located
