@@ -16,12 +16,14 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.ERROR)
 
 # create file handler and set level to info
-fh = logging.FileHandler("log_nics_prep_2D")
+fh = logging.FileHandler("log_nics_prep_2D", mode="w")
 fh.setLevel(logging.INFO)
 
 # create formatter
+#formatter = logging.Formatter(
+#    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    '%(levelname)s - %(message)s')
 
 # add formatter to ch
 ch.setFormatter(formatter)
@@ -50,8 +52,8 @@ class parallel_2D_grid:
         #
         # Print for debugging
         #
-        logger.info("nxpoints = {}".format(self.nxpoints))
-        logger.info("nypoints = {}".format(self.nypoints))
+        logger.debug("nxpoints = {}".format(self.nxpoints))
+        logger.debug("nypoints = {}".format(self.nypoints))
 
 
 def generate_command_line(p2D_grid, geomfile):
@@ -368,9 +370,9 @@ def main():
         default=0.0)
     args = parser.parse_args()
     if (args.debug):
-        ch.setLevel(DEBUG)
+        logger.setLevel(DEBUG)
     elif(args.verbose):
-        ch.setLevel(INFO)
+        logger.setLevel(INFO)
     p2D_grid = parallel_2D_grid(
         args.bounds[0],
         args.bounds[1],
