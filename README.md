@@ -24,7 +24,8 @@ This package contains 2 programs:
 - jmol installed (not absolutely necessary)
 
 ## Howto Install ?
-Download archive and uncompress.
+Download archive [here](https://github.com/ycarissan/prepare_nics/archive/v0.3.tar.gz)
+and uncompress.
 
 ## Usage _(in the following, replace path by the appropriate value)_
 To get all parameters help :
