@@ -224,10 +224,10 @@ def generate_grid(geom, atomlist, p2D_grid):
         inplane_v +
         xmin *
         inplane_u +
-        v0 *
+        0.9*v0 *
         normal_v)
     boundingBox.append(origin + (ymin + (nypoints - 1) * step) * inplane_v +
-                       (xmin + (nxpoints - 1) * step) * inplane_u + v0 * normal_v)
+                       (xmin + (nxpoints - 1) * step) * inplane_u + 1.1 * v0 * normal_v)
     plane["bbox"] = boundingBox
     #
     # Scan along the inplane_u direction
