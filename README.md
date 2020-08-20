@@ -19,6 +19,7 @@ This package contains 2 programs:
 - Python 3 installed
 - Check that the python networkx is installed:
 `pip3 install networkx`
+
 - babel or obabel installed
 - jmol installed (not absolutely necessary)
 
@@ -28,7 +29,9 @@ Download archive and uncompress.
 ## Usage _(in the following, replace path by the appropriate value)_
 To get all parameters help :
 `python3 /path/to/nics_prepare/nics_prepare_2D.py -h`
+
 `python3 /path/to/nics_harv/nics_harv.py -h`
+
 
 To launch :
 `python3 /path/nics_prepare_2D.py geometry.xyz`
