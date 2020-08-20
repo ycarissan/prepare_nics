@@ -24,14 +24,14 @@ def generate_jmolfile(jmol_filename, cube_filename, plane, png_filename):
     # define isosurface
     fio.write('isosurface iso_surface'.format())
     #   with bb
-    fio.write(
-        ' boundbox {{ {} {} {} }} {{ {} {} {} }}'.format(
-            plane["bbox"][0][0],
-            plane["bbox"][0][1],
-            plane["bbox"][0][2],
-            plane["bbox"][1][0],
-            plane["bbox"][1][1],
-            plane["bbox"][1][2]))
+#    fio.write(
+#        ' boundbox {{ {} {} {} }} {{ {} {} {} }}'.format(
+#            plane["bbox"][0][0],
+#            plane["bbox"][0][1],
+#            plane["bbox"][0][2],
+#            plane["bbox"][1][0],
+#            plane["bbox"][1][1],
+#            plane["bbox"][1][2]))
     fio.write(' color range -75 75 colorscheme "rwb"'.format())
     fio.write(
         ' "{0}" plane {{ {1} {2} {3} {4} }} map "{0}"\n'.format(
@@ -43,14 +43,14 @@ def generate_jmolfile(jmol_filename, cube_filename, plane, png_filename):
     # define isocontours
     fio.write('isosurface iso_contours'.format())
     #   with bb
-    fio.write(
-        ' boundbox {{ {} {} {} }} {{ {} {} {} }}'.format(
-            plane["bbox"][0][0],
-            plane["bbox"][0][1],
-            plane["bbox"][0][2],
-            plane["bbox"][1][0],
-            plane["bbox"][1][1],
-            plane["bbox"][1][2]))
+#    fio.write(
+#        ' boundbox {{ {} {} {} }} {{ {} {} {} }}'.format(
+#            plane["bbox"][0][0],
+#            plane["bbox"][0][1],
+#            plane["bbox"][0][2],
+#            plane["bbox"][1][0],
+#            plane["bbox"][1][1],
+#            plane["bbox"][1][2]))
     fio.write(' color range -75 75 colorscheme "rwb"'.format())
     fio.write(' contour increment {{ -75,75,1 }}'.format())
     fio.write(
