@@ -385,7 +385,6 @@ def main():
     # Read the geometry in the geom file
     #
     geomfile = args.geomfile
-    print(geomfile)
     geom = readgeom(geomfile)
     #
     # Generate the full command_line
