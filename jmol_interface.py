@@ -52,7 +52,7 @@ def generate_jmolfile(jmol_filename, cube_filename, plane, png_filename):
 #            plane["bbox"][1][1],
 #            plane["bbox"][1][2]))
     fio.write(' color range -75 75 colorscheme "rwb"'.format())
-    fio.write(' contour increment {{ -75,75,1 }}'.format())
+    fio.write(' contour increment {{ -45,75,5 }}'.format())
     fio.write(
         ' "{0}" plane {{ {1} {2} {3} {4} }} map "{0}"\n'.format(
             cube_filename,
