@@ -54,6 +54,20 @@ class parallel_2D_grid:
         logger.info("nypoints = {}".format(self.nypoints))
 
 
+def generate_command_line(p2D_grid, geomfile):
+    command_line = "python3 nics_prep_2D.py "
+    command_line = command_line + " --increment {} ".format(p2D_grid.increment)
+    command_line = command_line + " --step {} ".format(p2D_grid.step)
+    command_line = command_line + " --nval {} ".format(p2D_grid.nval)
+    command_line = command_line + " --offset {} ".format(p2D_grid.offset)
+    command_line = command_line + " --geomfile {} ".format(geomfile)
+    command_line = command_line + " --bounds {} {} {} {}".format(
+        p2D_grid.xmin,
+        p2D_grid.xmax,
+        p2D_grid.ymin,
+        p2D_grid.ymax)
+    return command_line
+
 def readgeom(f):
     """ Store a geometry from a file into the geom list """
     logger.debug("in readgeom")
@@ -367,12 +381,16 @@ def main():
         args.nval,
         args.offset
     )
-
     #
     # Read the geometry in the geom file
     #
     geomfile = args.geomfile
     geom = readgeom(geomfile)
+    #
+    # Generate the full command_line
+    #
+    command_line = generate_command_line(p2D_grid, geomfile)
+    logger.info(command_line)
     #
     # Detect the cycles
     #
