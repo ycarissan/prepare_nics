@@ -1,4 +1,17 @@
 def generate_jmolfile(jmol_filename, cube_filename, plane, png_filename):
+    #WARNING : the plane is the average plane of the cycle
+    # its equation is of the form : ax + by + c = z
+    # To generate the equation of the plane parallel to this plane that goes through a specific point
+    #  one must do this :
+    #   ax + by -z + c = 0
+    # V_normal = [a, b, -1]
+    # equation of the plane that goes through the points we want:
+    #  ax + by - z = d
+    # Thus
+    #  d = -1 * ( a * x_point + b * x_point - z_point )
+    # As a point, we take the origin of the bounding box
+    origin = plane["bbox"][0]
+    d = -1 * ( plane['a'] * origin[0] + plane['b'] * origin[1] - origin[2] )
     fio = open(jmol_filename, "w+")
     # set background
     fio.write('set backgroundColor "lightgray"\n'.format())
@@ -26,7 +39,7 @@ def generate_jmolfile(jmol_filename, cube_filename, plane, png_filename):
             plane['a'],
             plane['b'],
             -1,
-            -plane['c']))
+            d))
     # define isocontours
     fio.write('isosurface iso_contours'.format())
     #   with bb
@@ -39,14 +52,14 @@ def generate_jmolfile(jmol_filename, cube_filename, plane, png_filename):
             plane["bbox"][1][1],
             plane["bbox"][1][2]))
     fio.write(' color range -75 75 colorscheme "rwb"'.format())
-    fio.write(' contour increment {{ -45,25,5 }}'.format())
+    fio.write(' contour increment {{ -75,75,1 }}'.format())
     fio.write(
         ' "{0}" plane {{ {1} {2} {3} {4} }} map "{0}"\n'.format(
             cube_filename,
             plane['a'],
             plane['b'],
             -1,
-            -plane['c']))
+            d))
     fio.write(' color isosurface phase red blue\n'.format())
     #
     fio.write('draw diameter 20 points [{{ {0[0]} {0[1]} {0[2]} }},{{ {1[0]} {1[1]} {1[2]} }}]\n'.format(
