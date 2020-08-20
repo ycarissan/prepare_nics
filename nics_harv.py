@@ -22,7 +22,7 @@ ch.setLevel(logging.ERROR)
 
 # create file handler and set level to info
 fh = logging.FileHandler("log_nics_harv")
-fh.setLevel(logging.INFO)
+fh.setLevel(logging.DEBUG)
 
 # create formatter
 formatter = logging.Formatter(
@@ -224,19 +224,21 @@ def main():
     parser.add_argument(
         'logfile',
         type=str,
-        default="input_cycle_01_batch_01.log. default: %(default)s",
-        help='Log filename of a series of calculations.')
+        default="input_cycle_01_batch_01.log",
+        help='Log filename of a series of calculations. default: %(default)s')
     args = parser.parse_args()
     logfile = args.logfile
     npts = args.npts
     radical = re.sub(r'_cycle_\d*_batch_\d*.log$',
                      '', os.path.basename(logfile))
     dirname = os.path.dirname(logfile)
+    if len(dirname)==0:
+        dirname="."
 
 #
 # Print for debugging
 #
-    logger.debug("logfile", logfile)
+    logger.debug("logfile: {}".format(logfile))
 #
 # Read the geometry stored in geom for all radical_###.log files
 #  and the data for all these files
@@ -247,6 +249,7 @@ def main():
             "/" +
             radical +
             "_cycle_[0-9]*_batch_[0-9]*.log"))
+    logger.debug("dirname : {}\nradical : {}\n".format(dirname, radical))
     geom = []
     nics_grid = []
     for f in logfiles:
