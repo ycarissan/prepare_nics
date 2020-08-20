@@ -222,8 +222,7 @@ def main():
         default="10",
         help='Number of grid points in all 3 directions. default: %(default)s')
     parser.add_argument(
-        '--logfile',
-        '-l',
+        'logfile',
         type=str,
         default="input_cycle_01_batch_01.log. default: %(default)s",
         help='Log filename of a series of calculations.')

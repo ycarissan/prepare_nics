@@ -62,7 +62,7 @@ def generate_command_line(p2D_grid, geomfile):
     command_line = command_line + " --step {} ".format(p2D_grid.step)
     command_line = command_line + " --nval {} ".format(p2D_grid.nval)
     command_line = command_line + " --offset {} ".format(p2D_grid.offset)
-    command_line = command_line + " --geomfile {} ".format(geomfile)
+    command_line = command_line + " {} ".format(geomfile)
     command_line = command_line + " --bounds {} {} {} {}".format(
         p2D_grid.xmin,
         p2D_grid.xmax,
@@ -330,11 +330,10 @@ def main():
         action='store_true',
         help='Debug info')
     parser.add_argument(
-        '--geomfile',
-        '--geom',
-        '-g',
+        'geom.xyz',
         type=str,
         help="Geometry file in xyz format. default: %(default)s",
+        nargs=1,
         default="geom.xyz")
     parser.add_argument(
         '--offset',
