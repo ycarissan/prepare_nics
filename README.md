@@ -33,7 +33,8 @@ and uncompress.
 To get all parameters help :
 
 `python3 /path/to/nics_prepare/nics_prepare_2D.py -h`
-```usage: nics_prep_2D.py [-h] [-v] [-d] [--offset OFFSET] [--step STEP]
+```
+usage: nics_prep_2D.py [-h] [-v] [-d] [--offset OFFSET] [--step STEP]
                        [--bounds xmin xmax ymin ymax] [--nval NVAL]
                        [--increment INCREMENT]
                        geomfile
