@@ -1,5 +1,5 @@
 
-# prepare_nics (all doc in progress)
+# prepare_nics (doc in progress)
 
 ## What does it do?
 This package contains 2 programs:
