@@ -151,6 +151,7 @@ def generate_grid(geom, atomlist, p2D_grid):
     # "altitude" above the ring mean plane at which the ghost atoms will be located
     #
     v0 = offset
+    plane["offset"] = offset
     #
     # Print for debugging
     #
