@@ -115,7 +115,7 @@ To generate the com files of the tests by yourself:
 For your info, the coms are in /path/test/.../com.
 The corresponding logs are in /path/test/.../log.
 
-To get the images from jmol:
+To get the images from jmol (replace XXX by the appropriate value):
 `jmol -n -s command_XXX.jmol`
 
 Take care
