@@ -219,7 +219,7 @@ def main():
         '--npts',
         '-n',
         type=int,
-        default="10",
+        default="30",
         help='Number of grid points in all 3 directions. default: %(default)s')
     parser.add_argument(
         'logfile',

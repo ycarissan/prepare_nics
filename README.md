@@ -63,6 +63,20 @@ optional arguments:
 
 `python3 /path/to/nics_harv/nics_harv.py -h`
 
+```
+usage: nics_harv.py [-h] [--verbose] [--npts NPTS] logfile
+
+Harvest the calcuated data of NICS calculations.
+
+positional arguments:
+  logfile               Log filename of a series of calculations. default:
+                        input_cycle_01_batch_01.log
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --verbose, -v         More info
+  --npts NPTS, -n NPTS  Number of grid points in all 3 directions. default: 30
+```
 
 To launch :
 
