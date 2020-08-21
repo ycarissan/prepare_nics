@@ -85,6 +85,7 @@ To launch :
 TIP: molden can read the input files to check the grids your generated.
 
 __Run all generated com files by yourself on your favorite cluster.__
+See directory [utils](utils) for utilities to help running the com files easily.
 
 To harvest data __on all logfiles of the same series__:
 
