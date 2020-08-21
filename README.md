@@ -33,6 +33,32 @@ and uncompress.
 To get all parameters help :
 
 `python3 /path/to/nics_prepare/nics_prepare_2D.py -h`
+```usage: nics_prep_2D.py [-h] [-v] [-d] [--offset OFFSET] [--step STEP]
+                       [--bounds xmin xmax ymin ymax] [--nval NVAL]
+                       [--increment INCREMENT]
+                       geomfile
+
+Generate gaussian inputs for NICS calculations.
+
+positional arguments:
+  geomfile              Geometry file in xyz format. default: geom.xyz
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         More info
+  -d, --debug           Debug info
+  --offset OFFSET, -o OFFSET
+                        Offset with respect to the average plane. default: 1
+  --step STEP, -s STEP  Size of the step. default: 0.5
+  --bounds xmin xmax ymin ymax, -b xmin xmax ymin ymax
+                        Boundaries of the plane xmin xmax ymin ymax. default:
+                        [-2.5, 2.5, -2.5, 2.5]
+  --nval NVAL           Number of grids above (and below) the average plane.
+                        default: 0
+  --increment INCREMENT, --inc INCREMENT, -i INCREMENT
+                        Value of increment between grids in angstrom. default:
+                        0.0
+```
 
 `python3 /path/to/nics_harv/nics_harv.py -h`
 
