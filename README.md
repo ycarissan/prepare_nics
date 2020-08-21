@@ -58,15 +58,15 @@ Better but takes more time:
 Look in the test directory : there are 5 tests with com and log files.
 To generate the com files of the tests by yourself:
 
-`python3 /path/nics_prep_2D.py  --increment 0.0  --step 0.5  --nval 0  --offset 1.0  /path/test/test001//naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5`
+`python3 /path/nics_prep_2D.py  --increment 0.0  --step 0.5  --nval 0  --offset 1.0  /path/test/test001/naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5`
 
-`python3 /path/nics_prep_2D.py  --increment 0.1  --step 0.5  --nval 5  --offset 1.0  /path/test/test002//naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5`
+`python3 /path/nics_prep_2D.py  --increment 0.1  --step 0.5  --nval 5  --offset 1.0  /path/test/test002/naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5`
 
-`python3 /path/nics_prep_2D.py  --increment 0.1  --step 0.5  --nval 1  --offset 1.0  /path/test/test003//_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5`
+`python3 /path/nics_prep_2D.py  --increment 0.1  --step 0.5  --nval 1  --offset 1.0  /path/test/test003/_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5`
 
-`python3 /path/nics_prep_2D.py  --increment 0.1  --step 0.5  --nval 5  --offset 1.0  /path/test/test004//_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5`
+`python3 /path/nics_prep_2D.py  --increment 0.1  --step 0.5  --nval 5  --offset 1.0  /path/test/test004/_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5`
 
-`python3 /path/nics_prep_2D.py  --increment 0.0  --step 0.05  --nval 0  --offset 0.0  /path/test/test005//_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5`
+`python3 /path/nics_prep_2D.py  --increment 0.0  --step 0.05  --nval 0  --offset 0.0  /path/test/test005/_5_helicene.xyz  --bounds -2.5 2.5 -2.5 2.5`
 
 `python3 /path/nics_prep_2D.py  --increment 0.0  --step 1  --nval 0  --offset 1.0  /path/test/test006/naphtalene.xyz  --bounds -2.5 2.5 -2.5 2.5`
 
