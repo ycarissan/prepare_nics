@@ -1,3 +1,5 @@
+import numpy as np
+
 def generate_jmolfile(jmol_filename, cube_filename, plane, png_filename):
     #WARNING : the plane is the average plane of the cycle
     # its equation is of the form : ax + by + c = z
@@ -9,9 +11,14 @@ def generate_jmolfile(jmol_filename, cube_filename, plane, png_filename):
     #  ax + by - z = d
     # Thus
     #  d = -1 * ( a * x_point + b * x_point - z_point )
-    # As a point, we take the origin of the bounding box
-    origin = plane["bbox"][0]
-    d = -1 * ( plane['a'] * origin[0] + plane['b'] * origin[1] - origin[2] )
+    # As a point, we take the origin to which we add offset * the normalized normal vector
+    origin = plane["origin"]
+    offset = plane["offset"]
+    vect = [-plane['a'], -plane['b'], 1]
+    vect = vect / np.linalg.norm(vect)
+    vect = offset * vect
+    point = origin + vect
+    d = -1 * ( plane['a'] * point[0] + plane['b'] * point[1] - point[2] )
     fio = open(jmol_filename, "w+")
     # set background
     fio.write('set backgroundColor "lightgray"\n'.format())
