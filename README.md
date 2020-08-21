@@ -1,7 +1,9 @@
 
 # prepare_nics (all doc in progress)
+
 ## What does it do?
 This package contains 2 programs:
+
 - nics_prepare
 	- Detects the cycles automatically
 	- Generates gaussian input files for each cycle with the appropriate grids
