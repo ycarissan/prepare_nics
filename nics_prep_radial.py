@@ -83,10 +83,12 @@ def generate_grid(geom, radial_grid):
                 #
                 # Compute the distance between the point and the current atom
                 #
-                point = at
+                point = at.copy()
                 point[0] = point[0] + radius * np.sin(theta) * np.cos(phi)
                 point[1] = point[1] + radius * np.sin(theta) * np.sin(phi)
                 point[2] = point[2] + radius * np.cos(theta)
+                logger.info("{} {}".format(at, point))
+                addAtom = True
                 for other_atom in geom.atoms:
                     #
                     # Check that we are looping over other atoms only (not the current one)
@@ -108,10 +110,12 @@ def generate_grid(geom, radial_grid):
                         #
                         # if the point is within the vdw radius of the other atom, skip it
                         #
-                        if not(dist_point_other_at < other_radius):
-                            logger.debug(
-                                    "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(point))
-                            grid.append(point)
+                        if (dist_point_other_at < other_radius):
+                            addAtom = False
+                if addAtom:
+                    logger.debug(
+                            "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f}".format(point))
+                    grid.append(point)
     return grid
 
 def generate_gaussianFile(geom, grid, outdir="./", igrid=0):
@@ -132,7 +136,7 @@ def generate_gaussianFile(geom, grid, outdir="./", igrid=0):
         nbq = nbq + 1
         nat = nat + 1
         igrid = igrid + 1
-        if (nbq == 200):
+        if (nbq == 20000):
             logger.info("Batch generation : {}".format(igrid))
             generate_gaussianFile(
                 geom, grid, outdir=outdir, igrid=igrid)
