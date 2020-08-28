@@ -144,7 +144,7 @@ def generate_gaussianFile(geom, grid, outdir="./", igrid=0):
         nbq = nbq + 1
         nat = nat + 1
         igrid = igrid + 1
-        if (nbq == 20000):
+        if (nbq == 200):
             logger.info("Batch generation : {}".format(igrid))
             generate_gaussianFile(
                 geom, grid, outdir=outdir, igrid=igrid)
