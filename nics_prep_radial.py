@@ -6,6 +6,7 @@ import detect_cycle
 import argparse
 import logging
 import jsonUtils
+import geometry
 
 # Create logger
 logger = logging.getLogger('log')
@@ -34,24 +35,17 @@ logger.addHandler(ch)
 logger.addHandler(fh)
 
 
-class Geometry:
-    def __init__(self, lines):
-        self.header=(lines[1])
-        self.atoms = []
-        for l in lines[2:]:
-            a = l.split()
-            self.atoms.append( { 'label': a[0], 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
-            
-
 class radial_grid:
     vdw_radii_standard = {
+            "E": 1.0, # pseudo atom
             "H": 1.1,
-            "C": 1.7 
+            "C": 1.7
             }
-    def __init__(self, ntheta=24, vdw_radii=vdw_radii_standard, ignoreH = False, radius_all=None):
+    def __init__(self, ntheta=12, vdw_radii=vdw_radii_standard, ignoreH = False, radius_all=None):
         self.ntheta = ntheta
         if not(radius_all == None):
             self.vdw_radii = {
+                    "E": radius_all,
                     "H": radius_all,
                     "C": radius_all
                     }
@@ -82,9 +76,12 @@ def generate_grid(geom, radial_grid):
     ntheta = radial_grid.ntheta
 
     grid = []
-    for atom in geom.atoms:
+    for atom in geom.atoms+geom.pseudoatoms:
+        print(radial_grid.ignoreH)
+        print(atom['label'] == "H")
         if (radial_grid.ignoreH and (atom['label'] == "H")):
             break
+        print(atom)
         at    = np.array([ atom['x'], atom['y'], atom['z'] ])
         radius = radial_grid.vdw_radii[atom['label']]
         for theta in np.linspace(0, np.pi, ntheta, endpoint=False):
@@ -98,7 +95,7 @@ def generate_grid(geom, radial_grid):
                 point[2] = point[2] + radius * np.cos(theta)
                 logger.info("{} {}".format(at, point))
                 addAtom = True
-                for other_atom in geom.atoms:
+                for other_atom in geom.atoms+geom.pseudoatoms:
                     if (radial_grid.ignoreH and (other_atom['label'] == "H")):
                         break
                     #
@@ -186,7 +183,7 @@ def main():
         '--ignoreH',
         action='store_true',
         help="Ignore hydrogen atoms for the generation of the surface",
-        default="geom.xyz")
+        default=False)
     parser.add_argument(
         'geomfile',
         type=str,
@@ -195,15 +192,22 @@ def main():
     args = parser.parse_args()
     if (args.debug):
         logger.setLevel(DEBUG)
-    if (args.ignoreH):
-        ignoreH = True
     elif(args.verbose):
         logger.setLevel(INFO)
+    ignoreH = args.ignoreH
     #
     # Read the geometry in the geom file
     #
     geomfile = args.geomfile
-    geom = Geometry(readgeom(geomfile))
+    geom = geometry.Geometry(readgeom(geomfile))
+    cycles = detect_cycle.detect_cycles(geomfile)
+    for cycle in cycles:
+        atomlist = [int(i.replace('a', '')) - 1 for i in cycle]
+        barycenter = geom.getBarycenter(atomlist)
+        print(atomlist)
+        print(barycenter)
+        geom.addPseudoAtom(barycenter)
+
     if args.radius:
         radius_all = args.radius
         r_grid = radial_grid(ignoreH = ignoreH, radius_all = radius_all)
