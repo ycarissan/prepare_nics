@@ -48,9 +48,16 @@ class radial_grid:
             "H": 1.1,
             "C": 1.7 
             }
-    def __init__(self, ntheta=12, vdw_radii=vdw_radii_standard):
+    def __init__(self, ntheta=24, vdw_radii=vdw_radii_standard, ignoreH = False, radius_all=None):
         self.ntheta = ntheta
-        self.vdw_radii = vdw_radii
+        if not(radius_all == None):
+            self.vdw_radii = {
+                    "H": radius_all,
+                    "C": radius_all
+                    }
+        else:
+            self.vdw_radii = vdw_radii
+        self.ignoreH = ignoreH
 
 def generate_command_line(radial_grid, geomfile):
     command_line = "python3 nics_radial.py "
@@ -76,6 +83,8 @@ def generate_grid(geom, radial_grid):
 
     grid = []
     for atom in geom.atoms:
+        if (radial_grid.ignoreH and (atom['label'] == "H")):
+            break
         at    = np.array([ atom['x'], atom['y'], atom['z'] ])
         radius = radial_grid.vdw_radii[atom['label']]
         for theta in np.linspace(0, np.pi, ntheta, endpoint=False):
@@ -90,6 +99,8 @@ def generate_grid(geom, radial_grid):
                 logger.info("{} {}".format(at, point))
                 addAtom = True
                 for other_atom in geom.atoms:
+                    if (radial_grid.ignoreH and (other_atom['label'] == "H")):
+                        break
                     #
                     # Check that we are looping over other atoms only (not the current one)
                     #
@@ -165,6 +176,18 @@ def main():
         action='store_true',
         help='Debug info')
     parser.add_argument(
+        '-r',
+        '--radius',
+        type=float,
+        help="Set the radius to 1 angstrom"
+            )
+    parser.add_argument(
+        '-i',
+        '--ignoreH',
+        action='store_true',
+        help="Ignore hydrogen atoms for the generation of the surface",
+        default="geom.xyz")
+    parser.add_argument(
         'geomfile',
         type=str,
         help="Geometry file in xyz format. default: %(default)s",
@@ -172,6 +195,8 @@ def main():
     args = parser.parse_args()
     if (args.debug):
         logger.setLevel(DEBUG)
+    if (args.ignoreH):
+        ignoreH = True
     elif(args.verbose):
         logger.setLevel(INFO)
     #
@@ -179,7 +204,11 @@ def main():
     #
     geomfile = args.geomfile
     geom = Geometry(readgeom(geomfile))
-    r_grid = radial_grid()
+    if args.radius:
+        radius_all = args.radius
+        r_grid = radial_grid(ignoreH = ignoreH, radius_all = radius_all)
+    else:
+        r_grid = radial_grid(ignoreH = ignoreH, radius_all = None)
     #
     # Generate the full command_line
     #
