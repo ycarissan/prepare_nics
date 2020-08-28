@@ -179,6 +179,12 @@ def main():
         help="Set the radius to 1 angstrom"
             )
     parser.add_argument(
+        '-n',
+        '--npts',
+        type=int,
+        help="Number of angular points by half circle. default: %(default)s",
+        default=12)
+    parser.add_argument(
         '-i',
         '--ignoreH',
         action='store_true',
@@ -195,6 +201,7 @@ def main():
     elif(args.verbose):
         logger.setLevel(INFO)
     ignoreH = args.ignoreH
+    ntheta = args.npts
     #
     # Read the geometry in the geom file
     #
@@ -210,9 +217,9 @@ def main():
 
     if args.radius:
         radius_all = args.radius
-        r_grid = radial_grid(ignoreH = ignoreH, radius_all = radius_all)
+        r_grid = radial_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = radius_all)
     else:
-        r_grid = radial_grid(ignoreH = ignoreH, radius_all = None)
+        r_grid = radial_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = None)
     #
     # Generate the full command_line
     #
