@@ -7,7 +7,7 @@ import argparse
 import logging
 import jsonUtils
 import geometry
-import gridUtils
+import cubeUtils
 import angularGrid
 import gaussianUtils
 
