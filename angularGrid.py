@@ -73,3 +73,9 @@ def generate_angular_grid(geom, angular_grid, logger):
                     grid.append(point)
     return grid
 
+def writegrid(grid):
+    fio = open("grid.csv", "w+")
+    fio.write("#x,y,z,v\n")
+    for pt in grid:
+        fio.write("{} , {} , {}, {}\n".format(pt[0], pt[1], pt[2], pt[0]+pt[1]))
+
