@@ -156,28 +156,28 @@ def main():
         nics_grid.extend(nics_grid_tmp)
         logger.info("NICS values")
     store_data(geom, nics_grid)
-    grid, grid_values, dx, dy, dz, nptx, npty, nptz = generate_values_on_grid(
-        geom, nics_grid, npts)
-    cubefile = generate_cubefile(
-        geom,
-        grid,
-        grid_values,
-        dx,
-        dy,
-        dz,
-        nptx,
-        npty,
-        nptz)
-    # Part 2 plot usin jmol
-    planes = jsonUtils.load_state("state.json")["planes"]
-    id_plane = 0
-    for plane in planes:
-        p = plane['plane']
-        id_plane = id_plane + 1
-        jmolfile = "commands_{}.jmol".format(id_plane)
-        pngfile = "nics_{}.png".format(id_plane)
-        jmol_interface.generate_jmolfile(
-            jmolfile, cubefile, p, pngfile)
+#    grid, grid_values, dx, dy, dz, nptx, npty, nptz = generate_values_on_grid(
+#        geom, nics_grid, npts)
+#    cubefile = generate_cubefile(
+#        geom,
+#        grid,
+#        grid_values,
+#        dx,
+#        dy,
+#        dz,
+#        nptx,
+#        npty,
+#        nptz)
+#    # Part 2 plot usin jmol
+#    planes = jsonUtils.load_state("state.json")["planes"]
+#    id_plane = 0
+#    for plane in planes:
+#        p = plane['plane']
+#        id_plane = id_plane + 1
+#        jmolfile = "commands_{}.jmol".format(id_plane)
+#        pngfile = "nics_{}.png".format(id_plane)
+#        jmol_interface.generate_jmolfile(
+#            jmolfile, cubefile, p, pngfile)
 
 
 if __name__ == "__main__":
