@@ -106,13 +106,13 @@ def main():
     #
     geomfile = args.geomfile
     geom = geometry.Geometry(readgeom(geomfile))
-#    cycles = detect_cycle.detect_cycles(geomfile)
-#    for cycle in cycles:
-#        atomlist = [int(i.replace('a', '')) - 1 for i in cycle]
-#        barycenter = geom.getBarycenter(atomlist)
-#        print(atomlist)
-#        print(barycenter)
-#        geom.addPseudoAtom(barycenter)
+    cycles = detect_cycle.detect_cycles(geomfile)
+    for cycle in cycles:
+        atomlist = [int(i.replace('a', '')) - 1 for i in cycle]
+        barycenter = geom.getBarycenter(atomlist)
+        print(atomlist)
+        print(barycenter)
+        geom.addPseudoAtom(barycenter)
 
     if args.radius:
         radius_all = args.radius
@@ -138,8 +138,8 @@ def main():
     nptz = 50
     print("Making grid")
     grid = cubeUtils.generate_cube_volume(geom, angular_grid, xmin, xmax, nptx, ymin, ymax, npty, zmin, zmax, nptz)
-    print("Making cube")
-    cubefile = cubeUtils.generate_cubefile_new("volume.cube", geom, grid, xmin, xmax, nptx, ymin, ymax, npty, zmin, zmax, nptz)
+#    print("Making cube")
+#    cubefile = cubeUtils.generate_cubefile_new("volume.cube", geom, grid, xmin, xmax, nptx, ymin, ymax, npty, zmin, zmax, nptz)
 
 
 if __name__ == "__main__":

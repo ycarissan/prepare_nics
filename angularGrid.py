@@ -80,10 +80,13 @@ def generate_angular_grid(geom, angular_grid, logger):
     return grid, normals
 
 def writegrid(grid, normals=None):
-    fio = open("grid.csv", "w+")
-    fio.write("#x,y,z,v,nx,ny,nz\n")
+    fio_pts = open("points_values.csv", "w+")
+    fio_norm = open("noramls.csv", "w+")
+    fio_pts.write("#x,y,z,v\n")
+    fio_norm.write("#nx,ny,nz\n")
     for ipt in range(len(grid)):
         pt = grid[ipt]
         normal_vector = normals[ipt]
-        fio.write("{:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}\n".format(pt[0], pt[1], pt[2], pt[0]+pt[1], normal_vector[0], normal_vector[1], normal_vector[2]))
+        fio_pts.write("{:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}\n".format(pt[0], pt[1], pt[2], pt[0]+pt[1]))
+        fio_norm.write("{:12.8f}, {:12.8f}, {:12.8f}\n".format(normal_vector[0], normal_vector[1], normal_vector[2]))
 
