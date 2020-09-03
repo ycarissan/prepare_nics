@@ -16,7 +16,7 @@ def readdata():
     pts = []
     data = []
     for line in fio.readlines()[1:]:
-        val = [ float(line.split(",")[i].strip()) for i in range(4) ]
+        val = [ float(line.split()[i].strip()) for i in range(4) ]
         pts.append(np.asarray([val[0], val[1], val[2]]))
         data.append(val[3])
     return pts, data
