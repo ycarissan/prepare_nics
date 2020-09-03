@@ -23,6 +23,7 @@ def generate_angular_grid(geom, angular_grid, logger):
     ntheta = angular_grid.ntheta
 
     grid = []
+    normals = []
     for atom in geom.atoms+geom.pseudoatoms:
         print(angular_grid.ignoreH)
         print(atom['label'] == "H")
@@ -37,9 +38,10 @@ def generate_angular_grid(geom, angular_grid, logger):
                 # Compute the distance between the point and the current atom
                 #
                 point = at.copy()
-                normal_vector[0] = radius * np.sin(theta) * np.cos(phi)
-                normal_vector[1] = radius * np.sin(theta) * np.sin(phi)
-                normal_vector[2] = radius * np.cos(theta)
+                normal_vector=[]
+                normal_vector.append(radius * np.sin(theta) * np.cos(phi))
+                normal_vector.append(radius * np.sin(theta) * np.sin(phi))
+                normal_vector.append(radius * np.cos(theta)              )
                 point[0] = point[0] + normal_vector[0]
                 point[1] = point[1] + normal_vector[1]
                 point[2] = point[2] + normal_vector[2]
@@ -79,7 +81,7 @@ def generate_angular_grid(geom, angular_grid, logger):
 
 def writegrid(grid, normals=None):
     fio = open("grid.csv", "w+")
-    fio.write("#x,y,z,v\n")
+    fio.write("#x,y,z,v,nx,ny,nz\n")
     for ipt in range(len(grid)):
         pt = grid[ipt]
         normal_vector = normals[ipt]
