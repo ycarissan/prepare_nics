@@ -124,8 +124,8 @@ def main():
     args = parser.parse_args()
     logfile = args.logfile
     npts = args.npts
-    radical = re.sub(r'_cycle_\d*_batch_\d*.log$',
-                     '', os.path.basename(logfile))
+    radical = re.sub(r'_cycle_\d*_batch_\d*.log$', '', os.path.basename(logfile))
+    radical = re.sub(r'_batch_\d*.log$', '', os.path.basename(logfile))
     dirname = os.path.dirname(logfile)
     if len(dirname)==0:
         dirname="."
@@ -143,8 +143,10 @@ def main():
             dirname +
             "/" +
             radical +
-            "_cycle_[0-9]*_batch_[0-9]*.log"))
+            "_batch_[0-9]*.log"))
+#            "_cycle_[0-9]*_batch_[0-9]*.log"))
     logger.debug("dirname : {}\nradical : {}\n".format(dirname, radical))
+    logger.debug("logfiles: {} ...".format(logfiles))
     geom = []
     nics_grid = []
     for f in logfiles:
