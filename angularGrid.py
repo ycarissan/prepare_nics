@@ -37,9 +37,12 @@ def generate_angular_grid(geom, angular_grid, logger):
                 # Compute the distance between the point and the current atom
                 #
                 point = at.copy()
-                point[0] = point[0] + radius * np.sin(theta) * np.cos(phi)
-                point[1] = point[1] + radius * np.sin(theta) * np.sin(phi)
-                point[2] = point[2] + radius * np.cos(theta)
+                normal_vector[0] = radius * np.sin(theta) * np.cos(phi)
+                normal_vector[1] = radius * np.sin(theta) * np.sin(phi)
+                normal_vector[2] = radius * np.cos(theta)
+                point[0] = point[0] + normal_vector[0]
+                point[1] = point[1] + normal_vector[1]
+                point[2] = point[2] + normal_vector[2]
                 logger.info("{} {}".format(at, point))
                 addAtom = True
                 for other_atom in geom.atoms+geom.pseudoatoms:
@@ -71,11 +74,14 @@ def generate_angular_grid(geom, angular_grid, logger):
                     logger.debug(
                             "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} {1}\n".format(point,point[0]+point[1]))
                     grid.append(point)
-    return grid
+                    normals.append(normal_vector)
+    return grid, normals
 
-def writegrid(grid):
+def writegrid(grid, normals=None):
     fio = open("grid.csv", "w+")
     fio.write("#x,y,z,v\n")
-    for pt in grid:
-        fio.write("{} , {} , {}, {}\n".format(pt[0], pt[1], pt[2], pt[0]+pt[1]))
+    for ipt in range(len(grid)):
+        pt = grid[ipt]
+        normal_vector = normals[ipt]
+        fio.write("{:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}\n".format(pt[0], pt[1], pt[2], pt[0]+pt[1], normal_vector[0], normal_vector[1], normal_vector[2]))
 

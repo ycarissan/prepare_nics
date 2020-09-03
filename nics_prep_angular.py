@@ -124,8 +124,8 @@ def main():
     #
     command_line = generate_command_line(r_grid, geomfile)
     logger.info(command_line)
-    angular_grid = angularGrid.generate_angular_grid(geom, r_grid, logger)
-    angularGrid.writegrid(angular_grid)
+    angular_grid, angular_grid_normals = angularGrid.generate_angular_grid(geom, r_grid, logger)
+    angularGrid.writegrid(angular_grid, angular_grid_normals)
     gaussianUtils.generate_gaussianFile(geom, angular_grid, logger)
     xmin = min([ angular_grid[i][0] for i in range(len(angular_grid))])
     xmax = max([ angular_grid[i][0] for i in range(len(angular_grid))])
