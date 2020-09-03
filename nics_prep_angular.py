@@ -38,9 +38,10 @@ logger.addHandler(ch)
 logger.addHandler(fh)
 
 
-def generate_command_line(angular_grid, geomfile):
+def generate_command_line(args):
     command_line = "python3 nics_angular.py "
-    command_line = command_line + " {} ".format(geomfile)
+    for arg in vars(args):
+        command_line = command_line + " {} {}".format(arg, getattr(args, arg))
     return command_line
 
 def readgeom(f):
@@ -94,6 +95,8 @@ def main():
         help="Geometry file in xyz format. default: %(default)s",
         default="geom.xyz")
     args = parser.parse_args()
+    for arg in vars(args):
+        print("{:} ... {:}".format(arg, getattr(args, arg)))
     if (args.debug):
         logger.setLevel(logging.DEBUG)
         fh.setLevel(logging.DEBUG)
@@ -107,12 +110,13 @@ def main():
     geomfile = args.geomfile
     geom = geometry.Geometry(readgeom(geomfile))
     cycles = detect_cycle.detect_cycles(geomfile)
-    for cycle in cycles:
-        atomlist = [int(i.replace('a', '')) - 1 for i in cycle]
-        barycenter = geom.getBarycenter(atomlist)
-        print(atomlist)
-        print(barycenter)
-        geom.addPseudoAtom(barycenter)
+    if (len(cycles)>0):
+        for cycle in cycles:
+            atomlist = [int(i.replace('a', '')) - 1 for i in cycle]
+            barycenter = geom.getBarycenter(atomlist)
+            print(atomlist)
+            print(barycenter)
+            geom.addPseudoAtom(barycenter)
 
     if args.radius:
         radius_all = args.radius
@@ -122,25 +126,12 @@ def main():
     #
     # Generate the full command_line
     #
-    command_line = generate_command_line(r_grid, geomfile)
+    command_line = generate_command_line(args)
+    print(command_line)
     logger.info(command_line)
     angular_grid, angular_grid_normals = angularGrid.generate_angular_grid(geom, r_grid, logger)
     angularGrid.writegrid(angular_grid, angular_grid_normals)
     gaussianUtils.generate_gaussianFile(geom, angular_grid, logger)
-    xmin = min([ angular_grid[i][0] for i in range(len(angular_grid))])
-    xmax = max([ angular_grid[i][0] for i in range(len(angular_grid))])
-    ymin = min([ angular_grid[i][1] for i in range(len(angular_grid))])
-    ymax = max([ angular_grid[i][1] for i in range(len(angular_grid))])
-    zmin = min([ angular_grid[i][2] for i in range(len(angular_grid))])
-    zmax = max([ angular_grid[i][2] for i in range(len(angular_grid))])
-    nptx = 50
-    npty = 50
-    nptz = 50
-    print("Making grid")
-    grid = cubeUtils.generate_cube_volume(geom, angular_grid, xmin, xmax, nptx, ymin, ymax, npty, zmin, zmax, nptz)
-#    print("Making cube")
-#    cubefile = cubeUtils.generate_cubefile_new("volume.cube", geom, grid, xmin, xmax, nptx, ymin, ymax, npty, zmin, zmax, nptz)
-
 
 if __name__ == "__main__":
     main()

@@ -50,9 +50,10 @@ def detect_cycles(geomfile, logger=None):
     G = nx.Graph()
     G.add_nodes_from([i + 1 for i in range(nat)])
     #  On parcourt les liaisons et on cree le graphe
-    for bond in bondArray_el:
-        at1, at2 = str.split(bond.get('atomRefs2'))
-        G.add_edge(at1, at2)
+    if bondArray_el!=None:
+        for bond in bondArray_el:
+            at1, at2 = str.split(bond.get('atomRefs2'))
+            G.add_edge(at1, at2)
     #  Dectection des cycles
     cycles = nx.minimum_cycle_basis(G)
     return cycles

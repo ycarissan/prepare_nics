@@ -81,7 +81,7 @@ def generate_angular_grid(geom, angular_grid, logger):
 
 def writegrid(grid, normals=None):
     fio_pts = open("points_values.csv", "w+")
-    fio_norm = open("noramls.csv", "w+")
+    fio_norm = open("normals.csv", "w+")
     fio_pts.write("#x,y,z,v\n")
     fio_norm.write("#nx,ny,nz\n")
     for ipt in range(len(grid)):
