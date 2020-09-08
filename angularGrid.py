@@ -87,6 +87,6 @@ def writegrid(grid, normals=None):
     for ipt in range(len(grid)):
         pt = grid[ipt]
         normal_vector = normals[ipt]
-        fio_pts.write("{:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}\n".format(pt[0], pt[1], pt[2], pt[0]+pt[1]))
+        fio_pts.write("{:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}\n".format(pt[0], pt[1], pt[2], pt[0]+pt[1], pt[0]+pt[1], pt[0]+pt[1]))
         fio_norm.write("{:12.8f}, {:12.8f}, {:12.8f}\n".format(normal_vector[0], normal_vector[1], normal_vector[2]))
 

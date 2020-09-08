@@ -10,6 +10,8 @@ import geometry
 import cubeUtils
 import angularGrid
 import gaussianUtils
+import open3d as o3d
+import colorsys
 
 # Create logger
 logger = logging.getLogger('log')
@@ -37,6 +39,27 @@ fh.setFormatter(formatter)
 logger.addHandler(ch)
 logger.addHandler(fh)
 
+
+def valtoRGB(values):
+    """
+    Returns RGB colors for each value of values
+        arg: values[:]
+    """
+    min_val = np.min(values)
+    max_val = np.max(values)
+    rgb=[]
+    for val in values:
+        ratio = (val-min_val)/(max_val-min_val)
+        if (ratio<0.5):
+            R = 1
+            B = 1 - 2 * ratio
+            G = B
+        else:
+            B = 1
+            R = 1 - ratio
+            G = R
+        rgb.append(np.asarray([R, G, B]))
+    return rgb
 
 def generate_command_line(args):
     command_line = "python3 nics_angular.py "
@@ -132,6 +155,27 @@ def main():
     angular_grid, angular_grid_normals = angularGrid.generate_angular_grid(geom, r_grid, logger)
     angularGrid.writegrid(angular_grid, angular_grid_normals)
     gaussianUtils.generate_gaussianFile(geom, angular_grid, logger)
+
+    point_cloud = np.loadtxt("points_values.csv", delimiter=",", skiprows=1)
+    points_normals = np.loadtxt("normals.csv", delimiter=",", skiprows=1)
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(point_cloud[:,:3])
+    pcd.normals = o3d.utility.Vector3dVector(points_normals[:,:3])
+#    pcd.colors = o3d.utility.Vector3dVector(point_cloud[:,3:6]/0.1)
+    print(point_cloud[:,3:6])
+    point_rgb = valtoRGB(point_cloud[:,3])
+    pcd.colors = o3d.utility.Vector3dVector(np.asarray(point_rgb))
+    o3d.visualization.draw_geometries([pcd])
+#    o3d.visualization.draw_geometries([pcd],point_show_normal=True)
+    poisson_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)[0]
+#    poisson_mesh.paint_uniform_color([1, 0.706, 0])
+    poisson_mesh.compute_vertex_normals()
+    density_mesh = o3d.geometry.TriangleMesh()
+#    density_mesh.vertices = mesh.vertices
+#    density_mesh.triangles = mesh.triangles
+#    density_mesh.triangle_normals = mesh.triangle_normals
+    o3d.visualization.draw_geometries([poisson_mesh])
+    o3d.io.write_triangle_mesh("./p_mesh_c.ply", poisson_mesh)
 
 if __name__ == "__main__":
     main()
