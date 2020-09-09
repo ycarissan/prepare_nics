@@ -9,6 +9,7 @@ import networkx as nx
 import random
 import logging
 
+G = nx.Graph()
 
 def generate_cml(geomfile, logger):
     """ Genere le fichier de descritpion de la geometrie en cml"""
@@ -32,6 +33,7 @@ def generate_cml(geomfile, logger):
 
 
 def detect_cycles(geomfile, logger=None):
+    global G
     #
     # Detection des cycles
     #
@@ -47,7 +49,6 @@ def detect_cycles(geomfile, logger=None):
     #  Nombre d'atomes
     nat = len(atomArray_el)
     #  Creation du graphe
-    G = nx.Graph()
     G.add_nodes_from([i + 1 for i in range(nat)])
     #  On parcourt les liaisons et on cree le graphe
     if bondArray_el!=None:
@@ -58,34 +59,8 @@ def detect_cycles(geomfile, logger=None):
     cycles = nx.minimum_cycle_basis(G)
     return cycles
 
-#    #
-#    # Traitement des cycles
-#    #
-#    list_q=[]
-#    #
-#    # Pour chaque cycle detecte on fait la moyenne des coordonnees de atomes
-#    #
-#    for cycle in cycles:
-#        x=y=z=0
-#        for iat in cycle:
-#            xpath = './/'+qdn+'atom[@id="'+iat+'"]'
-#            atom = atomArray_el.find(xpath)
-#            x = x + float(atom.get("x3"))
-#            y = y + float(atom.get("y3"))
-#            z = z + float(atom.get("z3"))
-#        list_q.append([x/len(cycle),y/len(cycle),z/len(cycle)])
-# print("q",x/len(cycle),y/len(cycle),z/len(cycle))
-#    #
-#    # Ecriture finale
-#    #
-#    fout=open("molecule_bq.xyz","w+")
-#    fout.write(str(len(list_q)+nat)+"\n")
-#    for l in open(geomfile,"r").readlines()[1:]:
-#        fout.write(l)
-#    for q in list_q:
-#        fout.write("{:s} {:10.6f} {:10.6f} {:10.6f}\n".format("bq",q[0],q[1],q[2]))
-#    fout.close()
-
+def get_boundary():
+    return G.number_of_edges()
 
 def main():
     print("Cycle detection library")

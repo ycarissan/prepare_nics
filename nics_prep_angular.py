@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import os
 import sys
 import numpy as np
 import detect_cycle
@@ -133,7 +134,9 @@ def main():
     #
     geomfile = args.geomfile
     geom = geometry.Geometry(readgeom(geomfile))
-    cycles = detect_cycle.detect_cycles(geomfile)
+    geomfile_atomsonly = geom.getgeomfilename_Atomsonly()
+    cycles = detect_cycle.detect_cycles(geomfile_atomsonly)
+    os.remove(geomfile_atomsonly)
     if (len(cycles)>0):
         for cycle in cycles:
             atomlist = [int(i.replace('a', '')) - 1 for i in cycle]
