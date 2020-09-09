@@ -7,7 +7,10 @@ class Geometry:
         self.pseudoatoms = []
         for l in lines[2:]:
             a = l.split()
-            self.atoms.append( { 'label': a[0], 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
+            if a[0].lower()=="bq" or a[0].lower()=="x":
+                self.pseudoatoms.append( { 'label': 'E', 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
+            else:
+                self.atoms.append( { 'label': a[0], 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
 
     def getAtom(self, index):
         return self.atoms[index]
