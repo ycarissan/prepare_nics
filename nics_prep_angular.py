@@ -74,6 +74,7 @@ def readgeom(f):
     geom = []
     for line in fgeom.readlines():
         l = line.strip()
+        print(l)
         geom.append(l)
         logger.debug(l)
     fgeom.close()

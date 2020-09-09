@@ -24,7 +24,7 @@ def generate_angular_grid(geom, angular_grid, logger):
 
     grid = []
     normals = []
-    for atom in geom.atoms+geom.pseudoatoms:
+    for atom in geom.atoms+geom.spherecenters+geom.pseudoatoms:
         print(angular_grid.ignoreH)
         print(atom['label'] == "H")
         if (angular_grid.ignoreH and (atom['label'] == "H")):
@@ -47,7 +47,7 @@ def generate_angular_grid(geom, angular_grid, logger):
                 point[2] = point[2] + normal_vector[2]
                 logger.info("{} {}".format(at, point))
                 addAtom = True
-                for other_atom in geom.atoms+geom.pseudoatoms:
+                for other_atom in geom.atoms+geom.spherecenters+geom.pseudoatoms:
                     if (angular_grid.ignoreH and (other_atom['label'] == "H")):
                         break
                     #

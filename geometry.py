@@ -5,12 +5,16 @@ class Geometry:
         self.header=(lines[1])
         self.atoms = []
         self.pseudoatoms = []
+        self.spherecenters = []
         for l in lines[2:]:
             a = l.split()
-            if a[0].lower()=="bq" or a[0].lower()=="x":
-                self.pseudoatoms.append( { 'label': 'E', 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
+            lbl = a[0].strip().upper()
+            print(">>> "+lbl)
+            if lbl=="BQ" or lbl=="X" or lbl=="XX":
+                print("BQ found")
+                self.spherecenters.append( { 'label': "E", 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
             else:
-                self.atoms.append( { 'label': a[0], 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
+                self.atoms.append( { 'label': lbl, 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
 
     def getAtom(self, index):
         return self.atoms[index]
