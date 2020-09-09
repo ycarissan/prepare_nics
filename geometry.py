@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 class Geometry:
     def __init__(self, lines):
@@ -41,3 +42,12 @@ class Geometry:
 
     def addPseudoAtom(self, coords):
         self.pseudoatoms.append( { 'label': 'E', 'x': coords[0], 'y': coords[1], 'z': coords[2] } )
+
+    def getgeomfilename_Atomsonly(self):
+        xyztmp_filename = "tmpfile_{:05d}.xyz".format(int(random.uniform(0, 99999)))
+        fio = open(xyztmp_filename, "w+")
+        fio.write("{}\n\n".format(len(self.atoms)))
+        for atom in self.atoms:
+            fio.write("{} {} {} {}\n".format(atom['label'], atom['x'], atom['y'], atom['z']))
+        fio.close()
+        return xyztmp_filename
