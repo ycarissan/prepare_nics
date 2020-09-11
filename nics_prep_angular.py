@@ -115,6 +115,12 @@ def main():
         help="Ignore hydrogen atoms for the generation of the surface",
         default=False)
     parser.add_argument(
+        '-p',
+        '--preview',
+        action='store_true',
+        help="Preview the grid and the resulting surface"
+            )
+    parser.add_argument(
         'geomfile',
         type=str,
         help="Geometry file in xyz format. default: %(default)s",
@@ -128,6 +134,7 @@ def main():
     elif(args.verbose):
         logger.setLevel(logging.INFO)
     ignoreH = args.ignoreH
+    preview = arge.preview
     ntheta = args.npts
     #
     # Read the geometry in the geom file
@@ -160,26 +167,19 @@ def main():
     angularGrid.writegrid(angular_grid, angular_grid_normals)
     gaussianUtils.generate_gaussianFile(geom, angular_grid, logger)
 
-    point_cloud = np.loadtxt("points_values.csv", delimiter=",", skiprows=1)
-    points_normals = np.loadtxt("normals.csv", delimiter=",", skiprows=1)
-    pcd = o3d.geometry.PointCloud()
-    pcd.points = o3d.utility.Vector3dVector(point_cloud[:,:3])
-    pcd.normals = o3d.utility.Vector3dVector(points_normals[:,:3])
-#    pcd.colors = o3d.utility.Vector3dVector(point_cloud[:,3:6]/0.1)
-    print(point_cloud[:,3:6])
-    point_rgb = valtoRGB(point_cloud[:,3])
-    pcd.colors = o3d.utility.Vector3dVector(np.asarray(point_rgb))
-    o3d.visualization.draw_geometries([pcd])
-#    o3d.visualization.draw_geometries([pcd],point_show_normal=True)
-    poisson_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)[0]
-#    poisson_mesh.paint_uniform_color([1, 0.706, 0])
-    poisson_mesh.compute_vertex_normals()
-    density_mesh = o3d.geometry.TriangleMesh()
-#    density_mesh.vertices = mesh.vertices
-#    density_mesh.triangles = mesh.triangles
-#    density_mesh.triangle_normals = mesh.triangle_normals
-    o3d.visualization.draw_geometries([poisson_mesh])
-    o3d.io.write_triangle_mesh("./p_mesh_c.ply", poisson_mesh)
+    if preview==True:
+        point_cloud = np.loadtxt("points_values.csv", delimiter=",", skiprows=1)
+        points_normals = np.loadtxt("normals.csv", delimiter=",", skiprows=1)
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(point_cloud[:,:3])
+        pcd.normals = o3d.utility.Vector3dVector(points_normals[:,:3])
+        point_rgb = valtoRGB(point_cloud[:,3])
+        pcd.colors = o3d.utility.Vector3dVector(np.asarray(point_rgb))
+        o3d.visualization.draw_geometries([pcd])
+        poisson_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)[0]
+        poisson_mesh.compute_vertex_normals()
+        o3d.visualization.draw_geometries([poisson_mesh])
+        o3d.io.write_triangle_mesh("./p_mesh_c.ply", poisson_mesh)
 
 if __name__ == "__main__":
     main()
