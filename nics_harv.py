@@ -11,6 +11,7 @@ import logging
 import jsonUtils
 import jmol_interface
 import cubeUtils
+import angularGrid
 
 # Create logger
 logger = logging.getLogger('log')
@@ -91,7 +92,7 @@ def store_data(geom, nics_grid):
     fio = open(nics_file, "w")
     for el in nics_grid:
         fio.write(
-            "{0[x]:16.10f}  {0[y]:16.10f}  {0[z]:16.10f}  {0[nics]:16.10f}\n".format(el))
+            "{0[x]:16.10f}  {0[y]:16.10f}  {0[z]:16.10f}  {0[nx]:16.10f} {0[ny]:16.10f} {0[nz]:16.10f} {0[nics]:16.10f}\n".format(el))
     fio.close()
 
 
@@ -157,29 +158,9 @@ def main():
             logger.info("geometry and ".format())
         nics_grid.extend(nics_grid_tmp)
         logger.info("NICS values")
+    grid, normals = angularGrid.readgrid()
+    angularGrid.addNormals(nics_grid, grid, normals)
     store_data(geom, nics_grid)
-#    grid, grid_values, dx, dy, dz, nptx, npty, nptz = generate_values_on_grid(
-#        geom, nics_grid, npts)
-#    cubefile = generate_cubefile(
-#        geom,
-#        grid,
-#        grid_values,
-#        dx,
-#        dy,
-#        dz,
-#        nptx,
-#        npty,
-#        nptz)
-#    # Part 2 plot usin jmol
-#    planes = jsonUtils.load_state("state.json")["planes"]
-#    id_plane = 0
-#    for plane in planes:
-#        p = plane['plane']
-#        id_plane = id_plane + 1
-#        jmolfile = "commands_{}.jmol".format(id_plane)
-#        pngfile = "nics_{}.png".format(id_plane)
-#        jmol_interface.generate_jmolfile(
-#            jmolfile, cubefile, p, pngfile)
 
 
 if __name__ == "__main__":
