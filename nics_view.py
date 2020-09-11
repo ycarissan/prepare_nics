@@ -12,6 +12,8 @@ import logging
 #import gaussianUtils
 import open3d as o3d
 import colorsys
+import matplotlib.pyplot as plt
+import argparse
 
 # Create logger
 logger = logging.getLogger('log')
@@ -47,8 +49,7 @@ def getIntermediateColor(val, min_val, max_val, color_min, color_max):
         color_val[i] = color_min[i] + ratio * (color_max[i]-color_min[i])
     return color_val
 
-def valtoRGB(values, color_min=[0, 0, 1], color_avg=[.5, .5, .5], color_max=[1, 1, 0]):
-#def valtoRGB(values, color_min=[62/100, 80/100, 89/100], color_avg=[(97+62)/200, (97+80)/200, (97+89)/200], color_max=[97/100, 97/100, 97/100]):
+def valtoRGB(values, color_min=[0, 0, 1], color_avg=[.5, .5, .5], color_max=[1, 1, 0], colormode="auto"):
     """
     Returns RGB colors for each value of values
         arg: values[:]
@@ -57,30 +58,75 @@ def valtoRGB(values, color_min=[0, 0, 1], color_avg=[.5, .5, .5], color_max=[1, 
     max_val = np.max(values)
     avg_val = np.average(values)
     rgb=[]
-    for val in values:
-        ratio = (val-min_val)/(max_val-min_val)
-        if (ratio<0.5):
-            color = getIntermediateColor(val,min_val, avg_val, color_min, color_avg)
-        else:
-            color = getIntermediateColor(val,avg_val, max_val, color_avg, color_max)
-        rgb.append(np.asarray(color))
-
+    if colormode=="auto":
+        for val in values:
+            ratio = (val-min_val)/(max_val-min_val)
+            if (ratio<0.5):
+                color = getIntermediateColor(val,min_val, avg_val, color_min, color_avg)
+            else:
+                color = getIntermediateColor(val,avg_val, max_val, color_avg, color_max)
+            rgb.append(np.asarray(color))
+    elif colormode=="iso":
+        for val in values:
+            if val>-10:
+                color = [1,1,1]
+            elif val>-15:
+                color = [.75,.75,1]
+            elif val>-20:
+                color = [.50,.50,1]
+            elif val>-25:
+                color = [.25,.25,1]
+            elif val>-30:
+                color = [.25,.00,1]
+            else:
+                color = [.50,.00,1]
+            rgb.append(np.asarray(color))
     return rgb
 
 def main():
+    parser = argparse.ArgumentParser(
+        description='Display the calcuated data of NICS calculations.')
+    parser.add_argument(
+        '--showstat',
+        '-s',
+        action='store_true',
+        help='Show statistics')
+    parser.add_argument(
+        '--mate',
+        '-m',
+        action='store_true',
+        help='Turn on mate rendering')
+    parser.add_argument(
+        '--colormode',
+        '-c',
+        type=str,
+        default="auto",
+        help='Color mode: auto|iso. default: %(default)s')
+    args = parser.parse_args()
+    showstat = args.showstat
+    colormode = args.colormode
+    mate = args.mate
+
     values =  np.loadtxt("nics.dat", delimiter=",", skiprows=1)
     pcd = o3d.geometry.PointCloud()
     pcd.points = o3d.utility.Vector3dVector(values[:,:3])
     pcd.normals = o3d.utility.Vector3dVector(values[:,3:6])
-#    pcd.colors = o3d.utility.Vector3dVector(point_cloud[:,3:6]/0.1)
-#    print(point_cloud[:,3:6])
-    point_rgb = valtoRGB(values[:,6])
+
+    if showstat:
+        a = np.hstack(values[:,6])
+        _ = plt.hist(a, bins='auto')  # arguments are passed to np.histogram
+        plt.title("Repartition of NICS values")
+        plt.show()
+
+    point_rgb = valtoRGB(values[:,6], colormode=colormode)
     pcd.colors = o3d.utility.Vector3dVector(np.asarray(point_rgb))
     o3d.visualization.draw_geometries([pcd])
     poisson_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)[0]
-    poisson_mesh.compute_vertex_normals()
+    if not(mate):
+        poisson_mesh.compute_vertex_normals()
     density_mesh = o3d.geometry.TriangleMesh()
-    o3d.visualization.draw_geometries([poisson_mesh])
+    vis = o3d.visualization.draw_geometries([poisson_mesh])
+    vis.capture_screen_image("temp_%04d.jpg" % i)
     o3d.io.write_triangle_mesh("./p_mesh_c.ply", poisson_mesh)
 
 if __name__ == "__main__":
