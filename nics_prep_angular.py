@@ -134,7 +134,7 @@ def main():
     elif(args.verbose):
         logger.setLevel(logging.INFO)
     ignoreH = args.ignoreH
-    preview = arge.preview
+    preview = args.preview
     ntheta = args.npts
     #
     # Read the geometry in the geom file
