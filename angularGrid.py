@@ -90,3 +90,21 @@ def writegrid(grid, normals=None):
         fio_pts.write("{:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}, {:12.8f}\n".format(pt[0], pt[1], pt[2], pt[0]+pt[1], pt[0]+pt[1], pt[0]+pt[1]))
         fio_norm.write("{:12.8f}, {:12.8f}, {:12.8f}\n".format(normal_vector[0], normal_vector[1], normal_vector[2]))
 
+def readgrid():
+    grid = np.loadtxt("points_values.csv", delimiter=",", skiprows=1)
+    normals = np.loadtxt("normals.csv", delimiter=",", skiprows=1)
+    return grid, normals
+
+def addNormals(nics_grid, grid, normals):
+    for i in range(len(nics_grid)):
+        samepoint = np.all(np.isclose([nics_grid[i]['x'], nics_grid[i]['y'], nics_grid[i]['z']], grid[i][:3], atol=1e-4))
+        if samepoint:
+            nics_grid[i]['nx'] = normals[i][0]
+            nics_grid[i]['ny'] = normals[i][1]
+            nics_grid[i]['nz'] = normals[i][2]
+        else:
+#                logger.error("Grid inconsistency")
+            print("{} != {}".format(nics_grid[i]['x'],grid[i][0]))
+            print("{} != {}".format(nics_grid[i]['y'],grid[i][1]))
+            print("{} != {}".format(nics_grid[i]['z'],grid[i][2]))
+            exit(99)
