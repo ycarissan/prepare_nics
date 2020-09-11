@@ -92,7 +92,7 @@ def store_data(geom, nics_grid):
     fio = open(nics_file, "w")
     for el in nics_grid:
         fio.write(
-            "{0[x]:16.10f}  {0[y]:16.10f}  {0[z]:16.10f}  {0[nx]:16.10f} {0[ny]:16.10f} {0[nz]:16.10f} {0[nics]:16.10f}\n".format(el))
+            "{0[x]:16.10f},  {0[y]:16.10f},  {0[z]:16.10f},  {0[nx]:16.10f}, {0[ny]:16.10f}, {0[nz]:16.10f}, {0[nics]:16.10f}\n".format(el))
     fio.close()
 
 
