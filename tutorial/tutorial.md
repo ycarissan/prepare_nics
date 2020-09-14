@@ -34,6 +34,7 @@ python3 ../nics_harv.py input_batch_00000.log
 ```
 python3 ../nics_view.py
 ```
+When a window pops u, press "q" to exit.
 Viewing can be done with different rendering:
 
 
