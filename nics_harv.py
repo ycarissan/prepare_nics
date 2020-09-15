@@ -8,7 +8,7 @@ import glob
 import argparse
 import logging
 
-import grid.angular
+import grids.angular
 
 # Create logger
 logger = logging.getLogger('log')
@@ -155,8 +155,8 @@ def main():
             logger.info("geometry and ".format())
         nics_grid.extend(nics_grid_tmp)
         logger.info("NICS values")
-    grid, normals = grid.angular.readgrid()
-    grid.angular.addNormals(nics_grid, grid, normals)
+    grid, normals = grids.angular.readgrid()
+    grids.angular.addNormals(nics_grid, grid, normals)
     store_data(geom, nics_grid)
 
 

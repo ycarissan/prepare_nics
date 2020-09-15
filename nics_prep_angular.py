@@ -9,7 +9,7 @@ import open3d as o3d
 
 import geometry.geometry
 import graph_theory.detect_cycle
-import grid.angular
+import grids.angular
 import interface.gaussian
 
 # Create logger
@@ -152,17 +152,17 @@ def main():
 
     if args.radius:
         radius_all = args.radius
-        r_grid = grid.angular.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = radius_all)
+        r_grid = grids.angular.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = radius_all)
     else:
-        r_grid = grid.angular.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = None)
+        r_grid = grids.angular.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = None)
     #
     # Generate the full command_line
     #
     command_line = generate_command_line(args)
     print(command_line)
     logger.info(command_line)
-    angular_grid, angular_grid_normals = grid.angular.generate_angular_grid(geom, r_grid, logger)
-    grid.angular.writegrid(angular_grid, angular_grid_normals)
+    angular_grid, angular_grid_normals = grids.angular.generate_angular_grid(geom, r_grid, logger)
+    grids.angular.writegrids.angular_grid, angular_grid_normals)
     interface.gaussian.generate_gaussianFile(geom, angular_grid, logger)
 
     if preview==True:
