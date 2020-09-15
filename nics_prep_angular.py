@@ -2,17 +2,15 @@
 
 import os
 import sys
-import numpy as np
-import detect_cycle
 import argparse
 import logging
-import jsonUtils
-import geometry
-import cubeUtils
-import angularGrid
-import gaussianUtils
+import numpy as np
 import open3d as o3d
-import colorsys
+
+import geometry.geometry
+import graph_theory.detect_cycle
+import grid.angular
+import interface.gaussian
 
 # Create logger
 logger = logging.getLogger('log')
@@ -140,9 +138,9 @@ def main():
     # Read the geometry in the geom file
     #
     geomfile = args.geomfile
-    geom = geometry.Geometry(readgeom(geomfile))
+    geom = geometry.geometry.Geometry(readgeom(geomfile))
     geomfile_atomsonly = geom.getgeomfilename_Atomsonly()
-    cycles = detect_cycle.detect_cycles(geomfile_atomsonly)
+    cycles = graph_theory.detect_cycle.detect_cycles(geomfile_atomsonly)
     os.remove(geomfile_atomsonly)
     if (len(cycles)>0):
         for cycle in cycles:
@@ -154,23 +152,23 @@ def main():
 
     if args.radius:
         radius_all = args.radius
-        r_grid = angularGrid.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = radius_all)
+        r_grid = grid.angular.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = radius_all)
     else:
-        r_grid = angularGrid.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = None)
+        r_grid = grid.angular.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = None)
     #
     # Generate the full command_line
     #
     command_line = generate_command_line(args)
     print(command_line)
     logger.info(command_line)
-    angular_grid, angular_grid_normals = angularGrid.generate_angular_grid(geom, r_grid, logger)
-    angularGrid.writegrid(angular_grid, angular_grid_normals)
-    gaussianUtils.generate_gaussianFile(geom, angular_grid, logger)
+    angular_grid, angular_grid_normals = grid.angular.generate_angular_grid(geom, r_grid, logger)
+    grid.angular.writegrid(angular_grid, angular_grid_normals)
+    interface.gaussian.generate_gaussianFile(geom, angular_grid, logger)
 
     if preview==True:
         point_cloud = np.loadtxt("points_values.csv", delimiter=",", skiprows=1)
         points_normals = np.loadtxt("normals.csv", delimiter=",", skiprows=1)
-        pcd = o3d.geometry.PointCloud()
+        pcd = o3d.geometry.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(point_cloud[:,:3])
         pcd.normals = o3d.utility.Vector3dVector(points_normals[:,:3])
         point_rgb = valtoRGB(point_cloud[:,3])

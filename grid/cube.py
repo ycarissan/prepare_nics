@@ -1,5 +1,5 @@
 import numpy as np
-from constants import Bohr2Angstrom
+from data.constants import Bohr2Angstrom
 
 def generate_cubefile(geom, grid_values, dx, dy, dz, nptx, npty, nptz):
     grid = None

@@ -2,14 +2,7 @@
 
 import sys
 import numpy as np
-#import detect_cycle
-#import argparse
 import logging
-#import jsonUtils
-#import geometry
-#import cubeUtils
-#import angularGrid
-#import gaussianUtils
 import open3d as o3d
 import colorsys
 import matplotlib.pyplot as plt

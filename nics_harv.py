@@ -2,16 +2,13 @@
 
 import sys
 import numpy as np
-from scipy.spatial.distance import cdist
 import re
 import os
 import glob
 import argparse
 import logging
-import jsonUtils
-import jmol_interface
-import cubeUtils
-import angularGrid
+
+import grid.angular
 
 # Create logger
 logger = logging.getLogger('log')
@@ -158,8 +155,8 @@ def main():
             logger.info("geometry and ".format())
         nics_grid.extend(nics_grid_tmp)
         logger.info("NICS values")
-    grid, normals = angularGrid.readgrid()
-    angularGrid.addNormals(nics_grid, grid, normals)
+    grid, normals = grid.angular.readgrid()
+    grid.angular.addNormals(nics_grid, grid, normals)
     store_data(geom, nics_grid)
 
 
