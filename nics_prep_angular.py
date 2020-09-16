@@ -162,7 +162,7 @@ def main():
     print(command_line)
     logger.info(command_line)
     angular_grid, angular_grid_normals = grids.angular.generate_angular_grid(geom, r_grid, logger)
-    grids.angular.writegrids.angular_grid, angular_grid_normals)
+    grids.angular.writegrid(angular_grid, angular_grid_normals)
     interface.gaussian.generate_gaussianFile(geom, angular_grid, logger)
 
     if preview==True:
