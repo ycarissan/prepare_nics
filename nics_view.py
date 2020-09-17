@@ -119,7 +119,13 @@ def main():
         mesh_sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.4)
         mesh_sphere.transform(mat)
         mesh_sphere.compute_vertex_normals()
-        mesh_sphere.paint_uniform_color([0.1, 0.1, 0.7])
+        if at['label'] == 'C':
+            color=[0.4, 0.4, 0.4]
+        elif at['label'] == 'H':
+            color=[0.9, 0.9, 0.9]
+        else:
+            color=[1.0, 0.0, 0.0]
+        mesh_sphere.paint_uniform_color(color)
         spheres.append(mesh_sphere)
     cylinders = []
     molecularGraph = graph_theory.detect_cycle.MolecularGraph("geom.xyz")
@@ -159,20 +165,21 @@ def main():
         mesh_cylinder.transform(mat_rotation)
         mesh_cylinder.transform(mat_translation)
         mesh_cylinder.compute_vertex_normals()
-        mesh_cylinder.paint_uniform_color([0.4, 0.4, 0.4])
+        mesh_cylinder.paint_uniform_color([0.0, 0.6, 1.0])
         cylinders.append(mesh_cylinder)
 
+    mesh_molecule = spheres
+    mesh_molecule.extend(cylinders)
     point_rgb = valtoRGB(values[:,6], colormode=colormode)
     pcd.colors = o3d.utility.Vector3dVector(np.asarray(point_rgb))
-    o3d.visualization.draw_geometries([pcd]+ spheres + cylinders)
+    o3d.visualization.draw_geometries([pcd] + mesh_molecule)
     poisson_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)[0]
     if not(mate):
         poisson_mesh.compute_vertex_normals()
     density_mesh = o3d.geometry.TriangleMesh()
 
-#    vis = o3d.visualization.draw_geometries([poisson_mesh]+ spheres)
-#    vis.capture_screen_image("temp_%04d.jpg" % i)
-#    o3d.io.write_triangle_mesh("./p_mesh_c.ply", poisson_mesh)
+    vis = o3d.visualization.draw_geometries([poisson_mesh] + mesh_molecule)
+    o3d.io.write_triangle_mesh("./surface_mesh.ply", poisson_mesh)
 
 if __name__ == "__main__":
 #    mesh = o3d.geometry.TriangleMesh.create_coordinate_frame()
