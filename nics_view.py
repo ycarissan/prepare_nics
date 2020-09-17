@@ -8,6 +8,10 @@ import colorsys
 import matplotlib.pyplot as plt
 import argparse
 
+import geometry.geometry
+import graph_theory.detect_cycle
+import mathutils.trigonometry
+
 # Create logger
 logger = logging.getLogger('log')
 logger.setLevel(logging.DEBUG)
@@ -42,7 +46,9 @@ def getIntermediateColor(val, min_val, max_val, color_min, color_max):
         color_val[i] = color_min[i] + ratio * (color_max[i]-color_min[i])
     return color_val
 
-def valtoRGB(values, color_min=[0, 0, 1], color_avg=[.5, .5, .5], color_max=[1, 1, 0], colormode="auto"):
+def valtoRGB(values, color_min=[0, 0, 1], color_avg=[.5, .5, .5], color_max=[1, 1, 0],
+        limits = [float("inf"), -10, -15, -20, -25, -30, float("-inf")],
+        colors = [[1,1,1], [.75,.75,1], [.50,.50,1], [.25,.25,1], [.25,.00,1], [.50,.00,1]], colormode="auto"):
     """
     Returns RGB colors for each value of values
         arg: values[:]
@@ -61,18 +67,10 @@ def valtoRGB(values, color_min=[0, 0, 1], color_avg=[.5, .5, .5], color_max=[1, 
             rgb.append(np.asarray(color))
     elif colormode=="iso":
         for val in values:
-            if val>-10:
-                color = [1,1,1]
-            elif val>-15:
-                color = [.75,.75,1]
-            elif val>-20:
-                color = [.50,.50,1]
-            elif val>-25:
-                color = [.25,.25,1]
-            elif val>-30:
-                color = [.25,.00,1]
-            else:
-                color = [.50,.00,1]
+            color=[0,0,0]
+            for i in range(len(limits)-1):
+                if val<limits[i] and val>=limits[i+1]:
+                    color = colors[i]
             rgb.append(np.asarray(color))
     return rgb
 
@@ -111,16 +109,75 @@ def main():
         plt.title("Repartition of NICS values")
         plt.show()
 
+    geom = geometry.geometry.Geometry("geom.xyz")
+    spheres = []
+    for at in geom.atoms:
+        mat = [[1, 0, 0, at['x']],
+               [0, 1, 0, at['y']],
+               [0, 0, 1, at['z']],
+               [0, 0, 0, 1     ] ]
+        mesh_sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.4)
+        mesh_sphere.transform(mat)
+        mesh_sphere.compute_vertex_normals()
+        mesh_sphere.paint_uniform_color([0.1, 0.1, 0.7])
+        spheres.append(mesh_sphere)
+    cylinders = []
+    molecularGraph = graph_theory.detect_cycle.MolecularGraph("geom.xyz")
+    for e in molecularGraph.getEdges():
+        lbl1, lbl2 = e
+        idx1 = int(lbl1.replace('a',''))-1
+        idx2 = int(lbl2.replace('a',''))-1
+        at1 = geom.getAtom(idx1)
+        at2 = geom.getAtom(idx2)
+        pos1 = np.asarray([at1['x'], at1['y'], at1['z']])
+        pos2 = np.asarray([at2['x'], at2['y'], at2['z']])
+        vect_bond = pos2 - pos1
+        middle_bond = 0.5 * (pos1 + pos2)
+        mat_translation = np.asarray([
+               [1, 0, 0, middle_bond[0]],
+               [0, 1, 0, middle_bond[1]],
+               [0, 0, 1, middle_bond[2]],
+               [0, 0, 0, 1]])
+#        print(mat_translation)
+        vect_axis = np.cross(vect_bond, [0, 0, 1]) #cylinders are aligne along z when created
+        theta = np.arcsin(np.linalg.norm(vect_axis)/np.linalg.norm(vect_bond))
+        vect_axis = vect_axis / np.linalg.norm(vect_axis)
+        ux = vect_axis[0]
+        uy = vect_axis[1]
+        uz = vect_axis[2]
+        c = np.cos(theta)
+        s = np.sin(theta)
+        mat_rotation=np.asarray([
+                [ux * ux * (1-c) + c     , ux * uy * (1-c) - uz * s, ux * uz * (1-c) + uy * s, 0],
+                [ux * uy * (1-c) + uz * s, uy * uy * (1-c) + c     , uy * uz * (1-c) - ux * s, 0],
+                [ux * uz * (1-c) - uy * s, uy * uz  *(1-c) + ux * s, uz * uz * (1-c) + c     , 0],
+                [0                       , 0                       , 0                       , 1]
+                ]
+                )
+
+        mesh_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=.2, height=np.linalg.norm(vect_bond))
+        mesh_cylinder.transform(mat_rotation)
+        mesh_cylinder.transform(mat_translation)
+        mesh_cylinder.compute_vertex_normals()
+        mesh_cylinder.paint_uniform_color([0.4, 0.4, 0.4])
+        cylinders.append(mesh_cylinder)
+
     point_rgb = valtoRGB(values[:,6], colormode=colormode)
     pcd.colors = o3d.utility.Vector3dVector(np.asarray(point_rgb))
-    o3d.visualization.draw_geometries([pcd])
+    o3d.visualization.draw_geometries([pcd]+ spheres + cylinders)
     poisson_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)[0]
     if not(mate):
         poisson_mesh.compute_vertex_normals()
     density_mesh = o3d.geometry.TriangleMesh()
-    vis = o3d.visualization.draw_geometries([poisson_mesh])
-    vis.capture_screen_image("temp_%04d.jpg" % i)
-    o3d.io.write_triangle_mesh("./p_mesh_c.ply", poisson_mesh)
+
+#    vis = o3d.visualization.draw_geometries([poisson_mesh]+ spheres)
+#    vis.capture_screen_image("temp_%04d.jpg" % i)
+#    o3d.io.write_triangle_mesh("./p_mesh_c.ply", poisson_mesh)
 
 if __name__ == "__main__":
+#    mesh = o3d.geometry.TriangleMesh.create_coordinate_frame()
+#    mesh_r = o3d.geometry.TriangleMesh.create_coordinate_frame()
+#    R = mesh.get_rotation_matrix_from_xyz((1.5,0,2))
+#    mesh_r.rotate(R, center=(0,0,0))
+#    o3d.visualization.draw_geometries([mesh, mesh_r])
     main()
