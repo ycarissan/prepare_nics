@@ -140,7 +140,8 @@ def main():
     geomfile = args.geomfile
     geom = geometry.geometry.Geometry(readgeom(geomfile))
     geomfile_atomsonly = geom.getgeomfilename_Atomsonly()
-    cycles = graph_theory.detect_cycle.detect_cycles(geomfile_atomsonly)
+    molecularGraph = graph_theory.detect_cycle.MolecularGraph(geomfile_atomsonly)
+    cycles = molecularGraph.detect_cycles()
     os.remove(geomfile_atomsonly)
     if (len(cycles)>0):
         for cycle in cycles:
