@@ -93,10 +93,22 @@ def main():
         type=str,
         default="auto",
         help='Color mode: auto|iso. default: %(default)s')
+    parser.add_argument(
+        '--representation',
+        '-r',
+        type=str,
+        default="cloud",
+        help='Representation mode: cloud|surface. default: %(default)s')
+    parser.add_argument(
+        '--molecule',
+        action='store_true',
+        help='Show the molecule')
     args = parser.parse_args()
     showstat = args.showstat
     colormode = args.colormode
     mate = args.mate
+    representation = args.representation
+    molecule = args.molecule
 
     values =  np.loadtxt("nics.dat", delimiter=",", skiprows=1)
     pcd = o3d.geometry.PointCloud()
@@ -111,68 +123,75 @@ def main():
 
     geom = geometry.geometry.Geometry("geom.xyz")
     spheres = []
-    for at in geom.atoms:
-        mat = [[1, 0, 0, at['x']],
-               [0, 1, 0, at['y']],
-               [0, 0, 1, at['z']],
-               [0, 0, 0, 1     ] ]
-        mesh_sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.4)
-        mesh_sphere.transform(mat)
-        mesh_sphere.compute_vertex_normals()
-        if at['label'] == 'C':
-            color=[0.4, 0.4, 0.4]
-        elif at['label'] == 'H':
-            color=[0.9, 0.9, 0.9]
-        else:
-            color=[1.0, 0.0, 0.0]
-        mesh_sphere.paint_uniform_color(color)
-        spheres.append(mesh_sphere)
-    cylinders = []
-    molecularGraph = graph_theory.detect_cycle.MolecularGraph("geom.xyz")
-    for e in molecularGraph.getEdges():
-        lbl1, lbl2 = e
-        idx1 = int(lbl1.replace('a',''))-1
-        idx2 = int(lbl2.replace('a',''))-1
-        at1 = geom.getAtom(idx1)
-        at2 = geom.getAtom(idx2)
-        pos1 = np.asarray([at1['x'], at1['y'], at1['z']])
-        pos2 = np.asarray([at2['x'], at2['y'], at2['z']])
-        vect_bond = pos2 - pos1
-        middle_bond = 0.5 * (pos1 + pos2)
-        mat_translation = np.asarray([
-               [1, 0, 0, middle_bond[0]],
-               [0, 1, 0, middle_bond[1]],
-               [0, 0, 1, middle_bond[2]],
-               [0, 0, 0, 1]])
-#        print(mat_translation)
-        vect_axis = np.cross(vect_bond, [0, 0, 1]) #cylinders are aligne along z when created
-        theta = np.arcsin(np.linalg.norm(vect_axis)/np.linalg.norm(vect_bond))
-        vect_axis = vect_axis / np.linalg.norm(vect_axis)
-        ux = vect_axis[0]
-        uy = vect_axis[1]
-        uz = vect_axis[2]
-        c = np.cos(theta)
-        s = np.sin(theta)
-        mat_rotation=np.asarray([
-                [ux * ux * (1-c) + c     , ux * uy * (1-c) - uz * s, ux * uz * (1-c) + uy * s, 0],
-                [ux * uy * (1-c) + uz * s, uy * uy * (1-c) + c     , uy * uz * (1-c) - ux * s, 0],
-                [ux * uz * (1-c) - uy * s, uy * uz  *(1-c) + ux * s, uz * uz * (1-c) + c     , 0],
-                [0                       , 0                       , 0                       , 1]
-                ]
-                )
+    mesh_molecule=None
+    if molecule:
+        for at in geom.atoms:
+            mat = [[1, 0, 0, at['x']],
+                   [0, 1, 0, at['y']],
+                   [0, 0, 1, at['z']],
+                   [0, 0, 0, 1     ] ]
+            mesh_sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.4)
+            mesh_sphere.transform(mat)
+            mesh_sphere.compute_vertex_normals()
+            if at['label'] == 'C':
+                color=[0.4, 0.4, 0.4]
+            elif at['label'] == 'H':
+                color=[0.9, 0.9, 0.9]
+            else:
+                color=[1.0, 0.0, 0.0]
+            mesh_sphere.paint_uniform_color(color)
+            spheres.append(mesh_sphere)
+        cylinders = []
+        molecularGraph = graph_theory.detect_cycle.MolecularGraph("geom.xyz")
+        for e in molecularGraph.getEdges():
+            lbl1, lbl2 = e
+            idx1 = int(lbl1.replace('a',''))-1
+            idx2 = int(lbl2.replace('a',''))-1
+            at1 = geom.getAtom(idx1)
+            at2 = geom.getAtom(idx2)
+            pos1 = np.asarray([at1['x'], at1['y'], at1['z']])
+            pos2 = np.asarray([at2['x'], at2['y'], at2['z']])
+            vect_bond = pos2 - pos1
+            middle_bond = 0.5 * (pos1 + pos2)
+            mat_translation = np.asarray([
+                   [1, 0, 0, middle_bond[0]],
+                   [0, 1, 0, middle_bond[1]],
+                   [0, 0, 1, middle_bond[2]],
+                   [0, 0, 0, 1]])
+#            print(mat_translation)
+            vect_axis = np.cross(vect_bond, [0, 0, 1]) #cylinders are aligne along z when created
+            theta = np.arcsin(np.linalg.norm(vect_axis)/np.linalg.norm(vect_bond))
+            vect_axis = vect_axis / np.linalg.norm(vect_axis)
+            ux = vect_axis[0]
+            uy = vect_axis[1]
+            uz = vect_axis[2]
+            c = np.cos(theta)
+            s = np.sin(theta)
+            mat_rotation=np.asarray([
+                    [ux * ux * (1-c) + c     , ux * uy * (1-c) - uz * s, ux * uz * (1-c) + uy * s, 0],
+                    [ux * uy * (1-c) + uz * s, uy * uy * (1-c) + c     , uy * uz * (1-c) - ux * s, 0],
+                    [ux * uz * (1-c) - uy * s, uy * uz  *(1-c) + ux * s, uz * uz * (1-c) + c     , 0],
+                    [0                       , 0                       , 0                       , 1]
+                    ]
+                    )
 
-        mesh_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=.2, height=np.linalg.norm(vect_bond))
-        mesh_cylinder.transform(mat_rotation)
-        mesh_cylinder.transform(mat_translation)
-        mesh_cylinder.compute_vertex_normals()
-        mesh_cylinder.paint_uniform_color([0.0, 0.6, 1.0])
-        cylinders.append(mesh_cylinder)
+            mesh_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=.2, height=np.linalg.norm(vect_bond))
+            mesh_cylinder.transform(mat_rotation)
+            mesh_cylinder.transform(mat_translation)
+            mesh_cylinder.compute_vertex_normals()
+            mesh_cylinder.paint_uniform_color([0.0, 0.6, 1.0])
+            cylinders.append(mesh_cylinder)
 
-    mesh_molecule = spheres
-    mesh_molecule.extend(cylinders)
+        mesh_molecule = spheres
+        mesh_molecule.extend(cylinders)
+
     point_rgb = valtoRGB(values[:,6], colormode=colormode)
     pcd.colors = o3d.utility.Vector3dVector(np.asarray(point_rgb))
-    o3d.visualization.draw_geometries([pcd] + mesh_molecule)
+    if representation=='cloud':
+        if molecule:
+            o3d.visualization.draw_geometries([pcd] + mesh_molecule)
+        else:
+            o3d.visualization.draw_geometries([pcd])
     poisson_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)[0]
     if not(mate):
         poisson_mesh.compute_vertex_normals()
@@ -182,9 +201,4 @@ def main():
     o3d.io.write_triangle_mesh("./surface_mesh.ply", poisson_mesh)
 
 if __name__ == "__main__":
-#    mesh = o3d.geometry.TriangleMesh.create_coordinate_frame()
-#    mesh_r = o3d.geometry.TriangleMesh.create_coordinate_frame()
-#    R = mesh.get_rotation_matrix_from_xyz((1.5,0,2))
-#    mesh_r.rotate(R, center=(0,0,0))
-#    o3d.visualization.draw_geometries([mesh, mesh_r])
     main()
