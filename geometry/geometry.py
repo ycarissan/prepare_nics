@@ -3,6 +3,8 @@ import random
 
 class Geometry:
     def __init__(self, lines):
+        if isinstance(lines, str):
+            lines = open(lines, "r").readlines()
         self.header=(lines[1])
         self.atoms = []
         self.pseudoatoms = []
@@ -10,7 +12,6 @@ class Geometry:
         for l in lines[2:]:
             a = l.split()
             lbl = a[0].strip().upper()
-            print(">>> "+lbl)
             if lbl=="BQ" or lbl=="X" or lbl=="XX":
                 print("BQ found")
                 self.spherecenters.append( { 'label': "E", 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
@@ -51,3 +52,4 @@ class Geometry:
             fio.write("{} {} {} {}\n".format(atom['label'], atom['x'], atom['y'], atom['z']))
         fio.close()
         return xyztmp_filename
+
