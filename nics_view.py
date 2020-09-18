@@ -249,8 +249,7 @@ def main():
         newcolors[mapping <= -40] = black
         my_colormap = ListedColormap(newcolors)
 
-#        point_cloud.plot(render_points_as_spheres=True)
-        point_cloud.plot(render_points_as_spheres=True, radius=0.1, cmap=my_colormap)
+        point_cloud.plot(render_points_as_spheres=True, cmap=my_colormap)
 
 if __name__ == "__main__":
     main()
