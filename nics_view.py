@@ -10,7 +10,7 @@ import argparse
 
 import geometry.geometry
 import graph_theory.detect_cycle
-import mathutils.trigonometry
+import math_utils.trigonometry
 
 # Create logger
 logger = logging.getLogger('log')
