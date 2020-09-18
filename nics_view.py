@@ -4,13 +4,16 @@ import sys
 import numpy as np
 import logging
 import open3d as o3d
+import pyvista as pv
 import colorsys
 import matplotlib.pyplot as plt
 import argparse
+from matplotlib.colors import ListedColormap
 
 import geometry.geometry
 import graph_theory.detect_cycle
 import math_utils.trigonometry
+
 
 # Create logger
 logger = logging.getLogger('log')
@@ -75,6 +78,7 @@ def valtoRGB(values, color_min=[0, 0, 1], color_avg=[.5, .5, .5], color_max=[1, 
     return rgb
 
 def main():
+    # Begin trating arguments
     parser = argparse.ArgumentParser(
         description='Display the calcuated data of NICS calculations.')
     parser.add_argument(
@@ -82,6 +86,11 @@ def main():
         '-s',
         action='store_true',
         help='Show statistics')
+    parser.add_argument(
+        '--pyvista',
+        '-p',
+        action='store_true',
+        help='Turn on pyvista rendering')
     parser.add_argument(
         '--mate',
         '-m',
@@ -109,11 +118,14 @@ def main():
     mate = args.mate
     representation = args.representation
     molecule = args.molecule
+    pyvista = args.pyvista
+    # End trating arguments
 
+    # Read nics.dat
+    # The nics.dat format is:
+    #  x, y, z, nx, ny, nz, val
+    #skirow does not read the first line
     values =  np.loadtxt("nics.dat", delimiter=",", skiprows=1)
-    pcd = o3d.geometry.PointCloud()
-    pcd.points = o3d.utility.Vector3dVector(values[:,:3])
-    pcd.normals = o3d.utility.Vector3dVector(values[:,3:6])
 
     if showstat:
         a = np.hstack(values[:,6])
@@ -122,87 +134,123 @@ def main():
         plt.show()
 
     geom = geometry.geometry.Geometry("geom.xyz")
-    spheres = []
-    mesh_molecule=None
-    if molecule:
-        for at in geom.atoms:
-            mat = [[1, 0, 0, at['x']],
-                   [0, 1, 0, at['y']],
-                   [0, 0, 1, at['z']],
-                   [0, 0, 0, 1     ] ]
-            mesh_sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.4)
-            mesh_sphere.transform(mat)
-            mesh_sphere.compute_vertex_normals()
-            if at['label'] == 'C':
-                color=[0.4, 0.4, 0.4]
-            elif at['label'] == 'H':
-                color=[0.9, 0.9, 0.9]
+    if not pyvista:
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(values[:,:3])
+        pcd.normals = o3d.utility.Vector3dVector(values[:,3:6])
+        spheres = []
+        mesh_molecule=None
+        #generate molecule in open3D format
+        if molecule:
+            for at in geom.atoms:
+                mat = [[1, 0, 0, at['x']],
+                       [0, 1, 0, at['y']],
+                       [0, 0, 1, at['z']],
+                       [0, 0, 0, 1     ] ]
+                mesh_sphere = o3d.geometry.TriangleMesh.create_sphere(radius=0.4)
+                mesh_sphere.transform(mat)
+                mesh_sphere.compute_vertex_normals()
+                if at['label'] == 'C':
+                    color=[0.4, 0.4, 0.4]
+                elif at['label'] == 'H':
+                    color=[0.9, 0.9, 0.9]
+                else:
+                    color=[1.0, 0.0, 0.0]
+                mesh_sphere.paint_uniform_color(color)
+                spheres.append(mesh_sphere)
+            cylinders = []
+            molecularGraph = graph_theory.detect_cycle.MolecularGraph("geom.xyz")
+            for e in molecularGraph.getEdges():
+                lbl1, lbl2 = e
+                idx1 = int(lbl1.replace('a',''))-1
+                idx2 = int(lbl2.replace('a',''))-1
+                at1 = geom.getAtom(idx1)
+                at2 = geom.getAtom(idx2)
+                pos1 = np.asarray([at1['x'], at1['y'], at1['z']])
+                pos2 = np.asarray([at2['x'], at2['y'], at2['z']])
+                vect_bond = pos2 - pos1
+                middle_bond = 0.5 * (pos1 + pos2)
+                mat_translation = np.asarray([
+                       [1, 0, 0, middle_bond[0]],
+                       [0, 1, 0, middle_bond[1]],
+                       [0, 0, 1, middle_bond[2]],
+                       [0, 0, 0, 1]])
+    #            print(mat_translation)
+                vect_axis = np.cross(vect_bond, [0, 0, 1]) #cylinders are aligne along z when created
+                theta = np.arcsin(np.linalg.norm(vect_axis)/np.linalg.norm(vect_bond))
+                vect_axis = vect_axis / np.linalg.norm(vect_axis)
+                ux = vect_axis[0]
+                uy = vect_axis[1]
+                uz = vect_axis[2]
+                c = np.cos(theta)
+                s = np.sin(theta)
+                mat_rotation=np.asarray([
+                        [ux * ux * (1-c) + c     , ux * uy * (1-c) - uz * s, ux * uz * (1-c) + uy * s, 0],
+                        [ux * uy * (1-c) + uz * s, uy * uy * (1-c) + c     , uy * uz * (1-c) - ux * s, 0],
+                        [ux * uz * (1-c) - uy * s, uy * uz  *(1-c) + ux * s, uz * uz * (1-c) + c     , 0],
+                        [0                       , 0                       , 0                       , 1]
+                        ]
+                        )
+
+                mesh_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=.2, height=np.linalg.norm(vect_bond))
+                mesh_cylinder.transform(mat_rotation)
+                mesh_cylinder.transform(mat_translation)
+                mesh_cylinder.compute_vertex_normals()
+                mesh_cylinder.paint_uniform_color([0.0, 0.6, 1.0])
+                cylinders.append(mesh_cylinder)
+
+            mesh_molecule = spheres
+            mesh_molecule.extend(cylinders)
+        # end generate molecule in open3D format
+
+        point_rgb = valtoRGB(values[:,6], colormode=colormode)
+        pcd.colors = o3d.utility.Vector3dVector(np.asarray(point_rgb))
+        if representation=='cloud':
+            if molecule:
+                o3d.visualization.draw_geometries([pcd] + mesh_molecule)
             else:
-                color=[1.0, 0.0, 0.0]
-            mesh_sphere.paint_uniform_color(color)
-            spheres.append(mesh_sphere)
-        cylinders = []
-        molecularGraph = graph_theory.detect_cycle.MolecularGraph("geom.xyz")
-        for e in molecularGraph.getEdges():
-            lbl1, lbl2 = e
-            idx1 = int(lbl1.replace('a',''))-1
-            idx2 = int(lbl2.replace('a',''))-1
-            at1 = geom.getAtom(idx1)
-            at2 = geom.getAtom(idx2)
-            pos1 = np.asarray([at1['x'], at1['y'], at1['z']])
-            pos2 = np.asarray([at2['x'], at2['y'], at2['z']])
-            vect_bond = pos2 - pos1
-            middle_bond = 0.5 * (pos1 + pos2)
-            mat_translation = np.asarray([
-                   [1, 0, 0, middle_bond[0]],
-                   [0, 1, 0, middle_bond[1]],
-                   [0, 0, 1, middle_bond[2]],
-                   [0, 0, 0, 1]])
-#            print(mat_translation)
-            vect_axis = np.cross(vect_bond, [0, 0, 1]) #cylinders are aligne along z when created
-            theta = np.arcsin(np.linalg.norm(vect_axis)/np.linalg.norm(vect_bond))
-            vect_axis = vect_axis / np.linalg.norm(vect_axis)
-            ux = vect_axis[0]
-            uy = vect_axis[1]
-            uz = vect_axis[2]
-            c = np.cos(theta)
-            s = np.sin(theta)
-            mat_rotation=np.asarray([
-                    [ux * ux * (1-c) + c     , ux * uy * (1-c) - uz * s, ux * uz * (1-c) + uy * s, 0],
-                    [ux * uy * (1-c) + uz * s, uy * uy * (1-c) + c     , uy * uz * (1-c) - ux * s, 0],
-                    [ux * uz * (1-c) - uy * s, uy * uz  *(1-c) + ux * s, uz * uz * (1-c) + c     , 0],
-                    [0                       , 0                       , 0                       , 1]
-                    ]
-                    )
+                o3d.visualization.draw_geometries([pcd])
+        poisson_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)[0]
+        if not(mate):
+            poisson_mesh.compute_vertex_normals()
+        density_mesh = o3d.geometry.TriangleMesh()
 
-            mesh_cylinder = o3d.geometry.TriangleMesh.create_cylinder(radius=.2, height=np.linalg.norm(vect_bond))
-            mesh_cylinder.transform(mat_rotation)
-            mesh_cylinder.transform(mat_translation)
-            mesh_cylinder.compute_vertex_normals()
-            mesh_cylinder.paint_uniform_color([0.0, 0.6, 1.0])
-            cylinders.append(mesh_cylinder)
+        if representation=='surface':
+            if molecule:
+                vis = o3d.visualization.draw_geometries([poisson_mesh] + mesh_molecule)
+            else:
+                vis = o3d.visualization.draw_geometries([poisson_mesh])
+        o3d.io.write_triangle_mesh("./surface_mesh.ply", poisson_mesh)
+    else:
+        #begin pysta
+        points = values[:,:3]
+        data = values[:,6]
+        points = pv.pyvista_ndarray(points)
+        datac = pv.pyvista_ndarray(data)
 
-        mesh_molecule = spheres
-        mesh_molecule.extend(cylinders)
+        point_cloud = pv.PolyData(points)
+        point_cloud["NICS"] = datac
 
-    point_rgb = valtoRGB(values[:,6], colormode=colormode)
-    pcd.colors = o3d.utility.Vector3dVector(np.asarray(point_rgb))
-    if representation=='cloud':
-        if molecule:
-            o3d.visualization.draw_geometries([pcd] + mesh_molecule)
-        else:
-            o3d.visualization.draw_geometries([pcd])
-    poisson_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)[0]
-    if not(mate):
-        poisson_mesh.compute_vertex_normals()
-    density_mesh = o3d.geometry.TriangleMesh()
+        blue = np.array([12/256, 238/256, 246/256, 1])
+        black = np.array([11/256, 11/256, 11/256, 1])
+        grey = np.array([189/256, 189/256, 189/256, 1])
+        yellow = np.array([255/256, 247/256, 0/256, 1])
+        red = np.array([1, 0, 0, 1])
 
-    if representation=='surface':
-        if molecule:
-            vis = o3d.visualization.draw_geometries([poisson_mesh] + mesh_molecule)
-        else:
-            vis = o3d.visualization.draw_geometries([poisson_mesh])
-    o3d.io.write_triangle_mesh("./surface_mesh.ply", poisson_mesh)
+        mapping = np.linspace(datac.min(), datac.max(), 256)
+        newcolors = np.empty((256, 4))
+        newcolors[mapping < 40]  = grey
+        newcolors[mapping < 30]  = grey
+        newcolors[mapping < 20]   = grey
+        newcolors[mapping < 10]   = red
+        newcolors[mapping < -10]  = yellow
+        newcolors[mapping < -20]  = grey
+        newcolors[mapping < -30]  = blue
+        newcolors[mapping <= -40] = black
+        my_colormap = ListedColormap(newcolors)
+
+#        point_cloud.plot(render_points_as_spheres=True)
+        point_cloud.plot(render_points_as_spheres=True, radius=0.1, cmap=my_colormap)
 
 if __name__ == "__main__":
     main()
