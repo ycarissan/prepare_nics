@@ -197,7 +197,11 @@ def main():
         poisson_mesh.compute_vertex_normals()
     density_mesh = o3d.geometry.TriangleMesh()
 
-    vis = o3d.visualization.draw_geometries([poisson_mesh] + mesh_molecule)
+    if representation=='surface':
+        if molecule:
+            vis = o3d.visualization.draw_geometries([poisson_mesh] + mesh_molecule)
+        else:
+            vis = o3d.visualization.draw_geometries([poisson_mesh])
     o3d.io.write_triangle_mesh("./surface_mesh.ply", poisson_mesh)
 
 if __name__ == "__main__":
