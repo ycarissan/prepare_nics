@@ -41,6 +41,14 @@ fh.setFormatter(formatter)
 logger.addHandler(ch)
 logger.addHandler(fh)
 
+class MyPlotter(pv.Plotter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_key_event("t", self.setTransparency)
+
+    def setTransparency():
+        return
+
 def getIntermediateColor(val, min_val, max_val, color_min, color_max):
     delta = (max_val-min_val)
     ratio = (val-min_val)/delta
@@ -83,17 +91,14 @@ def main():
         description='Display the calcuated data of NICS calculations.')
     parser.add_argument(
         '--showstat',
-        '-s',
         action='store_true',
         help='Show statistics')
     parser.add_argument(
-        '--pyvista',
-        '-p',
+        '--open3d',
         action='store_true',
-        help='Turn on pyvista rendering')
+        help='Turn on open3d rendering')
     parser.add_argument(
         '--mate',
-        '-m',
         action='store_true',
         help='Turn on mate rendering')
     parser.add_argument(
@@ -109,7 +114,13 @@ def main():
         default="cloud",
         help='Representation mode: cloud|surface. default: %(default)s')
     parser.add_argument(
+        '--twopanels',
+        '-2',
+        action='store_true',
+        help='Show the molecule')
+    parser.add_argument(
         '--molecule',
+        '-m',
         action='store_true',
         help='Show the molecule')
     args = parser.parse_args()
@@ -118,7 +129,8 @@ def main():
     mate = args.mate
     representation = args.representation
     molecule = args.molecule
-    pyvista = args.pyvista
+    open3d = args.open3d
+    twopanels = args.twopanels
     # End trating arguments
 
     # Read nics.dat
@@ -134,7 +146,7 @@ def main():
         plt.show()
 
     geom = geometry.geometry.Geometry("geom.xyz")
-    if not pyvista:
+    if open3d:
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(values[:,:3])
         pcd.normals = o3d.utility.Vector3dVector(values[:,3:6])
@@ -231,25 +243,72 @@ def main():
         point_cloud = pv.PolyData(points)
         point_cloud["NICS"] = datac
 
-        blue = np.array([12/256, 238/256, 246/256, 1])
-        black = np.array([11/256, 11/256, 11/256, 1])
-        grey = np.array([189/256, 189/256, 189/256, 1])
-        yellow = np.array([255/256, 247/256, 0/256, 1])
-        red = np.array([1, 0, 0, 1])
+        alpha = 1
+        superred = np.array([1, 1, 0, alpha])
+        red = np.array([1, 0, 0, alpha])
+        darkred = np.array([1, .25, .25, alpha])
+        lightred = np.array([1, .75, .75, alpha])
+        lightblue = np.array([1, .75, .75, alpha])
+        darkblue = np.array([1, .25, .25, alpha])
+        blue = np.array([1, 0, 0, alpha])
+        purple = np.array([1, 0, 1, alpha])
 
         mapping = np.linspace(datac.min(), datac.max(), 256)
         newcolors = np.empty((256, 4))
-        newcolors[mapping < 40]  = grey
-        newcolors[mapping < 30]  = grey
-        newcolors[mapping < 20]   = grey
-        newcolors[mapping < 10]   = red
-        newcolors[mapping < -10]  = yellow
-        newcolors[mapping < -20]  = grey
+        newcolors[mapping < 40]  = superred
+        newcolors[mapping < 30]  = red
+        newcolors[mapping < 20]   = darkred
+        newcolors[mapping < 10]   = lightred
+        newcolors[mapping < -10]  = lightblue
+        newcolors[mapping < -20]  = darkblue
         newcolors[mapping < -30]  = blue
-        newcolors[mapping <= -40] = black
+        newcolors[mapping <= -40] = purple
         my_colormap = ListedColormap(newcolors)
 
-        point_cloud.plot(render_points_as_spheres=True, cmap=my_colormap)
+        if twopanels:
+            p = MyPlotter(shape=(1,2))
+        else:
+            p = MyPlotter()
+        p.subplot(0, 0)
+        p.add_points(point_cloud, render_points_as_spheres=True, cmap=my_colormap)
+        if twopanels:
+            p.subplot(0, 1)
+        else:
+            p.subplot(0, 0)
+#
+        spheres = []
+        cylinders = []
+        if molecule:
+            for at in geom.atoms:
+                mesh_sphere = pv.Sphere(radius=0.5, center=[at['x'], at['y'], at['z']])
+                if at['label'] == 'C':
+                    color=[0.4, 0.4, 0.4]
+                elif at['label'] == 'H':
+                    color=[0.9, 0.9, 0.9]
+                else:
+                    color=[1.0, 0.0, 0.0]
+                spheres.append(mesh_sphere)
+            molecularGraph = graph_theory.detect_cycle.MolecularGraph("geom.xyz")
+            for e in molecularGraph.getEdges():
+                lbl1, lbl2 = e
+                idx1 = int(lbl1.replace('a',''))-1
+                idx2 = int(lbl2.replace('a',''))-1
+                at1 = geom.getAtom(idx1)
+                at2 = geom.getAtom(idx2)
+                pos1 = np.asarray([at1['x'], at1['y'], at1['z']])
+                pos2 = np.asarray([at2['x'], at2['y'], at2['z']])
+                vect_bond = pos2 - pos1
+                middle_bond = 0.5 * (pos1 + pos2)
+
+                mesh_cylinder = pv.Cylinder(center=middle_bond, direction=vect_bond, radius=.2, height=np.linalg.norm(vect_bond))
+                cylinders.append(mesh_cylinder)
+#
+        for sphere in spheres:
+            p.add_mesh(sphere, color="tan", show_edges=False)
+        for cyl in cylinders:
+            p.add_mesh(cyl, color="tan", show_edges=False)
+        p.link_views()
+        p.show()
 
 if __name__ == "__main__":
     main()
