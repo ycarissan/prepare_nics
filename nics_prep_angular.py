@@ -108,6 +108,12 @@ def main():
         help="Number of angular points by half circle. default: %(default)s",
         default=12)
     parser.add_argument(
+        '-o',
+        '--orient',
+        action='store_true',
+        help="Reorient the molecule along its principal symmetry axis",
+        default=False)
+    parser.add_argument(
         '-i',
         '--ignoreH',
         action='store_true',
@@ -135,18 +141,12 @@ def main():
     ignoreH = args.ignoreH
     preview = args.preview
     ntheta = args.npts
+    orient = args.orient
     #
     # Read the geometry in the geom file
     #
     geomfile = args.geomfile
-    geom = geometry.geometry.Geometry(geomfile)
-
-#    geom_sym = pymatgen.io.xyz.Molecule()
-#    geom_sym.from_file("geom.xyz")
-#    pga = pymatgen.symmetry.analyzer.PointGroupAnalyzer(geom_sym)
-#    pg = pga.get_pointgroup()
-
-
+    geom = geometry.geometry.Geometry(geomfile, orient=orient)
 
     geomfile_atomsonly = geom.getgeomfilename_Atomsonly()
     molecularGraph = graph_theory.detect_cycle.MolecularGraph(geomfile_atomsonly)

@@ -5,7 +5,7 @@ import pymatgen
 import pymatgen.transformations.standard_transformations
 
 class Geometry:
-    def __init__(self, filename):
+    def __init__(self, filename, orient = False):
         lines = open(filename, "r").readlines()
         self.header=(lines[1])
         self.atoms = []
@@ -20,7 +20,8 @@ class Geometry:
             a = l.split()
             lbl = a[0].strip().upper()
             position = [float(a[1]), float(a[2]), float(a[3])]
-            position = orientation_rotation.apply(position)
+            if orient:
+                position = orientation_rotation.apply(position)
             if lbl=="BQ" or lbl=="X" or lbl=="XX":
                 print("BQ found")
                 self.spherecenters.append( { 'label': "E", 'x': position[0], 'y': position[1], 'z': position[2] } )
