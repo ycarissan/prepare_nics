@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.spatial.transform
 import random
 import pymatgen
 import pymatgen.transformations.standard_transformations
@@ -10,15 +11,21 @@ class Geometry:
         self.atoms = []
         self.pseudoatoms = []
         self.spherecenters = []
+        self.geom_original_orientation = pymatgen.Molecule.from_file(filename)
+        self.rotvec = get_rotation_vector_to_align_along_z(self.geom_original_orientation)
+        
+        orientation_rotation = scipy.spatial.transform.Rotation.from_rotvec(self.rotvec)
+
         for l in lines[2:]:
             a = l.split()
             lbl = a[0].strip().upper()
+            position = [float(a[1]), float(a[2]), float(a[3])]
+            position = orientation_rotation.apply(position)
             if lbl=="BQ" or lbl=="X" or lbl=="XX":
                 print("BQ found")
-                self.spherecenters.append( { 'label': "E", 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
+                self.spherecenters.append( { 'label': "E", 'x': position[0], 'y': position[1], 'z': position[2] } )
             else:
-                self.atoms.append( { 'label': lbl, 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
-        geom_sym = pymatgen.Molecule.from_file("geom.xyz")
+                self.atoms.append( { 'label': lbl, 'x': position[0], 'y': position[1], 'z': position[2] } )
 
     def getAtom(self, index):
         return self.atoms[index]
@@ -86,14 +93,16 @@ def get_principal_axis(pga):
             axis_min = axis
     return theta_min, axis_min
 
-def align_along_z(geom_sym):
+def get_rotation_vector_to_align_along_z(geom_sym):
     pga = pymatgen.symmetry.analyzer.PointGroupAnalyzer(geom_sym)
     theta, axis = get_principal_axis(pga)
-    print("Principal axis found {0[0]} {0[1]} {0[2]} angle: {1}".format(axis, theta))
-    rotation_axis = np.cross([0, 0, 1], axis)
-    rotation_angle = np.arcsin(np.linalg.norm(rotation_axis)/np.linalg.norm(axis))
-    rot = pymatgen.transformations.standard_transformations.RotationTransformation(rotation_axis, rotation_angle, angle_in_radians=True)
-    return rot.apply_transformation(geom_sym)
+#    print("Principal axis found {0[0]} {0[1]} {0[2]} angle: {1}".format(axis, theta))
+    rotation_vector = np.cross([0, 0, 1], axis)
+    rotation_vector = rotation_vector / np.linalg.norm(rotation_vector)
+    rotation_angle = np.arcsin(np.linalg.norm(rotation_vector)/np.linalg.norm(axis))
+    rotation_vector = rotation_vector * rotation_angle
+#    rot = pymatgen.transformations.standard_transformations.RotationTransformation(rotation_axis, rotation_angle, angle_in_radians=True)
+    return rotation_vector
 
 def main():
 
