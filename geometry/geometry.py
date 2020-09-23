@@ -4,9 +4,8 @@ import pymatgen
 import pymatgen.transformations.standard_transformations
 
 class Geometry:
-    def __init__(self, lines):
-        if isinstance(lines, str):
-            lines = open(lines, "r").readlines()
+    def __init__(self, filename):
+        lines = open(filename, "r").readlines()
         self.header=(lines[1])
         self.atoms = []
         self.pseudoatoms = []
@@ -20,7 +19,6 @@ class Geometry:
             else:
                 self.atoms.append( { 'label': lbl, 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
         geom_sym = pymatgen.Molecule.from_file("geom.xyz")
-#        newgeom = align_along_z(geom_sym)
 
     def getAtom(self, index):
         return self.atoms[index]
