@@ -1,5 +1,7 @@
 import numpy as np
 import random
+import pymatgen
+import pymatgen.transformations.standard_transformations
 
 class Geometry:
     def __init__(self, lines):
@@ -17,6 +19,8 @@ class Geometry:
                 self.spherecenters.append( { 'label': "E", 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
             else:
                 self.atoms.append( { 'label': lbl, 'x': float(a[1]), 'y': float(a[2]), 'z': float(a[3]) } )
+        geom_sym = pymatgen.Molecule.from_file("geom.xyz")
+#        newgeom = align_along_z(geom_sym)
 
     def getAtom(self, index):
         return self.atoms[index]
@@ -53,3 +57,51 @@ class Geometry:
         fio.close()
         return xyztmp_filename
 
+def get_angle_and_axis(op):
+    """Return angle and rotation axis from an symmetry operation"""
+    matQ = op.rotation_matrix
+    Qxx = matQ[0, 0]
+    Qyy = matQ[1, 1]
+    Qzz = matQ[2, 2]
+    Qzy = matQ[2, 1]
+    Qyz = matQ[1, 2]
+    Qxz = matQ[0, 2]
+    Qzx = matQ[2, 0]
+    Qyx = matQ[1, 0]
+    Qxy = matQ[0, 1]
+    x = Qzy-Qyz
+    y = Qxz-Qzx
+    z = Qyx-Qxy
+    r = np.hypot(x,np.hypot(y,z))
+    t = Qxx+Qyy+Qzz
+    theta = np.arctan2(r,t-1)
+    return theta, np.asarray([x/r, y/r, z/r])
+
+
+def get_principal_axis(pga):
+    theta_min = 2 * np.pi
+    axis_min = np.asarray([0, 0, 1])
+    for op in pga.get_symmetry_operations():
+        theta, axis = get_angle_and_axis(op)
+        if theta > np.pi/100 and theta < theta_min:
+            theta_min = theta
+            axis_min = axis
+    return theta_min, axis_min
+
+def align_along_z(geom_sym):
+    pga = pymatgen.symmetry.analyzer.PointGroupAnalyzer(geom_sym)
+    theta, axis = get_principal_axis(pga)
+    print("Principal axis found {0[0]} {0[1]} {0[2]} angle: {1}".format(axis, theta))
+    rotation_axis = np.cross([0, 0, 1], axis)
+    rotation_angle = np.arcsin(np.linalg.norm(rotation_axis)/np.linalg.norm(axis))
+    rot = pymatgen.transformations.standard_transformations.RotationTransformation(rotation_axis, rotation_angle, angle_in_radians=True)
+    return rot.apply_transformation(geom_sym)
+
+def main():
+
+    pga = pymatgen.symmetry.analyzer.PointGroupAnalyzer(newgeom)
+    theta, axis = get_principal_axis(pga)
+    print("Principal axis found {0[0]} {0[1]} {0[2]} angle: {1}".format(axis, theta))
+
+if __name__=="__main__":
+    main()
