@@ -6,6 +6,7 @@ import argparse
 import logging
 import numpy as np
 import open3d as o3d
+import pymatgen
 
 import geometry.geometry
 import graph_theory.detect_cycle
@@ -66,18 +67,18 @@ def generate_command_line(args):
         command_line = command_line + " {} {}".format(arg, getattr(args, arg))
     return command_line
 
-def readgeom(f):
-    """ Store a geometry from a file into the geom list """
-    logger.debug("in readgeom")
-    fgeom = open(f, "r")
-    geom = []
-    for line in fgeom.readlines():
-        l = line.strip()
-        print(l)
-        geom.append(l)
-        logger.debug(l)
-    fgeom.close()
-    return geom
+#def readgeom(f):
+#    """ Store a geometry from a file into the geom list """
+#    logger.debug("in readgeom")
+#    fgeom = open(f, "r")
+#    geom = []
+#    for line in fgeom.readlines():
+#        l = line.strip()
+#        print(l)
+#        geom.append(l)
+#        logger.debug(l)
+#    fgeom.close()
+#    return geom
 
 def main():
 
@@ -138,7 +139,15 @@ def main():
     # Read the geometry in the geom file
     #
     geomfile = args.geomfile
-    geom = geometry.geometry.Geometry(readgeom(geomfile))
+    geom = geometry.geometry.Geometry(geomfile)
+
+#    geom_sym = pymatgen.io.xyz.Molecule()
+#    geom_sym.from_file("geom.xyz")
+#    pga = pymatgen.symmetry.analyzer.PointGroupAnalyzer(geom_sym)
+#    pg = pga.get_pointgroup()
+
+
+
     geomfile_atomsonly = geom.getgeomfilename_Atomsonly()
     molecularGraph = graph_theory.detect_cycle.MolecularGraph(geomfile_atomsonly)
     cycles = molecularGraph.detect_cycles()
@@ -169,7 +178,7 @@ def main():
     if preview==True:
         point_cloud = np.loadtxt("points_values.csv", delimiter=",", skiprows=1)
         points_normals = np.loadtxt("normals.csv", delimiter=",", skiprows=1)
-        pcd = o3d.geometry.geometry.PointCloud()
+        pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(point_cloud[:,:3])
         pcd.normals = o3d.utility.Vector3dVector(points_normals[:,:3])
         point_rgb = valtoRGB(point_cloud[:,3])
