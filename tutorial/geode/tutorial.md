@@ -4,7 +4,7 @@
 1. Generation of the com files
 
 ```
-python3 ../../nics_prep_angular.py -r 1 naphtalene.xyz --geode --depth 3
+python3 ../../nics_prep_angular.py -r 1 naphtalene.xyz --depth 4
 ```
 
 2. Gaussian calculation
