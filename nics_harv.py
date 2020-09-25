@@ -77,7 +77,7 @@ def readlogfile(logfile):
     return geom, nics_grid
 
 
-def store_data(geom, nics_grid):
+def store_data(geom, nics_grid, geode=True):
     geom_file = "geom.xyz"
     fio = open(geom_file, "w")
     fio.write("{}\n\n".format(len(geom)))
@@ -88,8 +88,12 @@ def store_data(geom, nics_grid):
     nics_file = "nics.dat"
     fio = open(nics_file, "w")
     for el in nics_grid:
-        fio.write(
-            "{0[x]:16.10f},  {0[y]:16.10f},  {0[z]:16.10f},  {0[nx]:16.10f}, {0[ny]:16.10f}, {0[nz]:16.10f}, {0[nics]:16.10f}\n".format(el))
+        if geode:
+            fio.write(
+                "{0[x]:16.10f},  {0[y]:16.10f},  {0[z]:16.10f},  {0[x]:16.10f}, {0[y]:16.10f}, {0[z]:16.10f}, {0[nics]:16.10f}\n".format(el))
+        else:
+            fio.write(
+                "{0[x]:16.10f},  {0[y]:16.10f},  {0[z]:16.10f},  {0[nx]:16.10f}, {0[ny]:16.10f}, {0[nz]:16.10f}, {0[nics]:16.10f}\n".format(el))
     fio.close()
 
 
@@ -109,6 +113,11 @@ def main():
         action='store_true',
         help='More info')
     parser.add_argument(
+        '--angular',
+        '-a',
+        action='store_true',
+        help='Handle angular grid')
+    parser.add_argument(
         '--npts',
         '-n',
         type=int,
@@ -122,6 +131,7 @@ def main():
     args = parser.parse_args()
     logfile = args.logfile
     npts = args.npts
+    geode = not(args.angular)
     radical = re.sub(r'_cycle_\d*_batch_\d*.log$', '', os.path.basename(logfile))
     radical = re.sub(r'_batch_\d*.log$', '', os.path.basename(logfile))
     dirname = os.path.dirname(logfile)
@@ -155,9 +165,12 @@ def main():
             logger.info("geometry and ".format())
         nics_grid.extend(nics_grid_tmp)
         logger.info("NICS values")
-    grid, normals = grids.angular.readgrid()
-    grids.angular.addNormals(nics_grid, grid, normals)
-    store_data(geom, nics_grid)
+    if geode:
+        store_data(geom, nics_grid)
+    else:
+        grid, normals = grids.angular.readgrid()
+        grids.angular.addNormals(nics_grid, grid, normals)
+        store_data(geom, nics_grid, geode=False)
 
 
 if __name__ == "__main__":
