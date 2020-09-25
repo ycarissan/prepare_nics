@@ -11,6 +11,7 @@ import pymatgen
 import geometry.geometry
 import graph_theory.detect_cycle
 import grids.angular
+import grids.geode
 import interface.gaussian
 
 # Create logger
@@ -108,6 +109,11 @@ def main():
         help="Number of angular points by half circle. default: %(default)s",
         default=12)
     parser.add_argument(
+        '--depth',
+        type=int,
+        help="Change the depth for geodesic grid generation: %(default)s",
+        default=3)
+    parser.add_argument(
         '-o',
         '--orient',
         action='store_true',
@@ -123,8 +129,14 @@ def main():
         '-p',
         '--preview',
         action='store_true',
-        help="Preview the grid and the resulting surface"
-            )
+        help="Preview the grid and the resulting surface",
+        default=False)
+    parser.add_argument(
+        '-a',
+        '--angular',
+        action='store_true',
+        help="Activate the deprecated angular grid",
+        default=False)
     parser.add_argument(
         'geomfile',
         type=str,
@@ -142,6 +154,8 @@ def main():
     preview = args.preview
     ntheta = args.npts
     orient = args.orient
+    angular = args.angular
+    depth = args.depth
     #
     # Read the geometry in the geom file
     #
@@ -160,29 +174,41 @@ def main():
             print(barycenter)
             geom.addPseudoAtom(barycenter)
 
-    if args.radius:
-        radius_all = args.radius
-        r_grid = grids.angular.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = radius_all)
-    else:
-        r_grid = grids.angular.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = None)
     #
     # Generate the full command_line
     #
     command_line = generate_command_line(args)
     print(command_line)
     logger.info(command_line)
-    angular_grid, angular_grid_normals = grids.angular.generate_angular_grid(geom, r_grid, logger)
-    grids.angular.writegrid(angular_grid, angular_grid_normals)
-    interface.gaussian.generate_gaussianFile(geom, angular_grid, logger)
+    grid=[]
+    if angular:
+        if args.radius:
+            radius_all = args.radius
+            r_grid = grids.angular.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = radius_all)
+        else:
+            r_grid = grids.angular.angular_grid(ignoreH = ignoreH, ntheta = ntheta, radius_all = None)
+        angular_grid, angular_grid_normals = grids.angular.generate_angular_grid(geom, r_grid, logger)
+        grids.angular.writegrid(angular_grid, angular_grid_normals)
+        grid = angular_grid
+    else:
+        if args.radius:
+            radius_all = args.radius
+            geodesic_grid = grids.geode.geodesic_grid(ignoreH = ignoreH, depth = depth, radius_all = radius_all)
+        else:
+            geodesic_grid = grids.geode.geodesic_grid(ignoreH = ignoreH, depth = depth, radius_all = None)
+        grid = grids.geode.generate_geodesic_grid(geom, geodesic_grid, logger)
+        print(len(grid))
+        grids.geode.writegrid(grid)
+    interface.gaussian.generate_gaussianFile(geom, grid, logger)
 
     if preview==True:
         point_cloud = np.loadtxt("points_values.csv", delimiter=",", skiprows=1)
-        points_normals = np.loadtxt("normals.csv", delimiter=",", skiprows=1)
+#        points_normals = np.loadtxt("normals.csv", delimiter=",", skiprows=1)
         pcd = o3d.geometry.PointCloud()
         pcd.points = o3d.utility.Vector3dVector(point_cloud[:,:3])
-        pcd.normals = o3d.utility.Vector3dVector(points_normals[:,:3])
-        point_rgb = valtoRGB(point_cloud[:,3])
-        pcd.colors = o3d.utility.Vector3dVector(np.asarray(point_rgb))
+#        pcd.normals = o3d.utility.Vector3dVector(points_normals[:,:3])
+#        point_rgb = valtoRGB(point_cloud[:,3])
+#        pcd.colors = o3d.utility.Vector3dVector(np.asarray(point_rgb))
         o3d.visualization.draw_geometries([pcd])
         poisson_mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(pcd, depth=9)[0]
         poisson_mesh.compute_vertex_normals()

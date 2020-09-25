@@ -2,15 +2,34 @@
 https://github.com/eugene-eeo/spheres-from-triangles
 Thanks to Eugene Eeo
 """
+import numpy as np
+import matplotlib.tri as mtri
+
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import sys
-    import matplotlib.tri as mtri
-    import numpy as np
     from matplotlib import cm
     from mpl_toolkits.mplot3d import Axes3D
 
 from collections import namedtuple
+
+class geodesic_grid:
+    vdw_radii_standard = {
+            "E": 1.0, # pseudo atom
+            "H": 1.1,
+            "C": 1.7
+            }
+    def __init__(self, depth, vdw_radii=vdw_radii_standard, ignoreH = False, radius_all=None):
+        self.depth = depth
+        if not(radius_all == None):
+            self.vdw_radii = {
+                    "E": radius_all,
+                    "H": radius_all,
+                    "C": radius_all
+                    }
+        else:
+            self.vdw_radii = vdw_radii
+        self.ignoreH = ignoreH
 
 Triangle = namedtuple("Triangle", "a,b,c")
 Point = namedtuple("Point", "x,y,z")
@@ -171,7 +190,9 @@ def subdivide(faces, depth, method):
     for tri in faces:
         yield from method(tri, depth)
 
-def get_geode(depth=2):
+def get_geode(depth=2, method=None):
+    if method==None:
+        method = subdivide_edge
     # octahedron
     p = 2**0.5 / 2
     faces = [
@@ -206,12 +227,60 @@ def get_geode(depth=2):
 
     return X, Y, Z, T
 
-def get_geode_points(depth=2):
-    X, Y, Z, T = get_Geode(depth)
+def get_geode_points(depth=2, method=None):
+    X, Y, Z, T = get_geode(depth, method)
     points=[]
     for x, y, z in zip(X, Y, Z):
         points.append([x, y, z])
-    return points
+    return np.asarray(points)
+
+def generate_geodesic_grid(geom, geodesic_grid, logger):
+    grid = []
+    for atom in geom.atoms+geom.spherecenters+geom.pseudoatoms:
+        at    = np.array([ atom['x'], atom['y'], atom['z'] ])
+        radius = geodesic_grid.vdw_radii[atom['label']]
+        geodesic_points = get_geode_points(geodesic_grid.depth)
+        geodesic_points = np.unique(geodesic_points.round(decimals=8),axis=0)
+        for pt in geodesic_points:
+            #
+            # Compute the distance between the point and the current atom
+            #
+            point = at.copy()
+            point[0] = point[0] + pt[0]*radius #translate point coordiantes to the atomic repere
+            point[1] = point[1] + pt[1]*radius #translate point coordiantes to the atomic repere
+            point[2] = point[2] + pt[2]*radius #translate point coordiantes to the atomic repere
+            addAtom = True
+            for other_atom in geom.atoms+geom.spherecenters+geom.pseudoatoms:
+                #
+                # Check that we are looping over other atoms only (not the current one)
+                #
+                same_atom = False 
+                other_at = np.array([ other_atom['x'], other_atom['y'], other_atom['z'] ])
+                dist_at_other_at = np.linalg.norm(np.array( [ at[i] - other_at[i] for i in range(3)] ) )
+                if dist_at_other_at < 1e-6:
+                    same_atom = True
+                if not(same_atom):
+                    #
+                    # Compute the distance between the point and the other atom
+                    #
+                    dist_point_other_at = np.linalg.norm(np.array( [ point[i] - other_at[i] for i in range(3)] ) )
+                    #
+                    # Get the vdw radius of the other atom
+                    #
+                    other_radius = geodesic_grid.vdw_radii[other_atom['label']]
+                    #
+                    # if the point is within the vdw radius of the other atom, skip it
+                    #
+                    if (dist_point_other_at < other_radius):
+                        addAtom = False
+            if addAtom:
+                logger.debug(
+                        "Bq     {0[0]:16.10f} {0[1]:16.10f} {0[2]:16.10f} {1}\n".format(point,point[0]+point[1]))
+                grid.append(point)
+    return grid
+
+def writegrid(grid):
+    np.savetxt("points_values.csv", grid, delimiter=",", header='#x,y,z,v')
 
 if __name__ == '__main__':
 
@@ -227,7 +296,7 @@ if __name__ == '__main__':
     depth = int(sys.argv[2])
     color = getattr(cm, sys.argv[3] if len(sys.argv) >= 4 else 'coolwarm')
 
-    X, Y, Z, T = get_Geode(depth)
+    X, Y, Z, T = get_geode(depth, method)
 
     fig = plt.figure()
     ax  = fig.add_subplot(111, projection='3d')

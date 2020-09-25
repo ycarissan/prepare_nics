@@ -11,22 +11,39 @@ class Geometry:
         self.atoms = []
         self.pseudoatoms = []
         self.spherecenters = []
-        self.geom_original_orientation = pymatgen.Molecule.from_file(filename)
-        self.rotvec = get_rotation_vector_to_align_along_z(self.geom_original_orientation)
-        
-        orientation_rotation = scipy.spatial.transform.Rotation.from_rotvec(self.rotvec)
 
         for l in lines[2:]:
             a = l.split()
             lbl = a[0].strip().upper()
             position = [float(a[1]), float(a[2]), float(a[3])]
-            if orient:
-                position = orientation_rotation.apply(position)
             if lbl=="BQ" or lbl=="X" or lbl=="XX":
                 print("BQ found")
                 self.spherecenters.append( { 'label': "E", 'x': position[0], 'y': position[1], 'z': position[2] } )
             else:
                 self.atoms.append( { 'label': lbl, 'x': position[0], 'y': position[1], 'z': position[2] } )
+
+        if orient:
+            filename_atoms_only = self.getgeomfilename_Atomsonly()
+            self.geom_original_orientation = pymatgen.Molecule.from_file(filename_atoms_only)
+            self.rotvec = get_rotation_vector_to_align_along_z(self.geom_original_orientation)
+            
+            orientation_rotation = scipy.spatial.transform.Rotation.from_rotvec(self.rotvec)
+
+            for i in range(len(self.spherecenters)):
+                el = self.spherecenters[i]
+                position = [ el['x'], el['y'], el['z'] ]
+                position = orientation_rotation.apply(position)
+                self.spherecenters[i]['x'] = position[0]
+                self.spherecenters[i]['y'] = position[1]
+                self.spherecenters[i]['z'] = position[2]
+            for i in range(len(self.atoms)):
+                el = self.atoms[i]
+                position = [ el['x'], el['y'], el['z'] ]
+                position = orientation_rotation.apply(position)
+                self.atoms[i]['x'] = position[0]
+                self.atoms[i]['y'] = position[1]
+                self.atoms[i]['z'] = position[2]
+
 
     def getAtom(self, index):
         return self.atoms[index]
