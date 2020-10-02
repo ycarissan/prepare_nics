@@ -109,6 +109,12 @@ def main():
         help="Number of angular points by half circle. default: %(default)s",
         default=12)
     parser.add_argument(
+        '--batch',
+        '-b',
+        type=int,
+        help="Change the number of bq per batch. default: infinity",
+        default=float('inf'))
+    parser.add_argument(
         '--depth',
         type=int,
         help="Change the depth for geodesic grid generation: %(default)s",
@@ -156,6 +162,7 @@ def main():
     orient = args.orient
     angular = args.angular
     depth = args.depth
+    maxbq = args.batch
     #
     # Read the geometry in the geom file
     #
@@ -199,7 +206,7 @@ def main():
         grid = grids.geode.generate_geodesic_grid(geom, geodesic_grid, logger)
         print(len(grid))
         grids.geode.writegrid(grid)
-    interface.gaussian.generate_gaussianFile(geom, grid, logger)
+    interface.gaussian.generate_gaussianFile(geom, grid, logger, maxbq = maxbq)
 
     if preview==True:
         point_cloud = np.loadtxt("points_values.csv", delimiter=",", skiprows=1)
