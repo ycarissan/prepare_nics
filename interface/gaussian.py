@@ -1,4 +1,4 @@
-def generate_gaussianFile(geom, grid, logger, outdir="./", igrid=0):
+def generate_gaussianFile(geom, grid, logger, outdir="./", igrid=0, maxbq=200):
     gaussianfile = outdir + \
         "input_batch_{:05d}.com".format(igrid)
     f = open(gaussianfile, "w")
@@ -16,7 +16,7 @@ def generate_gaussianFile(geom, grid, logger, outdir="./", igrid=0):
         nbq = nbq + 1
         nat = nat + 1
         igrid = igrid + 1
-        if (nbq == 200):
+        if (nbq == maxbq):
             logger.info("Batch generation : {}".format(igrid))
             generate_gaussianFile(
                 geom, grid, logger, outdir=outdir, igrid=igrid)
