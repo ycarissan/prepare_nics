@@ -2,9 +2,10 @@ def generate_gaussianFile(geom, grid, logger, outdir="./", igrid=0):
     gaussianfile = outdir + \
         "input_batch_{:05d}.com".format(igrid)
     f = open(gaussianfile, "w")
+    f.write("%OldChk=/home/aartigas/chk/molecule_spe.chk\n".format())
     f.write("%nproc=8\n".format())
     f.write("%mem=1000MB\n".format())
-    f.write("# rb3lyp/6-311+g** NMR geom=connectivity\n\nTitle\n\n0 1\n".format())
+    f.write("#P b3lyp/6-311++G(d,p) SCF(Tight) CPHF(Separate) Int(Grid=SuperFine) Guess=Read NMR geom=connectivity\n\nTitle\n\n0 1\n".format())
     nat = 0
     for at in geom.atoms:
         f.write("{:4s} {:16.10f} {:16.10f} {:16.10f}\n".format(at['label'], at['x'], at['y'], at['z']))
