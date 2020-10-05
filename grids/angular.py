@@ -4,7 +4,10 @@ class angular_grid:
     vdw_radii_standard = {
             "E": 1.0, # pseudo atom
             "H": 1.1,
-            "C": 1.7
+            "C": 1.7,
+            "O": 1.52,
+            "N": 1.55,
+            "Cl": 1.75,
             }
     def __init__(self, ntheta=12, vdw_radii=vdw_radii_standard, ignoreH = False, radius_all=None):
         self.ntheta = ntheta

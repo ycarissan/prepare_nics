@@ -20,7 +20,7 @@ def generate_gaussianFile(geom, grid, logger, outdir="./", igrid=0, maxbq=200):
         if (nbq == maxbq):
             logger.info("Batch generation : {}".format(igrid))
             generate_gaussianFile(
-                geom, grid, logger, outdir=outdir, igrid=igrid)
+                geom, grid, logger, outdir=outdir, igrid=igrid, maxbq = maxbq)
             break
     f.write("\n")
     for i in range(nat):
