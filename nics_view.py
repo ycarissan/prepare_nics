@@ -114,6 +114,10 @@ def main():
         default="cloud",
         help='Representation mode: cloud|surface. default: %(default)s')
     parser.add_argument(
+        '--shot',
+        action='store_true',
+        help='Save a picture')
+    parser.add_argument(
         '--twopanels',
         '-2',
         action='store_true',
@@ -131,6 +135,7 @@ def main():
     molecule = args.molecule
     open3d = args.open3d
     twopanels = args.twopanels
+    shot = args.shot
     # End trating arguments
 
     # Read nics.dat
@@ -308,7 +313,10 @@ def main():
         for cyl in cylinders:
             p.add_mesh(cyl, color="tan", show_edges=False)
         p.link_views()
-        p.show()
+        if shot:
+            p.show(screenshot='airplane.png')
+        else:
+            p.show()
 
 if __name__ == "__main__":
     main()

@@ -20,7 +20,9 @@ class geodesic_grid:
             "C": 1.7,
             "O": 1.52,
             "N": 1.55,
-            "Cl": 1.75,
+            "S": 1.55,
+            "B": 1.55,
+            "Cl": 1.75
             }
     def __init__(self, depth, vdw_radii=vdw_radii_standard, ignoreH = False, radius_all=None):
         self.depth = depth
@@ -28,7 +30,12 @@ class geodesic_grid:
             self.vdw_radii = {
                     "E": radius_all,
                     "H": radius_all,
-                    "C": radius_all
+                    "C": radius_all,
+                    "O": 1.52,
+                    "N": 1.55,
+                    "S": 1.55,
+                    "B": 1.55,
+                    "Cl": 1.75
                     }
         else:
             self.vdw_radii = vdw_radii
