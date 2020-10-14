@@ -13,7 +13,6 @@ from matplotlib.colors import ListedColormap
 import geometry.geometry
 import graph_theory.detect_cycle
 import math_utils.trigonometry
-import interface.json
 
 
 # Create logger
@@ -247,10 +246,9 @@ def main():
         datac = pv.pyvista_ndarray(data)
 
         point_cloud = pv.PolyData(points)
+        point_cloud["NICS"] = datac
         cloud = pv.wrap(point_cloud)
         cloud.save('test.vtk')
-
-        point_cloud["NICS"] = datac
 
         alpha = 1
         superred = np.array([1, 1, 0, alpha])
@@ -273,7 +271,6 @@ def main():
         newcolors[mapping < -30]  = blue
         newcolors[mapping <= -40] = purple
         my_colormap = ListedColormap(newcolors)
-#        interface.json.dump_colormap(my_colormap, 'cm.json')
 
         if twopanels:
             p = MyPlotter(shape=(1,2))
