@@ -273,7 +273,7 @@ def main():
         newcolors[mapping < -30]  = blue
         newcolors[mapping <= -40] = purple
         my_colormap = ListedColormap(newcolors)
-        interface.json.dump_colormap(my_colormap, 'cm.json')
+#        interface.json.dump_colormap(my_colormap, 'cm.json')
 
         if twopanels:
             p = MyPlotter(shape=(1,2))
