@@ -41,7 +41,6 @@ def dump_state(state, filename, indent=None):
     json.dump(state, fio, cls=NumpyEncoder, indent=indent)
     fio.close()
 
-
 def load_state(filename):
     fio = open(filename, "r")
     state_loaded = json.load(fio)
@@ -59,3 +58,14 @@ def load_state(filename):
     state["planes"] = state_loaded["planes"]
     state["grids"] = grids
     return state
+
+def dump_colormap(colormap, filename, indent=None):
+    fio = open(filename, "w+")
+    json.dump(colormap, fio, indent=indent)
+    fio.close()
+
+def load_colormap(filename):
+    fio = open(filename, "r")
+    colormap_loaded = json.load(fio)
+    fio.close()
+    return colormap_loaded
