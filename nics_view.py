@@ -272,6 +272,66 @@ def main():
         newcolors[mapping <= -40] = purple
         my_colormap = ListedColormap(newcolors)
 
+        #Palette (1) ACIE Karadakov:
+        p1_level_1 = np.array([1, 0.9, 0.8, alpha]) # Pale Brown
+        p1_level_2 = np.array([0.6, 0.7, 0.95, alpha]) # Clear blue
+        p1_level_3 = np.array([0, 0.4, 0.85, alpha]) # Clear blue but no so clear
+        p1_level_4 = np.array([0, 0, 1, alpha]) #Plain blue
+        p1_level_5 = np.array([0, 0, 0.4, alpha]) # Noir blue
+        #Palette (2) Yellow to blue:
+        p2_level_1 = np.array([1, 0.5, 0, alpha]) # Orange
+        p2_level_2 = np.array([1, 1, 0, alpha]) # Yellow
+        p2_level_3 = np.array([0, 1, 0, alpha]) # Green
+        p2_level_4 = np.array([0, 0, 1, alpha]) # Blue
+        p2_level_5 = np.array([1, 0, 1, alpha]) # "Noir blue
+        #Palette (3) The Oranges:
+        p3_level_1 = np.array([1, 0.9, 0.75, alpha]) # White Orange
+        p3_level_2 = np.array([1, 0.75, 0.5, alpha]) # Clear Orange
+        p3_level_3 = np.array([1, 0.6, 0.25, alpha]) # Pale Orange
+        p3_level_4 = np.array([1, 0.5, 0, alpha]) # Orange
+        p3_level_5 = np.array([0.5, 0.25, 0, alpha]) # Dark Orange
+        #Palette (4) The Reds:
+        p4_level_1 = np.array([1, 0.8, 0.8, alpha]) # White Red
+        p4_level_2 = np.array([1, 0.6, 0.6, alpha]) # Clear Red
+        p4_level_3 = np.array([1, 0.2, 0.2, alpha]) # Pale Red
+        p4_level_4 = np.array([1, 0, 0, alpha]) # Red
+        p4_level_5 = np.array([0.5, 0, 0, alpha]) # Dark Red
+        #Palette (5) The Greens:
+        p5_level_1 = np.array([0.8, 1, 0.8, alpha]) # White Green
+        p5_level_2 = np.array([0.6, 1, 0.6, alpha]) # Clear Green
+        p5_level_3 = np.array([0.4, 1, 0.4, alpha]) # Pale Green
+        p5_level_4 = np.array([0, 1, 0, alpha]) # Green
+        p5_level_5 = np.array([0, 0.25, 0, alpha]) # Dark Green
+        #Palette (6) The Purples:
+        p6_level_1 = np.array([1, 0.8, 1, alpha]) # White Purple
+        p6_level_2 = np.array([1, 0.6, 1, alpha]) # Clear Purple
+        p6_level_3 = np.array([1, 0.4, 1, alpha]) # Pale Purple
+        p6_level_4 = np.array([1, 0, 1, alpha]) # Purple
+        p6_level_5 = np.array([0.25, 0, 0.25, alpha]) # Dark Purple
+        #Palette (7) The Blues:
+        p7_level_1 = np.array([0.8, 0.8, 1, alpha]) # White Blue
+        p7_level_2 = np.array([0.6, 0.6, 1, alpha]) # Clear Blue
+        p7_level_3 = np.array([0.4, 0.4, 1, alpha]) # Pale Blue
+        p7_level_4 = np.array([0, 0, 1, alpha]) # Blue
+        p7_level_5 = np.array([0, 0, 0.25, alpha]) # Dark Blue
+        #Palette (8) The Greyscale:
+        p8_level_1 = np.array([1, 1, 1, alpha]) # White
+        p8_level_2 = np.array([0.8, 0.8, 0.8, alpha]) # Clear Grey
+        p8_level_3 = np.array([0.6, 0.6, 0.6, alpha]) # Pale Grey
+        p8_level_4 = np.array([0.4, 0.4, 0.4, alpha]) # Grey
+        p8_level_5 = np.array([0, 0, 0, alpha]) # Black
+        #Colors used
+        mapping = np.linspace(datac.min(), datac.max(), 256)
+        newcolors = np.empty((256, 4))
+        newcolors[mapping >16.5 ]  = p4_level_5
+        newcolors[mapping <16.5 ]  = p4_level_3
+        newcolors[mapping <11 ]  = p4_level_2
+        newcolors[mapping <5.5 ]  = p1_level_1
+        newcolors[mapping <-5.5 ] = p1_level_2
+        newcolors[mapping <-11 ] = p1_level_3
+        newcolors[mapping <-16.5 ] = p1_level_5
+        my_colormap = ListedColormap(newcolors)
+
         if twopanels:
             p = MyPlotter(shape=(1,2))
         else:
