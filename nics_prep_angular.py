@@ -144,6 +144,12 @@ def main():
         help="Activate the deprecated angular grid",
         default=False)
     parser.add_argument(
+        '-c',
+        '--cycle-center-disable',
+        action='store_true',
+        help='Disable the dummy atom at the center of each cycle: %(default)s',
+        default=False)
+    parser.add_argument(
         'geomfile',
         type=str,
         help="Geometry file in xyz format. default: %(default)s",
@@ -163,6 +169,7 @@ def main():
     angular = args.angular
     depth = args.depth
     maxbq = args.batch
+    cycle_center_disable = args.cycle_center_disable
     #
     # Read the geometry in the geom file
     #
@@ -170,8 +177,11 @@ def main():
     geom = geometry.geometry.Geometry(geomfile, orient=orient)
 
     geomfile_atomsonly = geom.getgeomfilename_Atomsonly()
-    molecularGraph = graph_theory.detect_cycle.MolecularGraph(geomfile_atomsonly)
-    cycles = molecularGraph.detect_cycles()
+    if cycle_center_disable:
+        cycles = []
+    else:
+        molecularGraph = graph_theory.detect_cycle.MolecularGraph(geomfile_atomsonly)
+        cycles = molecularGraph.detect_cycles()
     os.remove(geomfile_atomsonly)
     if (len(cycles)>0):
         for cycle in cycles:
