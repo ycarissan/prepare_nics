@@ -248,7 +248,9 @@ def main():
         point_cloud = pv.PolyData(points)
         point_cloud["NICS"] = datac
         cloud = pv.wrap(point_cloud)
-        cloud.save('test.vtk')
+        cloud.save('test.vtk', binary=False)
+#        cloud.save('test_asc.vtk', binary=False)
+#        cloud.save('test_bin.vtk', binary=True)
 
         alpha = 1
         superred = np.array([1, 1, 0, alpha])
