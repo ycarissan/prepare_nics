@@ -145,10 +145,10 @@ def main():
         default=False)
     parser.add_argument(
         '-c',
-        '--cycle-center-disable',
-        action='store_true',
-        help='Disable the dummy atom at the center of each cycle: %(default)s',
-        default=False)
+        '--cycle-max-size',
+        type=int,
+        help='Auto detect cycles of max size: %(default)s',
+        default=7)
     parser.add_argument(
         'geomfile',
         type=str,
@@ -169,7 +169,7 @@ def main():
     angular = args.angular
     depth = args.depth
     maxbq = args.batch
-    cycle_center_disable = args.cycle_center_disable
+    cycle_max_size = args.cycle_max_size
     #
     # Read the geometry in the geom file
     #
@@ -177,11 +177,12 @@ def main():
     geom = geometry.geometry.Geometry(geomfile, orient=orient)
 
     geomfile_atomsonly = geom.getgeomfilename_Atomsonly()
-    if cycle_center_disable:
-        cycles = []
-    else:
-        molecularGraph = graph_theory.detect_cycle.MolecularGraph(geomfile_atomsonly)
-        cycles = molecularGraph.detect_cycles()
+    cycles = []
+    molecularGraph = graph_theory.detect_cycle.MolecularGraph(geomfile_atomsonly)
+    for c in molecularGraph.detect_cycles():
+        if len(c) <= cycle_max_size:
+            cycles.append(c)
+
     os.remove(geomfile_atomsonly)
     if (len(cycles)>0):
         for cycle in cycles:
