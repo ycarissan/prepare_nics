@@ -62,7 +62,7 @@ def readlogfile(logfile):
                          })
         if ("Anisotropy" in l):
             atmp = l.split()
-            geom[index]['nics'] = -float(atmp[7])
+            geom[index]['nics'] = -float(atmp[4])
             index = index + 1
     # split data into two sparate lists
     # as one will process many log files and want only 1 geometry but the full
