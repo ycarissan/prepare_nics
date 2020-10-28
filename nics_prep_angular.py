@@ -179,9 +179,9 @@ def main():
     geomfile_atomsonly = geom.getgeomfilename_Atomsonly()
     cycles = []
     molecularGraph = graph_theory.detect_cycle.MolecularGraph(geomfile_atomsonly)
-    for c in molecularGraph.detect_cycles():
+    for c in molecularGraph.getCycles():
         if len(c) <= cycle_max_size:
-            cycles.append(c)
+            cycles.append(list(c))
 
     os.remove(geomfile_atomsonly)
     if (len(cycles)>0):
