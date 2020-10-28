@@ -179,14 +179,14 @@ def main():
     geomfile_atomsonly = geom.getgeomfilename_Atomsonly()
     cycles = []
     molecularGraph = graph_theory.detect_cycle.MolecularGraph(geomfile_atomsonly)
-    for c in molecularGraph.detect_cycles():
+    for c in molecularGraph.getCycles():
         if len(c) <= cycle_max_size:
-            cycles.append(c)
+            cycles.append(list(c))
 
     os.remove(geomfile_atomsonly)
     if (len(cycles)>0):
         for cycle in cycles:
-            atomlist = [int(i.replace('a', '')) - 1 for i in cycle]
+            atomlist = [int(str(i).replace('a', '')) - 0 for i in cycle]
             barycenter = geom.getBarycenter(atomlist)
             print(atomlist)
             print(barycenter)
