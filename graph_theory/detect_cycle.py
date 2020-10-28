@@ -6,15 +6,15 @@ import argparse
 import subprocess
 import logging
 import random
-import rdkit
+import rdkit.Chem
 
 class MolecularGraph():
 
     def __init__(self,geomfile):
-        mol_filename = generate_mol(geomfile)
+        mol_filename = generate_mol(geomfile, None)
         self.molecule = rdkit.Chem.MolFromMolFile(mol_filename)
 
-    def getCycles():
+    def getCycles(self):
         return self.molecule.GetRingInfo().AtomRings()
 
 def generate_mol(geomfile, logger):

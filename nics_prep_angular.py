@@ -186,7 +186,7 @@ def main():
     os.remove(geomfile_atomsonly)
     if (len(cycles)>0):
         for cycle in cycles:
-            atomlist = [int(i.replace('a', '')) - 1 for i in cycle]
+            atomlist = [int(str(i).replace('a', '')) - 0 for i in cycle]
             barycenter = geom.getBarycenter(atomlist)
             print(atomlist)
             print(barycenter)
