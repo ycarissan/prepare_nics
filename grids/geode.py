@@ -28,14 +28,14 @@ class geodesic_grid:
         self.depth = depth
         if not(radius_all == None):
             self.vdw_radii = {
-                    "E": radius_all,
-                    "H": radius_all,
-                    "C": radius_all,
-                    "O": 1.52,
-                    "N": 1.55,
-                    "S": 1.55,
-                    "B": 1.55,
-                    "Cl": 1.75
+                    "E":  radius_all,
+                    "H":  radius_all,
+                    "C":  radius_all,
+                    "O":  radius_all,
+                    "N":  radius_all,
+                    "S":  radius_all,
+                    "B":  radius_all,
+                    "Cl": radius_all
                     }
         else:
             self.vdw_radii = vdw_radii
