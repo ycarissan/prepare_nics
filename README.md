@@ -2,8 +2,9 @@
 # prepare_nics (all doc in progress)
 
 ```
-python3 /path/to/nics_prepare/nics_prepare_2D.py -h
-usage: nics_prep_radial.py [-h] [-v] [-d] [-r RADIUS] [-n NPTS] [-i] geomfile
+usage: nics_prep_angular.py [-h] [-v] [-d] [-r RADIUS] [-n NPTS] [--batch BATCH] [--depth DEPTH] [-o] [-i] [-p] [-a]
+                            [-c CYCLE_MAX_SIZE]
+                            geomfile
 
 Generate gaussian inputs for NICS calculations.
 
@@ -17,7 +18,15 @@ optional arguments:
   -r RADIUS, --radius RADIUS
                         Set the radius to 1 angstrom
   -n NPTS, --npts NPTS  Number of angular points by half circle. default: 12
+  --batch BATCH, -b BATCH
+                        Change the number of bq per batch. default: infinity
+  --depth DEPTH         Change the depth for geodesic grid generation: 3
+  -o, --orient          Reorient the molecule along its principal symmetry axis
   -i, --ignoreH         Ignore hydrogen atoms for the generation of the surface
+  -p, --preview         Preview the grid and the resulting surface
+  -a, --angular         Activate the deprecated angular grid
+  -c CYCLE_MAX_SIZE, --cycle-max-size CYCLE_MAX_SIZE
+                        Auto detect cycles of max size: 7
 ```
 
 ## What does it do?
