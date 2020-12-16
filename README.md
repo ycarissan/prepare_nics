@@ -39,7 +39,7 @@ To make these programs permaneetly available you should add this line to your .b
 It is highly recommended that you reproduce the tutorial before starting your own calculations
 
 ## Tutorial
-Read the tutorial [here](https://github.com/ycarissan/ims3d.py/blob/master/tutorial/README.md)
+Read the tutorial [here](https://github.com/ycarissan/ims3d.py/blob/master/tutorial)
 
 ## ims3d.py
 
