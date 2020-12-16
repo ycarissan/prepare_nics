@@ -8,14 +8,17 @@ The user is strongly advised to read this publication before using the programs.
 
 # Installation
 ## Requirements
+### Compulsory
 - Python 3
 - [openbabel](http://openbabel.org/wiki/Main_Page)
 - [numpy](https://numpy.org/)
 - [matplotlib](https://matplotlib.org/)
 - [pymatgen](https://pymatgen.org/)
 - [Rdkit](http://rdkit.org/)
+- Eugene Eeo's geode library is embedded in the distribution but can be available [here](https://github.com/eugene-eeo/spheres-from-triangles)
+### Optional
 - [pyvista](https://www.pyvista.org/) (for the viewer only)
-- Eugene Eeo geode library is embedded in the distribution but can be available [here](https://github.com/eugene-eeo/spheres-from-triangles)
+- [open3d](http://www.open3d.org/) (for preview only) will be replaced fully by pyvista in the future
 
 ## Getting the code
 ```
