@@ -30,7 +30,7 @@ scp *.com REMOTE_MACHINE:INPUT_PATH
 scp REMOTE_MACHINE:INPUT_PATH/*.log .
 ```
 
-3. Gathering of the computed NICS
+3. Gathering of the computed IMS
 
 ```
 ims3d_harv.py input_batch_00000.log
