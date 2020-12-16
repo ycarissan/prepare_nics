@@ -25,7 +25,9 @@ echo " I am in ${SLURM_SUBMIT_DIR} "
 echo "Espace disque : "
 df -h
 source /usr/share/Modules/init/sh
+
 module load g16
+
 
 export GAUSS_SCRDIR=$TMPDIR
 
@@ -36,7 +38,9 @@ fi
 
 FILE=$(ls -1 *.com|sed -n ${SLURM_ARRAY_TASK_ID}p)
 
+
 g16 ${FILE}
+
 
 #CleanExit
 
