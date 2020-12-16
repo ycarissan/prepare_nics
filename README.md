@@ -18,7 +18,9 @@ The user is strongly advised to read this publication before using the programs.
 - Eugene Eeo geode library is embedded in the distribution but can be available [here](https://github.com/eugene-eeo/spheres-from-triangles)
 
 ## Getting the code
+```
 git clone https://github.com/ycarissan/prepare_nics.git
+```
 
 #Usage
 It is highly recommended that you reproduce the tutorial before starting your own calculations
