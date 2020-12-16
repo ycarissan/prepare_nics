@@ -6,14 +6,27 @@ Any publication resulting from the use of this program requires the citation of 
 Albert Artigas, Denis Hagebaum-Reignier, Yannick Carissan and Yoann Coquerel (title not definitive, in preparation)
 The user is strongly advised to read this publication before using the programs.
 
-## Requirements:
-- Python 3 installed
-- Check that the python networkx is installed:
-`pip3 install networkx`
+# Installation
+## Requirements
+- Python 3
+- [openbabel]{http://openbabel.org/wiki/Main_Page}
+- [numpy]{https://numpy.org/]
+- [matplotlib]{https://matplotlib.org/}
+- [pymatgen]{https://pymatgen.org/}
+- [Rdkit]{http://rdkit.org/}
+- [pyvista]{https://www.pyvista.org/} (for the viewer only)
+- Eugene Eeo geode library is embedded in the distribution but can be available [here]{https://github.com/eugene-eeo/spheres-from-triangles}
 
-- babel or obabel installed
+## Getting the code
+git clone https://github.com/ycarissan/prepare_nics.git
 
-# prepare_nics
+#Usage
+It is highly recommended that you reproduce the tutorial before starting your own calculations
+
+## Tutorial
+Read the tutorial [here]{https://github.com/ycarissan/prepare_nics/blob/master/tutorial/tutorial.md}
+
+## prepare_nics
 
 ```
 usage: nics_prep_angular.py [-h] [-v] [-d] [-r RADIUS] [-n NPTS] [--batch BATCH] [--depth DEPTH] [-o] [-i] [-p] [-a]
@@ -42,9 +55,5 @@ optional arguments:
   -c CYCLE_MAX_SIZE, --cycle-max-size CYCLE_MAX_SIZE
                         Auto detect cycles of max size: 7
 ```
-
-## Howto Install ?
-
-git clone https://github.com/ycarissan/prepare_nics.git
 
 Take care
