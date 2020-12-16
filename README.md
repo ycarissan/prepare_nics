@@ -25,11 +25,19 @@ The user is strongly advised to read this publication before using the programs.
 git clone https://github.com/ycarissan/ims3d.py.git
 ```
 
+After this is done, you need to add the directory containing the programs to your PATH:
+
+In bash (replace path_of_the_ims3d.py_file by an appropriate value)
+```
+export PATH=path_of_the_ims3d.py_file:${PATH}
+```
+To make these programs permaneetly available you should add this line to your .bashrc file
+
 #Usage
 It is highly recommended that you reproduce the tutorial before starting your own calculations
 
 ## Tutorial
-Read the tutorial [here](https://github.com/ycarissan/ims3d.py/blob/master/tutorial/tutorial.md)
+Read the tutorial [here](https://github.com/ycarissan/ims3d.py/blob/master/tutorial/README.md)
 
 ## ims3d.py
 
