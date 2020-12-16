@@ -85,7 +85,7 @@ def main():
 
     #
     parser = argparse.ArgumentParser(
-        description='Generate gaussian inputs for NICS calculations.')
+        description='Generate gaussian inputs for IMS calculations.')
     parser.add_argument(
         '-v',
         '--verbose',
