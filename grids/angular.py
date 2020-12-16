@@ -98,16 +98,16 @@ def readgrid():
     normals = np.loadtxt("normals.csv", delimiter=",", skiprows=1)
     return grid, normals
 
-def addNormals(nics_grid, grid, normals):
-    for i in range(len(nics_grid)):
-        samepoint = np.all(np.isclose([nics_grid[i]['x'], nics_grid[i]['y'], nics_grid[i]['z']], grid[i][:3], atol=1e-4))
+def addNormals(ims_grid, grid, normals):
+    for i in range(len(ims_grid)):
+        samepoint = np.all(np.isclose([ims_grid[i]['x'], ims_grid[i]['y'], ims_grid[i]['z']], grid[i][:3], atol=1e-4))
         if samepoint:
-            nics_grid[i]['nx'] = normals[i][0]
-            nics_grid[i]['ny'] = normals[i][1]
-            nics_grid[i]['nz'] = normals[i][2]
+            ims_grid[i]['nx'] = normals[i][0]
+            ims_grid[i]['ny'] = normals[i][1]
+            ims_grid[i]['nz'] = normals[i][2]
         else:
 #                logger.error("Grid inconsistency")
-            print("{} != {}".format(nics_grid[i]['x'],grid[i][0]))
-            print("{} != {}".format(nics_grid[i]['y'],grid[i][1]))
-            print("{} != {}".format(nics_grid[i]['z'],grid[i][2]))
+            print("{} != {}".format(ims_grid[i]['x'],grid[i][0]))
+            print("{} != {}".format(ims_grid[i]['y'],grid[i][1]))
+            print("{} != {}".format(ims_grid[i]['z'],grid[i][2]))
             exit(99)

@@ -24,7 +24,7 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.ERROR)
 
 # create file handler and set level to info
-fh = logging.FileHandler("log_nics_prep_angular", mode="w")
+fh = logging.FileHandler("log_ims_prep_angular", mode="w")
 fh.setLevel(logging.INFO)
 
 # create formatter
@@ -88,7 +88,7 @@ def valtoRGB(values, color_min=[0, 0, 1], color_avg=[.5, .5, .5], color_max=[1, 
 def main():
     # Begin trating arguments
     parser = argparse.ArgumentParser(
-        description='Display the calcuated data of NICS calculations.')
+        description='Display the calcuated data of IMS calculations.')
     parser.add_argument(
         '--showstat',
         action='store_true',
@@ -138,16 +138,16 @@ def main():
     shot = args.shot
     # End trating arguments
 
-    # Read nics.dat
-    # The nics.dat format is:
+    # Read ims.dat
+    # The ims.dat format is:
     #  x, y, z, nx, ny, nz, val
     #skirow does not read the first line
-    values =  np.loadtxt("nics.dat", delimiter=",", skiprows=1)
+    values =  np.loadtxt("ims.dat", delimiter=",", skiprows=1)
 
     if showstat:
         a = np.hstack(values[:,6])
         _ = plt.hist(a, bins='auto')  # arguments are passed to np.histogram
-        plt.title("Repartition of NICS values")
+        plt.title("Repartition of IMS values")
         plt.show()
 
     geom = geometry.geometry.Geometry("geom.xyz")
@@ -246,7 +246,7 @@ def main():
         datac = pv.pyvista_ndarray(data)
 
         point_cloud = pv.PolyData(points)
-        point_cloud["NICS"] = datac
+        point_cloud["IMS"] = datac
         cloud = pv.wrap(point_cloud)
         cloud.save('test.vtk', binary=False)
 #        cloud.save('test_asc.vtk', binary=False)

@@ -9,7 +9,7 @@ def generate_cubefile(geom, grid, grid_values, dx, dy, dz, nptx, npty, nptz):
     """
     Generate a cube file for the given geometry and grid
     """
-    cubefile = "nics.cube"
+    cubefile = "ims.cube"
     fio = open(cubefile, "w+")
     nat = len(geom)
     fio.write("head 1\n".format())
@@ -57,16 +57,16 @@ def closest_node(node, nodes):
     return nodes[cdist([node], nodes).argmin()]
 
 
-def generate_values_on_grid(geom, nics_grid, npts):
+def generate_values_on_grid(geom, ims_grid, npts):
     """
-    Put the nics_values on a cubic grid based on the proximity of a measured point and a grid point
+    Put the ims_values on a cubic grid based on the proximity of a measured point and a grid point
     """
-    xmin = min(a['x'] for a in nics_grid)
-    xmax = max(a['x'] for a in nics_grid)
-    ymin = min(a['y'] for a in nics_grid)
-    ymax = max(a['y'] for a in nics_grid)
-    zmin = min(a['z'] for a in nics_grid)
-    zmax = max(a['z'] for a in nics_grid)
+    xmin = min(a['x'] for a in ims_grid)
+    xmax = max(a['x'] for a in ims_grid)
+    ymin = min(a['y'] for a in ims_grid)
+    ymax = max(a['y'] for a in ims_grid)
+    zmin = min(a['z'] for a in ims_grid)
+    zmax = max(a['z'] for a in ims_grid)
     #
     # Add 5% margin to handle volume plotting
     #
@@ -99,20 +99,20 @@ def generate_values_on_grid(geom, nics_grid, npts):
     dx = (xmax - xmin) / (nptx - 1)
     dy = (ymax - ymin) / (npty - 1)  # idem
     dz = (zmax - zmin) / (nptz - 1)  # idem
-    for el in nics_grid:
+    for el in ims_grid:
         el_prox = closest_node([el['x'], el['y'], el['z']], grid)
         idz = (el_prox[2] - zmin) / dz
         idy = (el_prox[1] - ymin) / dy
         idx = (el_prox[0] - xmin) / dx
         index = idx * npty * nptz + idy * nptz + idz
-        grid_values[str(int(index))] = el['nics']
-        # store the value as a pair index (in str format), nics value: it is much better than storing a large number of
-        # zero nics values on the grid
+        grid_values[str(int(index))] = el['ims']
+        # store the value as a pair index (in str format), ims value: it is much better than storing a large number of
+        # zero ims values on the grid
     return grid, grid_values, dx, dy, dz, nptx, npty, nptz
 
 def generate_values_on_grid(geom, xmin, xmax, nptx, ymin, ymax, npty, zmin, zmax, nptz):
     """
-    Put the nics_values on a cubic grid by computing the indices
+    Put the ims_values on a cubic grid by computing the indices
     """
     #
     # Add 5% margin to handle volume plotting
@@ -145,15 +145,15 @@ def generate_values_on_grid(geom, xmin, xmax, nptx, ymin, ymax, npty, zmin, zmax
     dx = (xmax - xmin) / (nptx - 1)
     dy = (ymax - ymin) / (npty - 1)  # idem
     dz = (zmax - zmin) / (nptz - 1)  # idem
-    for el in nics_grid:
+    for el in ims_grid:
         el_prox = closest_node([el['x'], el['y'], el['z']], grid)
         idz = (el_prox[2] - zmin) / dz
         idy = (el_prox[1] - ymin) / dy
         idx = (el_prox[0] - xmin) / dx
         index = idx * npty * nptz + idy * nptz + idz
-        grid_values[str(int(index))] = el['nics']
-        # store the value as a pair index (in str format), nics value: it is much better than storing a large number of
-        # zero nics values on the grid
+        grid_values[str(int(index))] = el['ims']
+        # store the value as a pair index (in str format), ims value: it is much better than storing a large number of
+        # zero ims values on the grid
     return grid, grid_values, dx, dy, dz, nptx, npty, nptz
 
 

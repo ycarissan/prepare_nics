@@ -5,7 +5,6 @@ import sys
 import argparse
 import logging
 import numpy as np
-import open3d as o3d
 import pymatgen
 
 import geometry.geometry
@@ -23,7 +22,7 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.ERROR)
 
 # create file handler and set level to info
-fh = logging.FileHandler("log_nics_prep_angular", mode="w")
+fh = logging.FileHandler("log_ims_prep_angular", mode="w")
 fh.setLevel(logging.INFO)
 
 # create formatter
@@ -63,7 +62,7 @@ def valtoRGB(values):
     return rgb
 
 def generate_command_line(args):
-    command_line = "python3 nics_angular.py "
+    command_line = "python3 ims3d.py "
     for arg in vars(args):
         command_line = command_line + " {} {}".format(arg, getattr(args, arg))
     return command_line
@@ -220,6 +219,7 @@ def main():
     interface.gaussian.generate_gaussianFile(geom, grid, logger, maxbq = maxbq)
 
     if preview==True:
+        import open3d as o3d
         point_cloud = np.loadtxt("points_values.csv", delimiter=",", skiprows=1)
 #        points_normals = np.loadtxt("normals.csv", delimiter=",", skiprows=1)
         pcd = o3d.geometry.PointCloud()

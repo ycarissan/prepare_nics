@@ -19,7 +19,7 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.ERROR)
 
 # create file handler and set level to info
-fh = logging.FileHandler("log_nics_harv")
+fh = logging.FileHandler("log_ims_harv")
 fh.setLevel(logging.DEBUG)
 
 # create formatter
@@ -38,14 +38,14 @@ logger.addHandler(fh)
 
 def readlogfile(logfile):
     """
-    Read a guassian output file and store the geometry and the nics values (if any)
+    Read a guassian output file and store the geometry and the ims values (if any)
     """
     f = open(logfile, "r")
     store_geom = False
-    store_nics = False
+    store_ims = False
     index = 0
     geom = []
-    nics_grid = []
+    ims_grid = []
     for l in f.readlines():
         if (("Charge" in l) and ("Multiplicity" in l)):
             store_geom = True
@@ -62,22 +62,22 @@ def readlogfile(logfile):
                          })
         if ("Anisotropy" in l):
             atmp = l.split()
-            geom[index]['nics'] = -float(atmp[4])
+            geom[index]['ims'] = float(atmp[4])
             index = index + 1
     # split data into two sparate lists
     # as one will process many log files and want only 1 geometry but the full
-    # nics grid
+    # ims grid
     g = geom
     geom = []
     for el in g:
-        if "Bq" in el['label']:  # it is a bq atom -> nics grid
-            nics_grid.append(el)
+        if "Bq" in el['label']:  # it is a bq atom -> ims grid
+            ims_grid.append(el)
         else:
             geom.append(el)
-    return geom, nics_grid
+    return geom, ims_grid
 
 
-def store_data(geom, nics_grid, geode=True):
+def store_data(geom, ims_grid, geode=True):
     geom_file = "geom.xyz"
     fio = open(geom_file, "w")
     fio.write("{}\n\n".format(len(geom)))
@@ -85,15 +85,15 @@ def store_data(geom, nics_grid, geode=True):
         fio.write(
             "{0[label]:s} {0[x]:16.10f}  {0[y]:16.10f}  {0[z]:16.10f}\n".format(el))
     fio.close()
-    nics_file = "nics.dat"
-    fio = open(nics_file, "w")
-    for el in nics_grid:
+    ims_file = "ims.dat"
+    fio = open(ims_file, "w")
+    for el in ims_grid:
         if geode:
             fio.write(
-                "{0[x]:16.10f},  {0[y]:16.10f},  {0[z]:16.10f},  {0[x]:16.10f}, {0[y]:16.10f}, {0[z]:16.10f}, {0[nics]:16.10f}\n".format(el))
+                "{0[x]:16.10f},  {0[y]:16.10f},  {0[z]:16.10f},  {0[x]:16.10f}, {0[y]:16.10f}, {0[z]:16.10f}, {0[ims]:16.10f}\n".format(el))
         else:
             fio.write(
-                "{0[x]:16.10f},  {0[y]:16.10f},  {0[z]:16.10f},  {0[nx]:16.10f}, {0[ny]:16.10f}, {0[nz]:16.10f}, {0[nics]:16.10f}\n".format(el))
+                "{0[x]:16.10f},  {0[y]:16.10f},  {0[z]:16.10f},  {0[nx]:16.10f}, {0[ny]:16.10f}, {0[nz]:16.10f}, {0[ims]:16.10f}\n".format(el))
     fio.close()
 
 
@@ -106,7 +106,7 @@ def main():
 #    logger.critical('critical message')
     #
     parser = argparse.ArgumentParser(
-        description='Harvest the calcuated data of NICS calculations.')
+        description='Harvest the calcuated data of IMS calculations.')
     parser.add_argument(
         '--verbose',
         '-v',
@@ -156,21 +156,21 @@ def main():
     logger.debug("dirname : {}\nradical : {}\n".format(dirname, radical))
     logger.debug("logfiles: {} ...".format(logfiles))
     geom = []
-    nics_grid = []
+    ims_grid = []
     for f in logfiles:
         logger.info("Extracting from {0:s} ".format(f))
-        geom_tmp, nics_grid_tmp = readlogfile(f)
+        geom_tmp, ims_grid_tmp = readlogfile(f)
         if len(geom) == 0:
             geom = geom_tmp
             logger.info("geometry and ".format())
-        nics_grid.extend(nics_grid_tmp)
-        logger.info("NICS values")
+        ims_grid.extend(ims_grid_tmp)
+        logger.info("IMS values")
     if geode:
-        store_data(geom, nics_grid)
+        store_data(geom, ims_grid)
     else:
         grid, normals = grids.angular.readgrid()
-        grids.angular.addNormals(nics_grid, grid, normals)
-        store_data(geom, nics_grid, geode=False)
+        grids.angular.addNormals(ims_grid, grid, normals)
+        store_data(geom, ims_grid, geode=False)
 
 
 if __name__ == "__main__":
