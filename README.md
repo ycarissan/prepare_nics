@@ -22,21 +22,21 @@ The user is strongly advised to read this publication before using the programs.
 
 ## Getting the code
 ```
-git clone https://github.com/ycarissan/prepare_nics.git
+git clone https://github.com/ycarissan/ims3d.py.git
 ```
 
 #Usage
 It is highly recommended that you reproduce the tutorial before starting your own calculations
 
 ## Tutorial
-Read the tutorial [here](https://github.com/ycarissan/prepare_nics/blob/master/tutorial/tutorial.md)
+Read the tutorial [here](https://github.com/ycarissan/ims3d.py/blob/master/tutorial/tutorial.md)
 
-## prepare_nics
+## ims3d.py
 
 ```
-usage: nics_prep_angular.py [-h] [-v] [-d] [-r RADIUS] [-n NPTS] [--batch BATCH] [--depth DEPTH] [-o] [-i] [-p] [-a]
-                            [-c CYCLE_MAX_SIZE]
-                            geomfile
+usage: ims3d.py [-h] [-v] [-d] [-r RADIUS] [-n NPTS] [--batch BATCH] [--depth DEPTH] [-o] [-i] [-p] [-a]
+                [-c CYCLE_MAX_SIZE]
+                geomfile
 
 Generate gaussian inputs for IMS calculations.
 
