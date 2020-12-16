@@ -1,10 +1,15 @@
-# Tutorials
-## I. Naphtalene with default grid and 1 angström radius surface
+# Tutorial
+For this tutorial to work, you need a proper xyz file (one is provided in this directory).
+
+Furthermore, the installation must have been done properly (your PATH should contain the directory where the
+python programs ims3d.py, ims3d_harv.py and ims3d_view.py are located) and the dependancies fullfiled.
+
+## Naphtalene with default grid and 1 angström radius surface
 
 1. Generation of the com files
 
 ```
-python3 ../nics_prep_angular.py -r 1 naphtalene.xyz 
+ims3d.py -r 1 naphtalene.xyz 
 ```
 
 2. Gaussian calculation
@@ -28,40 +33,11 @@ scp REMOTE_MACHINE:INPUT_PATH/*.log .
 3. Gathering of the computed NICS
 
 ```
-python3 ../nics_harv.py input_batch_00000.log
+ims3d_harv.py input_batch_00000.log
 ```
 4. View of the results
 ```
-python3 ../nics_view.py
+ims3d_view.py
 ```
 When a window pops u, press "q" to exit.
-Viewing can be done with different rendering:
-
-
-Auto setup and shiny rendering (default):
-```
-python3 ../nics_view.py
-```
-
-![](img/autoshiny.png)
-
-Auto setup and mate rendering:
-```
-python3 ../nics_view.py -m
-```
-
-![](img/automate.png)
-
-Isocontour and shiny rendering:
-```
-python3 ../nics_view.py -c iso
-```
-
-![](img/isoshiny.png)
-
-Isocontour setup and mate rendering:
-```
-python3 ../nics_view.py -m -c iso
-```
-
-![](img/isomate.png)
+Viewing can be done with different rendering (run ims3d_view -h for available options)
