@@ -9,13 +9,13 @@ The user is strongly advised to read this publication before using the programs.
 # Installation
 ## Requirements
 - Python 3
-- [openbabel][http://openbabel.org/wiki/Main_Page]
-- [numpy][https://numpy.org/]
-- [matplotlib][https://matplotlib.org/]
-- [pymatgen][https://pymatgen.org/]
-- [Rdkit][http://rdkit.org/]
-- [pyvista][https://www.pyvista.org/] (for the viewer only)
-- Eugene Eeo geode library is embedded in the distribution but can be available [here][https://github.com/eugene-eeo/spheres-from-triangles]
+- [openbabel](http://openbabel.org/wiki/Main_Page)
+- [numpy](https://numpy.org/)
+- [matplotlib](https://matplotlib.org/)
+- [pymatgen](https://pymatgen.org/)
+- [Rdkit](http://rdkit.org/)
+- [pyvista](https://www.pyvista.org/) (for the viewer only)
+- Eugene Eeo geode library is embedded in the distribution but can be available [here](https://github.com/eugene-eeo/spheres-from-triangles)
 
 ## Getting the code
 git clone https://github.com/ycarissan/prepare_nics.git
@@ -24,7 +24,7 @@ git clone https://github.com/ycarissan/prepare_nics.git
 It is highly recommended that you reproduce the tutorial before starting your own calculations
 
 ## Tutorial
-Read the tutorial [here][https://github.com/ycarissan/prepare_nics/blob/master/tutorial/tutorial.md]
+Read the tutorial [here](https://github.com/ycarissan/prepare_nics/blob/master/tutorial/tutorial.md)
 
 ## prepare_nics
 
