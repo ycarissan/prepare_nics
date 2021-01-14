@@ -95,7 +95,7 @@ def main():
         help='Show statistics')
     parser.add_argument(
         '--open3d',
-        action='store_true',
+        action='store_false',
         help='Turn on open3d rendering')
     parser.add_argument(
         '--mate',
