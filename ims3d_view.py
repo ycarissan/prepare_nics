@@ -178,9 +178,8 @@ def main():
             cylinders = []
             molecularGraph = graph_theory.detect_cycle.MolecularGraph("geom.xyz")
             for e in molecularGraph.getEdges():
-                lbl1, lbl2 = e
-                idx1 = int(lbl1.replace('a',''))-1
-                idx2 = int(lbl2.replace('a',''))-1
+                idx1 = e.GetBeginAtomIdx()
+                idx2 = e.GetEndAtomIdx()
                 at1 = geom.getAtom(idx1)
                 at2 = geom.getAtom(idx2)
                 pos1 = np.asarray([at1['x'], at1['y'], at1['z']])
@@ -359,7 +358,6 @@ def main():
                 spheres.append(mesh_sphere)
             molecularGraph = graph_theory.detect_cycle.MolecularGraph("geom.xyz")
             for e in molecularGraph.getEdges():
-                lbl1, lbl2 = e
                 idx1 = int(lbl1.replace('a',''))-1
                 idx2 = int(lbl2.replace('a',''))-1
                 at1 = geom.getAtom(idx1)
