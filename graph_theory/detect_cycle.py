@@ -17,6 +17,9 @@ class MolecularGraph():
     def getCycles(self):
         return self.molecule.GetRingInfo().AtomRings()
 
+    def getEdges(self):
+        return self.molecule.GetBonds()
+
 def generate_mol(geomfile, logger):
     """ Genere le fichier de descritpion de la geometrie en mol"""
     mol_filename = "tmpfile_{:05d}.mol".format(int(random.uniform(0, 99999)))
